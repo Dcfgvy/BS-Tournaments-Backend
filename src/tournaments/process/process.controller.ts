@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('process')
+@Controller('tournaments/process')
 export class ProcessController {}
