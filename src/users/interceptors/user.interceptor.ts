@@ -5,7 +5,7 @@ import { User } from "src/typeorm/entities/User.entity";
 
 @Injectable()
 export class UserInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
+  intercept(context: ExecutionContext, next: CallHandler<User>): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(map((user: User) => instanceToPlain(user)));
   }
 }

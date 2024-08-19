@@ -1,5 +1,4 @@
-import { Exclude } from "class-transformer";
-import { IsNotEmpty, IsString, IsStrongPassword, Length, Matches } from "class-validator";
+import { IsNotEmpty, IsString, Length, Matches } from "class-validator";
 
 export class RegisterFormDto {
   @IsNotEmpty()

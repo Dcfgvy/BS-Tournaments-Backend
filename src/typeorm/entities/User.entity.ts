@@ -21,7 +21,7 @@ export class User extends BaseEntity {
   language: string;
 
   @Column({ nullable: true })
-  brawlStarsId: string;
+  brawlStarsTag: string;
 
   @Column({ default: false })
   isAccountConfirmed: boolean;
