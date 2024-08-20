@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Post, Req, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RegisterFormDto } from './dtos/RegisterForm.dto';
 import { AuthService } from './services/auth/auth.service';
 import { UserInterceptor } from './interceptors/user.interceptor';
@@ -19,8 +19,8 @@ export class UsersController {
   @Post('/register')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(new UserInterceptor())
-  register(@Body() registerDto: RegisterFormDto){
-    return this.authService.register(registerDto);
+  register(@Body() registerDto: RegisterFormDto, @Ip() ip: string){
+    return this.authService.register(registerDto, ip);
   }
 
   @Post('/login')
@@ -33,6 +33,13 @@ export class UsersController {
   @UsePipes(new ValidationPipe())
   refreshToken(@Body() refreshTokenDto: RefreshTokenDto){
     return this.authService.updateToken(refreshTokenDto);
+  }
+
+  @Get('/info')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(new UserInterceptor())
+  getUserInfo(@Req() req: Request){
+    return this.usersService.getUserInfo(req['user']);
   }
 
   @Post('/confirm-tag')

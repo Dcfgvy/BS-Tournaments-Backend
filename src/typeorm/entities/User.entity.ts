@@ -17,8 +17,14 @@ export class User extends BaseEntity {
   })
   password: string;
 
+  @Column({ default: 0.00 })
+  balance: number;
+
   @Column({ default: 'ru' })
   language: string;
+
+  @Column()
+  ip: string;
 
   @Column({ nullable: true })
   brawlStarsTag: string;

@@ -16,7 +16,7 @@ export class AuthService {
     private jwtService: JwtService
   ){}
 
-  async register(registerFormDto: RegisterFormDto){
+  async register(registerFormDto: RegisterFormDto, ip: string){
     const user: User = await this.userRepository.findOneBy({
       username: registerFormDto.username
     });
@@ -24,7 +24,8 @@ export class AuthService {
       const newUser = this.userRepository.create({
         username: registerFormDto.username,
         password: hashPassword(registerFormDto.password),
-        language: registerFormDto.language
+        language: registerFormDto.language,
+        ip: ip
       });
       const finalUser = await this.userRepository.save(newUser);
       return finalUser;
@@ -95,6 +96,15 @@ export class AuthService {
       }
       const user: User = await this.userRepository.findOneBy({ id: payload.id });
       if(user){
+        const request_ip: string =
+          req.headers['cf-connecting-ip'] ||
+          req.headers['x-real-ip'] ||
+          req.headers['x-forwarded-for'] || '';
+        console.log(req.headers);
+        if(request_ip.length > 0 && user.ip != request_ip){
+          user.ip = request_ip;
+          await this.userRepository.save(user);
+        }
         req['user'] = user;
         return true;
       } else {
