@@ -18,5 +18,4 @@ export class Payment extends BaseEntity {
 
   @ManyToOne(() => User)
   user: User;
-
 }
