@@ -1,6 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "../BaseEntity";
-import { BannedUser } from "./BannedUser.entity";
 import { Exclude } from "class-transformer";
 
 @Entity({ name: 'users' })
@@ -35,6 +34,6 @@ export class User extends BaseEntity {
   @Column({ default: false })
   isOrganizer: boolean;
 
-  @OneToMany(() => BannedUser, bannedUser => bannedUser.user, { onDelete: 'CASCADE' })
-  bannedUsers: BannedUser[];
+  @CreateDateColumn({ type: 'timestamptz' })
+  bannedUntil: Date;
 }

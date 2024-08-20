@@ -1,6 +1,5 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "../BaseEntity";
-import { Tournament } from "./Tournament.entity";
 import { EventMap } from "./EventMap.entity";
 
 @Entity({ name: 'events' })
