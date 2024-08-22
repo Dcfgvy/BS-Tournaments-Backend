@@ -12,6 +12,7 @@ import * as path from 'path';
 import { appConfig } from './utils/appConfigs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { User } from './typeorm/entities/User.entity';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { User } from './typeorm/entities/User.entity';
       ttl: 10000,
       limit: 3,
     }]),
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService, BrawlStarsApiService],

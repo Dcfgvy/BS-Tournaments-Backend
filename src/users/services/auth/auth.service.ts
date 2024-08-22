@@ -121,4 +121,13 @@ export class AuthService {
       throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
     }
   }
+
+  async validateAdminRequest(req: Request): Promise<boolean> {
+    const authCheck = await this.validateRequest(req);
+    if(authCheck){
+      if(req['user'].tag.toUpperCase() != '#ADMIN') throw new HttpException('Admin access only', HttpStatus.FORBIDDEN);
+      return true;
+    }
+    throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
+  }
 }
