@@ -5,16 +5,13 @@ import { UserInterceptor } from './interceptors/user.interceptor';
 import { LoginFormDto } from './dtos/LoginForm.dto';
 import { RefreshTokenDto } from './dtos/RefreshToken.dto';
 import { UsersService } from './services/users/users.service';
-import { BrawlStarsApiService } from 'src/services/brawl-stars-api/brawl-stars-api.service';
-import { TagConfirmationDto } from './dtos/TagConfirmation.dto';
 import { AuthGuard } from './guards/auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private authService: AuthService,
-    private usersService: UsersService,
-    private brawlStarsApiService: BrawlStarsApiService
+    private usersService: UsersService
   ){}
   @Post('/register')
   @UsePipes(new ValidationPipe())
@@ -40,16 +37,5 @@ export class UsersController {
   @UseInterceptors(new UserInterceptor())
   getUserInfo(@Req() req: Request){
     return this.usersService.getUserInfo(req['user']);
-  }
-
-  @Post('/confirm-tag')
-  @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
-  confirmAccountByTag(@Body() tagConfirmationDto: TagConfirmationDto, @Req() request: Request){
-    return this.brawlStarsApiService.confirmAccountByTag(
-      request['user'],
-      tagConfirmationDto.tag,
-      tagConfirmationDto.trophyChange
-    );
   }
 }

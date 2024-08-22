@@ -4,7 +4,7 @@ export class LoginFormDto {
   @IsNotEmpty()
   @IsString()
   @Length(5, 20)
-  username: string;
+  tag: string;
 
   @IsNotEmpty()
   @IsString()

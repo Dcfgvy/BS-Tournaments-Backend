@@ -1,18 +1,22 @@
-import { IsNotEmpty, IsString, Length, Matches } from "class-validator";
+import { IsNotEmpty, IsString, Length, Matches, IsNumber } from "class-validator";
 
 export class RegisterFormDto {
   @IsNotEmpty()
   @IsString()
-  @Length(5, 20)
-  @Matches(/^[A-Za-z][A-Za-z0-9]*$/, {
-    message: 'Username must start with a letter and contain only letters and digits.',
+  @Length(3, 20)
+  @Matches(/^#/, {
+    message: 'Brawl Stars tag must start with #',
   })
-  username: string;
+  tag: string;
 
   @IsNotEmpty()
   @IsString()
   @Length(8, 32)
   password: string;
+  
+  @IsNotEmpty()
+  @IsNumber()
+  trophyChange: number;
 
   @IsNotEmpty()
   @IsString()

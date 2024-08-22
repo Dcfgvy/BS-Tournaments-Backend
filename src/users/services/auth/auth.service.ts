@@ -8,35 +8,44 @@ import { comparePasswords, hashPassword } from 'src/utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginFormDto } from '../../dtos/LoginForm.dto';
 import { RefreshTokenDto } from 'src/users/dtos/RefreshToken.dto';
+import { BrawlStarsApiService } from 'src/services/brawl-stars-api/brawl-stars-api.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private brawlStarsApiService: BrawlStarsApiService
   ){}
 
   async register(registerFormDto: RegisterFormDto, ip: string){
+    const userTag: string = registerFormDto.tag;
     const user: User = await this.userRepository.findOneBy({
-      username: registerFormDto.username
+      tag: userTag
     });
     if(!user){
-      const newUser = this.userRepository.create({
-        username: registerFormDto.username,
-        password: hashPassword(registerFormDto.password),
-        language: registerFormDto.language,
-        ip: ip
-      });
-      const finalUser = await this.userRepository.save(newUser);
-      return finalUser;
+      const account_confirmed: boolean = await this.brawlStarsApiService.confirmAccountByTag(userTag, registerFormDto.trophyChange);
+      if(account_confirmed){
+        const userName = await this.brawlStarsApiService.getBSName(userTag);
+        const newUser = this.userRepository.create({
+          tag: userTag,
+          name: userName,
+          password: hashPassword(registerFormDto.password),
+          language: registerFormDto.language,
+          ip: ip
+        });
+        const finalUser = await this.userRepository.save(newUser);
+        return finalUser;
+      }
+      throw new HttpException('Invalid trophy change', HttpStatusCode.BadRequest);
     } else {
-      throw new HttpException('User with this username already exists', HttpStatusCode.Conflict);
+      throw new HttpException('User with this tag already exists', HttpStatusCode.Conflict);
     }
   }
 
-  async validateUser(username: string, password: string): Promise<User>{
+  async validateUser(tag: string, password: string): Promise<User>{
     const user: User = await this.userRepository.findOneBy({
-      username
+      tag
     });
     if(user && comparePasswords(password, user.password)){
       return user;
@@ -46,7 +55,7 @@ export class AuthService {
   }
 
   async login(loginFromDto: LoginFormDto){
-    const user: User = await this.validateUser(loginFromDto.username, loginFromDto.password);
+    const user: User = await this.validateUser(loginFromDto.tag, loginFromDto.password);
     if(user){
       const accessPayload = { id: user.id, timestamp: new Date().getTime() };
       const refreshPayload = { id: user.id, timestamp: new Date().getTime() + 1 };
@@ -100,7 +109,6 @@ export class AuthService {
           req.headers['cf-connecting-ip'] ||
           req.headers['x-real-ip'] ||
           req.headers['x-forwarded-for'] || '';
-        console.log(req.headers);
         if(request_ip.length > 0 && user.ip != request_ip){
           user.ip = request_ip;
           await this.userRepository.save(user);

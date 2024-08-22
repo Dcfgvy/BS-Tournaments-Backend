@@ -8,7 +8,10 @@ export class User extends BaseEntity {
   id: number;
 
   @Column({ unique: true })
-  username: string;
+  tag: string;
+
+  @Column()
+  name: string;
 
   @Column()
   @Exclude({
@@ -24,12 +27,6 @@ export class User extends BaseEntity {
 
   @Column()
   ip: string;
-
-  @Column({ nullable: true })
-  brawlStarsTag: string;
-
-  @Column({ default: false })
-  isAccountConfirmed: boolean;
 
   @Column({ default: false })
   isOrganizer: boolean;
