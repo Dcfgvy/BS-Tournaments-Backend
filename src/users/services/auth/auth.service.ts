@@ -1,9 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, HttpStatus } from '@nestjs/common';
 import { RegisterFormDto } from '../../dtos/RegisterForm.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm/entities/User.entity';
 import { Repository } from 'typeorm';
-import { HttpStatusCode } from 'axios';
 import { comparePasswords, hashPassword } from 'src/utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginFormDto } from '../../dtos/LoginForm.dto';
@@ -37,9 +36,9 @@ export class AuthService {
         const finalUser = await this.userRepository.save(newUser);
         return finalUser;
       }
-      throw new HttpException('Invalid trophy change', HttpStatusCode.BadRequest);
+      throw new HttpException('Invalid trophy change', HttpStatus.BAD_REQUEST);
     } else {
-      throw new HttpException('User with this tag already exists', HttpStatusCode.Conflict);
+      throw new HttpException('User with this tag already exists', HttpStatus.CONFLICT);
     }
   }
 
@@ -67,7 +66,7 @@ export class AuthService {
       };
     }
     else {
-      throw new HttpException('Invalid credentials', HttpStatusCode.BadRequest);
+      throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -76,7 +75,7 @@ export class AuthService {
     try {
       payload = this.jwtService.verify(refreshTokenDto.refreshToken);
     } catch (error) {
-      throw new HttpException('Invalid refresh token', HttpStatusCode.BadRequest);
+      throw new HttpException('Invalid refresh token', HttpStatus.BAD_REQUEST);
     }
 
     const user: User = await this.userRepository.findOneBy({ id: payload.id });
@@ -90,7 +89,7 @@ export class AuthService {
         refreshToken: this.jwtService.sign(refreshPayload),
       };
     } else {
-      throw new HttpException('Invalid refresh token', HttpStatusCode.NotFound);
+      throw new HttpException('Invalid refresh token', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -101,7 +100,7 @@ export class AuthService {
       try {
         payload = this.jwtService.verify(token);
       } catch (error) {
-        throw new HttpException('Invalid token', HttpStatusCode.Unauthorized);
+        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       }
       const user: User = await this.userRepository.findOneBy({ id: payload.id });
       if(user){
@@ -116,10 +115,10 @@ export class AuthService {
         req['user'] = user;
         return true;
       } else {
-        throw new HttpException('Invalid token', HttpStatusCode.Unauthorized);
+        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       }
     } else {
-      throw new HttpException('No token provided', HttpStatusCode.Unauthorized);
+      throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
     }
   }
 }
