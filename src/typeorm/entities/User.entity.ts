@@ -28,8 +28,8 @@ export class User extends BaseEntity {
   @Column()
   ip: string;
 
-  @Column({ default: false })
-  isOrganizer: boolean;
+  @Column({ type: 'int', array: true, default: [0] })
+  roles: number[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   bannedUntil: Date;

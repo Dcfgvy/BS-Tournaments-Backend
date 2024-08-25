@@ -8,6 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginFormDto } from '../../dtos/LoginForm.dto';
 import { RefreshTokenDto } from 'src/users/dtos/RefreshToken.dto';
 import { BrawlStarsApiService } from 'src/services/brawl-stars-api/brawl-stars-api.service';
+import { UserRole } from 'src/users/enums/role.enum';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -56,8 +58,8 @@ export class AuthService {
   async login(loginFromDto: LoginFormDto){
     const user: User = await this.validateUser(loginFromDto.tag, loginFromDto.password);
     if(user){
-      const accessPayload = { id: user.id, timestamp: new Date().getTime() };
-      const refreshPayload = { id: user.id, timestamp: new Date().getTime() + 1 };
+      const accessPayload = { id: user.id, uuid: uuidv4() };
+      const refreshPayload = { id: user.id, uuid: uuidv4() };
       return {
         tokenType: 'Bearer',
         accessToken: this.jwtService.sign(accessPayload, { expiresIn: '1h' }),
@@ -125,7 +127,7 @@ export class AuthService {
   async validateAdminRequest(req: Request): Promise<boolean> {
     const authCheck = await this.validateRequest(req);
     if(authCheck){
-      if(req['user'].tag.toUpperCase() != '#ADMIN') throw new HttpException('Admin access only', HttpStatus.FORBIDDEN);
+      if(!( req['user'].roles.includes(UserRole.Admin) )) throw new HttpException('Admin access only', HttpStatus.FORBIDDEN);
       return true;
     }
     throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);

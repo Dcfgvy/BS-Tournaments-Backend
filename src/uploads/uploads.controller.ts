@@ -1,4 +1,25 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { UploadsService } from './uploads.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AdminGuard } from 'src/users/guards/admin.guard';
+import { SkipThrottle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @Controller('uploads')
-export class UploadsController {}
+export class UploadsController {
+  constructor(
+    private uploadService: UploadsService
+  ){}
+
+  @Post('images')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  uploadImage(@UploadedFile() file: Express.Multer.File){
+    return this.uploadService.uploadImage(file);
+  }
+
+  @Get('images/:filename')
+  getImage(@Param('filename') filename: string){
+    return this.uploadService.fetchImage(filename);
+  }
+}

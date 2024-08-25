@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AuthService } from './services/auth/auth.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,7 +9,9 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersService } from './services/users/users.service';
 import { BrawlStarsApiService } from 'src/services/brawl-stars-api/brawl-stars-api.service';
+import { AdminCreationService } from './services/admin-creation/admin-creation.service';
 
+@Global()
 @Module({
   controllers: [UsersController],
   providers: [
@@ -19,7 +21,8 @@ import { BrawlStarsApiService } from 'src/services/brawl-stars-api/brawl-stars-a
       useClass: ThrottlerGuard
     },
     UsersService,
-    BrawlStarsApiService
+    BrawlStarsApiService,
+    AdminCreationService
   ],
   imports: [
     UsersModule,
@@ -27,6 +30,7 @@ import { BrawlStarsApiService } from 'src/services/brawl-stars-api/brawl-stars-a
     JwtModule.register({
       secret: appConfig.JWT_SECRET
     })
-  ]
+  ],
+  exports: [AuthService]
 })
 export class UsersModule {}
