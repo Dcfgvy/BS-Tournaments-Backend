@@ -11,6 +11,12 @@ export class Win extends BaseEntity {
   @Column()
   place: number;
 
+  // @Column()
+  // prize: number;
+
+  // @Column({ default: false })
+  // moneyTransfered: boolean;
+
   @ManyToOne(() => User)
   user: User;
 

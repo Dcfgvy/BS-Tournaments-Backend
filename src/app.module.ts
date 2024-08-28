@@ -13,6 +13,8 @@ import { appConfig } from './utils/appConfigs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { User } from './typeorm/entities/User.entity';
 import { UploadsModule } from './uploads/uploads.module';
+import { TournamentSubscriber } from './typeorm/subscribers/TournamentSubscriber';
+import { PaginationService } from './services/pagination/pagination.service';
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { UploadsModule } from './uploads/uploads.module';
       database: appConfig.DB_NAME,
       entities: [path.join(__dirname, 'typeorm', 'entities', '*.entity{.ts,.js}')],
       synchronize: true,
+      subscribers: [TournamentSubscriber]
     }),
     TypeOrmModule.forFeature([User]),
     ThrottlerModule.forRoot([{
@@ -35,6 +38,6 @@ import { UploadsModule } from './uploads/uploads.module';
     UploadsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, BrawlStarsApiService],
+  providers: [AppService, BrawlStarsApiService, PaginationService],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "../BaseEntity";
 import { User } from "./User.entity";
 import { EventMap } from "./EventMap.entity";
@@ -23,6 +23,12 @@ export class Tournament extends BaseEntity {
 
   @Column()
   status: number;
+
+  @Column({ nullable: true })
+  inviteLink: string;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  lastStatusUpdate: Date;
 
   @ManyToOne(() => User)
   organizer: User;

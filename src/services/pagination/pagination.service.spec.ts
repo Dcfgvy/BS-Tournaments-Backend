@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProcessService } from './process.service';
+import { PaginationService } from './pagination.service';
 
-describe('ProcessService', () => {
-  let service: ProcessService;
+describe('PaginationService', () => {
+  let service: PaginationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ProcessService],
+      providers: [PaginationService],
     }).compile();
 
-    service = module.get<ProcessService>(ProcessService);
+    service = module.get<PaginationService>(PaginationService);
   });
 
   it('should be defined', () => {

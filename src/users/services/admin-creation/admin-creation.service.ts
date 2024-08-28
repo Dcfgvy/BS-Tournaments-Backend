@@ -26,7 +26,7 @@ export class AdminCreationService implements OnModuleInit {
         name: 'Admin',
         language: 'en',
         ip: 'localhost',
-        roles: [UserRole.User, UserRole.Admin]
+        roles: [UserRole.USER, UserRole.ADMIN]
       });
       await this.userRepository.save(adminUser);
     }
