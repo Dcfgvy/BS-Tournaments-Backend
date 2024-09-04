@@ -16,6 +16,8 @@ const envConfig = cleanEnv(process.env, {
   DB_USER: str(),
   DB_PASS: str(),
   DB_NAME: str(),
+  DB_SEED_USER_PASSWORD: str(),
+  DB_SEED_ORGANIZER_PASSWORD: str(),
   JWT_SECRET: str(),
   ADMIN_TAGNAME: str(),
   ADMIN_PASSWORD: str(),

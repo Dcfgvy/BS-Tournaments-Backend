@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UploadsService } from './uploads.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AdminGuard } from 'src/users/guards/admin.guard';
 import { SkipThrottle } from '@nestjs/throttler';
+import { AdminGuard } from '../users/guards/admin.guard';
 
 @SkipThrottle()
 @Controller('uploads')

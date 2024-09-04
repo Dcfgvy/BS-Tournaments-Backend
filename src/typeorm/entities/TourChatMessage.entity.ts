@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "../BaseEntity";
+import { BaseEntity } from "./BaseEntity";
 import { User } from "./User.entity";
 import { Tournament } from "./Tournament.entity";
 
@@ -14,6 +14,6 @@ export class TourChatMessage extends BaseEntity {
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Tournament)
+  @ManyToOne(() => Tournament, tournament => tournament.chatMessages)
   tournament: Tournament;
 }

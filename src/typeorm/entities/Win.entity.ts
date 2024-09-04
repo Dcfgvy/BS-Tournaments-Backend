@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "../BaseEntity";
+import { BaseEntity } from "./BaseEntity";
 import { User } from "./User.entity";
 import { Tournament } from "./Tournament.entity";
 
@@ -11,15 +11,9 @@ export class Win extends BaseEntity {
   @Column()
   place: number;
 
-  // @Column()
-  // prize: number;
-
-  // @Column({ default: false })
-  // moneyTransfered: boolean;
-
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Tournament)
+  @ManyToOne(() => Tournament, tournament => tournament.wins)
   tournament: Tournament;
 }

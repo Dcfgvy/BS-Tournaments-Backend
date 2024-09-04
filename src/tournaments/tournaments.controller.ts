@@ -1,7 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Get, ParseArrayPipe, ParseIntPipe, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
-import { PaginationParams } from 'src/services/pagination/pagination.dto';
-import { BannedBrawlersDto } from './dtos/banned-brawlers.dto';
+import { PaginationParamsDto } from '../services/pagination/pagination.dto';
+import { PaginationParams } from '../services/pagination/pagination.decorator';
+import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @Controller('tournaments')
 export class TournamentsController {
@@ -10,23 +11,24 @@ export class TournamentsController {
   ) {}
 
   @Get('/active')
+  @UsePipes(new ValidationPipe())
   getActiveTournaments(
-    @Query() paginationParams: PaginationParams,
     @Query('costFrom') costFrom: number,
     @Query('costTo') costTo: number,
     @Query('playersNumberFrom') playersNumberFrom: number,
     @Query('playersNumberTo') playersNumberTo: number,
     @Query('eventId') eventId: number,
-    @Query() bannedBrawlersDto: BannedBrawlersDto,
+    @Query('bannedBrawlers', new DefaultValuePipe([]), new ParseArrayPipe({ items: Number, separator: ',' })) bannedBrawlers: number[],
+    @PaginationParams() paginationParams: PaginationParamsDto,
   ){
     return this.tournamentsService.fetchActiveTournaments(
-      paginationParams,
+      paginationParams as IPaginationOptions,
       costFrom,
       costTo,
       playersNumberFrom,
       playersNumberTo,
       eventId,
-      bannedBrawlersDto,
+      bannedBrawlers,
     );
   }
 }

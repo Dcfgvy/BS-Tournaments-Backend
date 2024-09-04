@@ -1,19 +1,19 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/typeorm/entities/User.entity';
-import { appConfig } from 'src/utils/appConfigs';
-import { hashPassword } from 'src/utils/bcrypt';
-import { UserRole } from 'src/users/enums/role.enum';
+import { User } from '../../../typeorm/entities/User.entity';
+import { appConfig } from '../../../utils/appConfigs';
+import { UserRole } from '../../enums/role.enum';
+import { hashPassword } from '../../../utils/bcrypt';
 
 @Injectable()
-export class AdminCreationService implements OnModuleInit {
+export class AdminCreationService implements OnApplicationBootstrap {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async onModuleInit() {
+  async onApplicationBootstrap() {
     const existingUser = await this.userRepository.findOne({
       where: { tag: appConfig.ADMIN_TAGNAME },
     });

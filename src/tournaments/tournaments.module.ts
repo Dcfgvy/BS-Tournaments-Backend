@@ -3,9 +3,9 @@ import { TournamentsService } from './tournaments.service';
 import { TournamentsController } from './tournaments.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { PaginationService } from 'src/services/pagination/pagination.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Tournament } from 'src/typeorm/entities/Tournament.entity';
+import { Tournament } from '../typeorm/entities/Tournament.entity';
+import { PaginationService } from '../services/pagination/pagination.service';
 
 @Module({
   providers: [
@@ -14,7 +14,6 @@ import { Tournament } from 'src/typeorm/entities/Tournament.entity';
       provide: APP_GUARD,
       useClass: ThrottlerGuard
     },
-    PaginationService,
   ],
   controllers: [TournamentsController],
   imports: [

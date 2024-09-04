@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
+import { PaginationParamsDto } from './pagination.dto';
 
 @Injectable()
 export class PaginationService {
   async paginate<T>(
     repository: Repository<T>,
-    pageNumber: number,
-    pageSize: number,
-    query: object = {},
+    { page, limit }: PaginationParamsDto,
+    where: object = {},
   ): Promise<{ items: T[]; totalCount: number }> {
     const [items, totalCount] = await repository.findAndCount({
-      where: query,
-      skip: (pageNumber - 1) * pageSize,
-      take: pageSize,
+      where: where,
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     return {
@@ -22,12 +22,20 @@ export class PaginationService {
   }
 
   async paginateRawRequest<T>(
-    pageNumber: number,
-    pageSize: number,
     rawQuery: SelectQueryBuilder<T>,
+    { page, limit }: PaginationParamsDto
   ): Promise<{ items: T[]; totalCount: number }> {
     const totalCount = await rawQuery.getCount();
-    const items = await rawQuery.skip((pageNumber - 1) * pageSize).take(pageSize).getMany();
+
+    console.log("counted");
+
+    rawQuery
+    .skip((page - 1) * limit)
+    .take(limit);
+
+    console.log(rawQuery.getQuery());
+
+    const items = await rawQuery.getMany();
 
     return {
       items,

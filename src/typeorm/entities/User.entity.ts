@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "../BaseEntity";
+import { BaseEntity } from "./BaseEntity";
 import { Exclude } from "class-transformer";
+import { UserRole } from "../../users/enums/role.enum";
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -28,7 +29,7 @@ export class User extends BaseEntity {
   @Column()
   ip: string;
 
-  @Column({ type: 'int', array: true, default: [0] })
+  @Column({ type: 'int', array: true, default: [UserRole.USER] })
   roles: number[];
 
   @CreateDateColumn({ type: 'timestamptz' })

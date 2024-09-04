@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
-import { User } from 'src/typeorm/entities/User.entity';
-import { appConfig } from 'src/utils/appConfigs';
-import { getRandomInt } from 'src/utils/other';
 import { Repository } from 'typeorm';
+import { User } from '../../typeorm/entities/User.entity';
+import { getRandomInt } from '../../utils/other';
+import { appConfig } from '../../utils/appConfigs';
 
 @Injectable()
 export class BrawlStarsApiService {

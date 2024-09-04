@@ -1,15 +1,15 @@
 import { HttpException, Injectable, HttpStatus } from '@nestjs/common';
 import { RegisterFormDto } from '../../dtos/RegisterForm.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/typeorm/entities/User.entity';
 import { Repository } from 'typeorm';
-import { comparePasswords, hashPassword } from 'src/utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginFormDto } from '../../dtos/LoginForm.dto';
-import { RefreshTokenDto } from 'src/users/dtos/RefreshToken.dto';
-import { BrawlStarsApiService } from 'src/services/brawl-stars-api/brawl-stars-api.service';
-import { UserRole } from 'src/users/enums/role.enum';
 import { v4 as uuidv4 } from 'uuid';
+import { UserRole } from '../../enums/role.enum';
+import { User } from '../../../typeorm/entities/User.entity';
+import { BrawlStarsApiService } from '../../../services/brawl-stars-api/brawl-stars-api.service';
+import { comparePasswords, hashPassword } from '../../../utils/bcrypt';
+import { RefreshTokenDto } from '../../dtos/RefreshToken.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +33,7 @@ export class AuthService {
           name: userName,
           password: hashPassword(registerFormDto.password),
           language: registerFormDto.language,
-          ip: ip
+          ip: ip,
         });
         const finalUser = await this.userRepository.save(newUser);
         return finalUser;
@@ -124,10 +124,10 @@ export class AuthService {
     }
   }
 
-  async validateAdminRequest(req: Request): Promise<boolean> {
+  async validateRequestByRole(req: Request, role: UserRole): Promise<boolean> {
     const authCheck = await this.validateRequest(req);
     if(authCheck){
-      if(!( req['user'].roles.includes(UserRole.ADMIN) )) throw new HttpException('Admin access only', HttpStatus.FORBIDDEN);
+      if(!( req['user'].roles.includes(role) )) throw new HttpException('Access forbidden', HttpStatus.FORBIDDEN);
       return true;
     }
     throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);

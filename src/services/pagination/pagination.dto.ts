@@ -1,13 +1,12 @@
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
-export class PaginationParams {
+export class PaginationParamsDto {
   @IsInt()
   @Min(1)
-  @IsOptional()
-  pageNumber: number = 1;
+  page: number;
 
   @IsInt()
   @Min(1)
-  @IsOptional()
-  pageSize: number = 10;
+  @Max(100)
+  limit: number;
 }

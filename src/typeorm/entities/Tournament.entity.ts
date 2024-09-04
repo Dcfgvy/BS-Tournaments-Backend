@@ -1,11 +1,12 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "../BaseEntity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
 import { User } from "./User.entity";
 import { EventMap } from "./EventMap.entity";
 import { Event } from "./Event.entity";
 import { Brawler } from "./Brawler.entity";
 import { Contestant } from "./Contestant.entity";
 import { Win } from "./Win.entity";
+import { TourChatMessage } from "./TourChatMessage.entity";
 
 @Entity({ name: 'tournaments' })
 export class Tournament extends BaseEntity {
@@ -30,6 +31,9 @@ export class Tournament extends BaseEntity {
   @CreateDateColumn({ type: 'timestamptz' })
   lastStatusUpdate: Date;
 
+  @OneToMany(() => TourChatMessage, tourChatMessage => tourChatMessage.tournament)
+  chatMessages: TourChatMessage[];
+
   @ManyToOne(() => User)
   organizer: User;
 
@@ -40,9 +44,10 @@ export class Tournament extends BaseEntity {
   eventMap: EventMap;
 
   @ManyToMany(() => Brawler)
+  @JoinTable()
   bannedBrawlers: Brawler[];
 
-  @ManyToMany(() => Contestant)
+  @OneToMany(() => Contestant, contestant => contestant.tournament)
   contestants: Contestant[];
 
   @OneToMany(() => Win, (win) => win.tournament)
