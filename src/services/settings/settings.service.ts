@@ -4,6 +4,7 @@ import { Settings } from '../../typeorm/entities/Settings.entity';
 import { Repository } from 'typeorm';
 import { ISettings } from '../../utils/interfaces';
 import { appConfig } from '../../utils/appConfigs';
+import { convertValue } from '../../utils/other';
 
 @Injectable()
 export class SettingsService implements OnModuleInit {
@@ -28,7 +29,7 @@ export class SettingsService implements OnModuleInit {
     };
     // replacing default values from env with data from DB
     for(let i = 0; i < settingsFromDB.length; i++){
-      settings[settingsFromDB[i].key] = settingsFromDB[i].value;
+      settings[settingsFromDB[i].key] = convertValue(settingsFromDB[i].value, settingsFromDB[i].type);
     }
 
     this.data = settings;
@@ -36,8 +37,17 @@ export class SettingsService implements OnModuleInit {
     // adding new settings that were not saved in DB
     const settingsKeys: string[] = Object.keys(settings);
     for(let i = 0; i < settingsKeys.length; i++){
-      if(settingsFromDB.filter(s => s.key === settingsKeys[i]).length === 0){
-        await this.settingsRepository.save({ key: settingsKeys[i], value: settings[settingsKeys[i]] });
+      const currentKey = settingsKeys[i];
+      if(settingsFromDB.filter(s => s.key === currentKey).length === 0){
+
+        let type: string = typeof settings[currentKey];
+        if(type === 'object' && new Date(settings[currentKey]).getTime()) type = 'date';
+        await this.settingsRepository.save({
+          key: currentKey, 
+          value: settings[currentKey],
+          type,
+        });
+
       }
     }
   }

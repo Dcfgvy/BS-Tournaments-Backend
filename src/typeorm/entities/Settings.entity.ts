@@ -10,4 +10,7 @@ export class Settings {
 
   @Column()
   value: string;
+
+  @Column()
+  type: string;
 }
