@@ -4,7 +4,7 @@ import { AuthService } from '../services/auth/auth.service';
 import { UserRole } from '../enums/role.enum';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class OrganizerGuard implements CanActivate {
   constructor(
     private authService: AuthService
   ){}

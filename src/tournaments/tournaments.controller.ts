@@ -11,7 +11,7 @@ export class TournamentsController {
   ) {}
 
   @Get('/active')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(ValidationPipe)
   getActiveTournaments(
     @Query('costFrom') costFrom: number,
     @Query('costTo') costTo: number,

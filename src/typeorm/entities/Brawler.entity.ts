@@ -6,12 +6,15 @@ export class Brawler extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  names: string;
+  @Column({ type: 'json' })
+  names: object;
 
   @Column()
   imgUrl: string;
 
   @Column()
   apiName: string;
+
+  @Column({ default: false })
+  isDisabled: boolean;
 }

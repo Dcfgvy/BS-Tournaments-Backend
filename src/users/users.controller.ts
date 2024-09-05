@@ -14,27 +14,27 @@ export class UsersController {
     private usersService: UsersService
   ){}
   @Post('/register')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(ValidationPipe)
   @UseInterceptors(new UserInterceptor())
   register(@Body() registerDto: RegisterFormDto, @Ip() ip: string){
     return this.authService.register(registerDto, ip);
   }
 
   @Post('/login')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(ValidationPipe)
   login(@Body() loginFormDto: LoginFormDto){
     return this.authService.login(loginFormDto);
   }
 
   @Post('/refresh')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(ValidationPipe)
   refreshToken(@Body() refreshTokenDto: RefreshTokenDto){
     return this.authService.updateToken(refreshTokenDto);
   }
 
   @Get('/info')
   @UseGuards(AuthGuard)
-  @UseInterceptors(new UserInterceptor())
+  @UseInterceptors(UserInterceptor)
   getUserInfo(@Req() req: Request){
     return this.usersService.getUserInfo(req['user']);
   }

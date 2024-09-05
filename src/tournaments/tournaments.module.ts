@@ -5,7 +5,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tournament } from '../typeorm/entities/Tournament.entity';
-import { PaginationService } from '../services/pagination/pagination.service';
 
 @Module({
   providers: [

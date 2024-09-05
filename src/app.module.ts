@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { AccountModule } from './account/account.module';
 import { AdminModule } from './admin/admin.module';
 import { PaymentsModule } from './payments/payments.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
@@ -20,7 +19,7 @@ import { GlobalModule } from './global/global.module';
 
 @Module({
   imports: [
-    UsersModule, AccountModule, AdminModule, PaymentsModule, TournamentsModule, 
+    UsersModule, AdminModule, PaymentsModule, TournamentsModule, 
     TypeOrmModule.forRoot(dataSourceOptions),
     TypeOrmModule.forFeature([User, Settings]),
     ThrottlerModule.forRoot([{
