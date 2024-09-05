@@ -3,7 +3,8 @@ import { DataSourceOptions } from 'typeorm';
 import * as path from 'path';
 import { TournamentSubscriber } from './subscribers/TournamentSubscriber';
 import { SeederOptions } from 'typeorm-extension';
-
+import UserSeeder from './seeders/user.seeder';
+import { UsersFactory } from './factories/users.factory';
 
 export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   type: 'postgres',
@@ -15,6 +16,6 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   entities: [path.join(__dirname, 'entities', '*.entity{.ts,.js}')],
   synchronize: appConfig.isProduction ? false : true,
   subscribers: [TournamentSubscriber],
-  factories: [path.join(__dirname, 'factories', '*.factory{.ts,.js}')],
-  seeds: [path.join(__dirname, 'seeders', '*.seeder{.ts,.js}')]
+  factories: [UsersFactory],
+  seeds: [UserSeeder]
 };

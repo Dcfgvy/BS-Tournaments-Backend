@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { cleanEnv, bool, port, url, str, host } from 'envalid';
+import { cleanEnv, bool, port, url, str, host, num } from 'envalid';
 import { NodeEnv } from './NodeEnv';
 
 dotenv.config();
@@ -11,6 +11,7 @@ const envConfig = cleanEnv(process.env, {
   PORT: port(),
   BRAWL_STARS_API_URL: url(),
   BRAWL_STARS_API_KEY: str(),
+  
   DB_HOST: host(),
   DB_PORT: port(),
   DB_USER: str(),
@@ -21,6 +22,14 @@ const envConfig = cleanEnv(process.env, {
   JWT_SECRET: str(),
   ADMIN_TAGNAME: str(),
   ADMIN_PASSWORD: str(),
+
+  PAYOUT_COMMISSION: num(),
+  ORGANIZER_FEE: num(),
+  TOUR_RECRUITMENT_MAX_TIME: num(),
+  TOUR_START_AWAITING_TIME: num(),
+  TOUR_FREEZE_TIME: num(),
+  ORGANIZER_BAN_TIME: num(),
+  TELEGRAM_SUPPORT: str(),
 });
 
 // In next config objects put variables after default config if you want to overwrite default values

@@ -10,9 +10,9 @@ export default class UserSeeder implements Seeder {
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<void> {
-    await dataSource.query('TRUNCATE "users" RESTART IDENTITY;');
-
     const repository = dataSource.getRepository(User);
+
+    console.log('Creating organizer...')
     await repository.insert({
       tag: '#ORG12',
       name: 'Organizer',
@@ -23,6 +23,7 @@ export default class UserSeeder implements Seeder {
       roles: [UserRole.USER, UserRole.ORGANIZER],
     });
 
+    console.log('Creating users...')
     const userFactory = factoryManager.get(User);
     await userFactory.saveMany(15);
   }

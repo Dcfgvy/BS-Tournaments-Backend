@@ -10,13 +10,15 @@ import { User } from '../../../typeorm/entities/User.entity';
 import { BrawlStarsApiService } from '../../../services/brawl-stars-api/brawl-stars-api.service';
 import { comparePasswords, hashPassword } from '../../../utils/bcrypt';
 import { RefreshTokenDto } from '../../dtos/RefreshToken.dto';
+import { SettingsService } from '../../../services/settings/settings.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
-    private brawlStarsApiService: BrawlStarsApiService
+    private brawlStarsApiService: BrawlStarsApiService,
+    private settings: SettingsService
   ){}
 
   async register(registerFormDto: RegisterFormDto, ip: string){
