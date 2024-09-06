@@ -9,9 +9,33 @@ on:
     - main
   pull_request:
 
-jobs:
-  build:
+env:
+  NODE_ENV: ci
+  LOAD_TEST_DATA: false
+  PORT: 3000
+  BRAWL_STARS_API_URL: https://api.brawlstars.com/v1
+  BRAWL_STARS_API_KEY: ${{ secrets.BRAWL_STARS_API_KEY }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASS: ${{ secrets.DB_PASS }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_SEED_USER_PASSWORD: ${{ secrets.DB_SEED_USER_PASSWORD }}
+  DB_SEED_ORGANIZER_PASSWORD: ${{ secrets.DB_SEED_ORGANIZER_PASSWORD }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  ADMIN_TAGNAME: "#ADMIN"
+  ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+  PAYOUT_COMMISSION: 4
+  ORGANIZER_FEE: 500
+  TOUR_RECRUITMENT_MAX_TIME: 4
+  TOUR_START_AWAITING_TIME: 0.25
+  TOUR_FREEZE_TIME: 72
+  ORGANIZER_BAN_TIME: 24
+  TELEGRAM_SUPPORT: support
 
+jobs:
+  install-deps:
+    name: Install dependencies
     runs-on: ubuntu-latest
 
     strategy:
@@ -27,5 +51,39 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
     - run: yarn install
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
     - run: yarn run build
+
+  unit-test:
+    name: Unit test
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
     - run: yarn test
