@@ -68,6 +68,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      
     - run: yarn run build
 
   unit-test:
@@ -86,4 +90,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
-    - run: yarn test
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+
+    - run: yarn run test
