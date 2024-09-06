@@ -1,12 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BrawlersService } from './brawlers.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Brawler } from '../../typeorm/entities/Brawler.entity';
 
 describe('BrawlersService', () => {
   let service: BrawlersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [BrawlersService],
+      providers: [
+        BrawlersService,
+        {
+          provide: getRepositoryToken(Brawler),
+          useValue: {
+          }
+        }
+      ],
     }).compile();
 
     service = module.get<BrawlersService>(BrawlersService);

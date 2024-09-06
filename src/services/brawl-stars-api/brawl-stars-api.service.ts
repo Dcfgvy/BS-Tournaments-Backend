@@ -1,16 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Repository } from 'typeorm';
-import { User } from '../../typeorm/entities/User.entity';
 import { getRandomInt } from '../../utils/other';
 import { appConfig } from '../../utils/appConfigs';
 
 @Injectable()
 export class BrawlStarsApiService {
-  constructor(
-    @InjectRepository(User) private userRepository: Repository<User>
-  ){}
+  constructor(){}
 
   private requestQueue: { tag: string; battlelog: boolean; resolve: (data: any) => void; reject: (error: any) => void; }[] = [];
   private isProcessing = false;
