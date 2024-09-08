@@ -3,9 +3,11 @@ import { UploadsService } from './uploads.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SkipThrottle } from '@nestjs/throttler';
 import { AdminGuard } from '../users/guards/admin.guard';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
 @SkipThrottle()
 @Controller('uploads')
+@ApiTags('Uploads')
 export class UploadsController {
   constructor(
     private uploadService: UploadsService
@@ -14,6 +16,20 @@ export class UploadsController {
   @Post('images')
   @UseGuards(AdminGuard)
   @UseInterceptors(FileInterceptor('file'))
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['file'],
+    }
+  })
   uploadImage(@UploadedFile() file: Express.Multer.File){
     return this.uploadService.uploadImage(file);
   }

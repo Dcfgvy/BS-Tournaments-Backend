@@ -3,8 +3,10 @@ import { BrawlersService } from './brawlers.service';
 import { AdminGuard } from '../../users/guards/admin.guard';
 import { CreateBrawlerDto } from './dtos/CreateBrawler.dto';
 import { UpdateBrawlerDto } from './dtos/UpdateBrawler.dto';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('brawlers')
+@ApiTags('Brawlers')
 export class BrawlersController {
   constructor(
     private readonly brawlersService: BrawlersService,
@@ -12,6 +14,7 @@ export class BrawlersController {
 
   @Get()
   @UseGuards(AdminGuard)
+  @ApiBearerAuth()
   getAllBrawlers() {
     return this.brawlersService.fetchAllBrawlers();
   }
@@ -24,6 +27,7 @@ export class BrawlersController {
   @Post()
   @UseGuards(AdminGuard)
   @UsePipes(ValidationPipe)
+  @ApiBearerAuth()
   createBrawler(@Body() createBrawlerDto: CreateBrawlerDto){
     return this.brawlersService.createBrawler(createBrawlerDto);
   }
@@ -31,6 +35,7 @@ export class BrawlersController {
   @Patch(':id')
   @UseGuards(AdminGuard)
   @UsePipes(ValidationPipe)
+  @ApiBearerAuth()
   updateBrawler(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBrawlerDto: UpdateBrawlerDto
@@ -40,6 +45,7 @@ export class BrawlersController {
 
   @Delete(':id')
   @UseGuards(AdminGuard)
+  @ApiBearerAuth()
   deleteBrawler(@Param('id', ParseIntPipe) id: number){
     return this.brawlersService.deleteBrawler(id);
   }

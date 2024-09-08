@@ -1,10 +1,12 @@
-import { Controller, DefaultValuePipe, Get, ParseArrayPipe, ParseIntPipe, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Get, HttpStatus, ParseArrayPipe, ParseIntPipe, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { PaginationParamsDto } from '../services/pagination/pagination.dto';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
+import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('tournaments')
+@ApiTags('Tournaments')
 export class TournamentsController {
   constructor(
     private tournamentsService: TournamentsService,

@@ -91,7 +91,7 @@ export class AuthService {
         refreshToken: this.jwtService.sign(refreshPayload),
       };
     } else {
-      throw new HttpException('Invalid refresh token', HttpStatus.NOT_FOUND);
+      throw new HttpException('Invalid refresh token', HttpStatus.BAD_REQUEST);
     }
   }
 
