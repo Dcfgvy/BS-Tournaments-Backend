@@ -4,6 +4,8 @@ import { AdminGuard } from '../../users/guards/admin.guard';
 import { CreateBrawlerDto } from './dtos/CreateBrawler.dto';
 import { UpdateBrawlerDto } from './dtos/UpdateBrawler.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { BrawlerResponseDto } from './dtos/BrawlerResponse.dto';
+import { Roles } from '../../users/decorators/roles.decorator';
 
 @Controller('brawlers')
 @ApiTags('Brawlers')
@@ -12,16 +14,24 @@ export class BrawlersController {
     private readonly brawlersService: BrawlersService,
   ) {}
 
+  @Get('active')
+  @ApiOkResponse({ type: [BrawlerResponseDto] })
+  getActiveBrawlers() {
+    return this.brawlersService.fetchActiveBrawlers();
+  }
+
+  @Get(':id')
+  @ApiOkResponse({ type: BrawlerResponseDto })
+  getBrawlerById(@Roles() roles: number[], @Param('id', ParseIntPipe) id: number) {
+    return this.brawlersService.fetchBrawlerById(id, roles);
+  }
+
   @Get()
   @UseGuards(AdminGuard)
   @ApiBearerAuth()
+  @ApiOkResponse({ type: [BrawlerResponseDto] })
   getAllBrawlers() {
     return this.brawlersService.fetchAllBrawlers();
-  }
-
-  @Get('active')
-  getActiveBrawlers() {
-    return this.brawlersService.fetchActiveBrawlers();
   }
 
   @Post()
@@ -36,6 +46,7 @@ export class BrawlersController {
   @UseGuards(AdminGuard)
   @UsePipes(ValidationPipe)
   @ApiBearerAuth()
+  @ApiOkResponse({ type: BrawlerResponseDto })
   updateBrawler(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBrawlerDto: UpdateBrawlerDto

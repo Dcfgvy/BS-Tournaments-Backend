@@ -8,10 +8,10 @@ import { APP_GUARD } from '@nestjs/core';
   controllers: [UploadsController],
   providers: [
     UploadsService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    }
+    
+  ],
+  exports: [
+    UploadsService
   ]
 })
 export class UploadsModule {}

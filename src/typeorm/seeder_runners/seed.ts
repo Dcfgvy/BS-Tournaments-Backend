@@ -1,9 +1,17 @@
-import { DataSource } from "typeorm";
-import { dataSourceOptions } from "./data-source";
-import { runSeeders } from "typeorm-extension";
-import { appConfig } from "../utils/appConfigs";
+import { DataSource, DataSourceOptions } from "typeorm";
+import { dataSourceOptions } from "../data-source";
+import { runSeeders, SeederOptions } from "typeorm-extension";
+import { appConfig } from "../../utils/appConfigs";
+import { UserFactory } from "../factories/user.factory";
+import UserSeeder from "../seeders/user.seeder";
 
-const dataSource = new DataSource(dataSourceOptions);
+const seedSourceOptions: DataSourceOptions & SeederOptions = {
+  ...dataSourceOptions,
+  factories: [UserFactory],
+  seeds: [UserSeeder]
+}
+
+const dataSource = new DataSource(seedSourceOptions);
 dataSource.initialize().then(async () => {
   await dataSource.synchronize(true);
   

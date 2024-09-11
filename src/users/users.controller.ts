@@ -4,18 +4,18 @@ import { AuthService } from './services/auth/auth.service';
 import { UserInterceptor } from './interceptors/user.interceptor';
 import { LoginFormDto } from './dtos/LoginForm.dto';
 import { RefreshTokenDto } from './dtos/RefreshToken.dto';
-import { UsersService } from './services/users/users.service';
 import { AuthGuard } from './guards/auth.guard';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { TokenResponseDto } from './dtos/TokenResponse.dto';
+import { GetUser } from './decorators/get-user.decorator';
+import { User } from '../typeorm/entities/User.entity';
 
 @Controller('users')
 @ApiTags('Users')
 export class UsersController {
   constructor(
-    private authService: AuthService,
-    private usersService: UsersService
+    private authService: AuthService
   ){}
   @Post('/register')
   @UsePipes(ValidationPipe)
@@ -49,7 +49,7 @@ export class UsersController {
   @ApiBearerAuth()
   @UseInterceptors(UserInterceptor)
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
-  getUserInfo(@Req() req: Request){
-    return this.usersService.getUserInfo(req['user']);
+  getUserInfo(@GetUser() user: User){
+    return user;
   }
 }

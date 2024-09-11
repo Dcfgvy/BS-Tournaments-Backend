@@ -95,33 +95,41 @@ export class AuthService {
     }
   }
 
-  async validateRequest(req: Request): Promise<boolean> {
-    const token = req.headers['authorization']?.split(' ')[1];
-    if(token){
-      let payload: { id: number };
-      try {
-        payload = this.jwtService.verify(token);
-      } catch (error) {
-        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-      }
-      const user: User = await this.userRepository.findOneBy({ id: payload.id });
-      if(user){
-        const request_ip: string =
-          req.headers['cf-connecting-ip'] ||
-          req.headers['x-real-ip'] ||
-          req.headers['x-forwarded-for'] || '';
-        if(request_ip.length > 0 && user.ip != request_ip){
-          user.ip = request_ip;
-          await this.userRepository.save(user);
-        }
-        req['user'] = user;
-        return true;
-      } else {
-        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-      }
-    } else {
-      throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
+  async processUserIpAddress(req: any, user: User): Promise<void> {
+    const request_ip: string =
+      req.headers['cf-connecting-ip'] ||
+      req.headers['x-real-ip'] ||
+      req.headers['x-forwarded-for'] || '';
+    if(request_ip.length > 0 && user.ip != request_ip){
+      user.ip = request_ip;
+      await this.userRepository.save(user);
     }
+  }
+
+  async validateRequest(req: Request): Promise<boolean> {
+    if(!(req['user'])){
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    }
+    return true;
+    // const token = req.headers['authorization']?.split(' ')[1];
+    // if(token){
+    //   let payload: { id: number };
+    //   try {
+    //     payload = this.jwtService.verify(token);
+    //   } catch (error) {
+    //     throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    //   }
+    //   const user: User = await this.userRepository.findOneBy({ id: payload.id });
+    //   if(user){
+    //     await this.processUserIpAddress(req, user);
+    //     req['user'] = user;
+    //     return true;
+    //   } else {
+    //     throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    //   }
+    // } else {
+    //   throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
+    // }
   }
 
   async validateRequestByRole(req: Request, role: UserRole): Promise<boolean> {

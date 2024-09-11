@@ -17,8 +17,8 @@ export class AdminCreationService implements OnApplicationBootstrap {
     const existingUser = await this.userRepository.findOne({
       where: { tag: appConfig.ADMIN_TAGNAME },
     });
+    const hashedPassword = hashPassword(appConfig.ADMIN_PASSWORD);
     if (!existingUser) {
-      const hashedPassword = hashPassword(appConfig.ADMIN_PASSWORD);
       const adminUser = this.userRepository.create({
         tag: appConfig.ADMIN_TAGNAME,
         password: hashedPassword,
@@ -29,6 +29,10 @@ export class AdminCreationService implements OnApplicationBootstrap {
         roles: [UserRole.USER, UserRole.ADMIN]
       });
       await this.userRepository.save(adminUser);
+    }
+    else {
+      existingUser.password = hashedPassword;
+      await this.userRepository.save(existingUser);
     }
   }
 }

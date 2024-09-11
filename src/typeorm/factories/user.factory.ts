@@ -4,7 +4,7 @@ import { User } from "../entities/User.entity";
 import { hashPassword } from "../../utils/bcrypt";
 import { appConfig } from "../../utils/appConfigs";
 
-export const UsersFactory = setSeederFactory(User, (faker: Faker) => {
+export const UserFactory = setSeederFactory(User, (faker: Faker) => {
   const user = new User();
 
   user.tag = `#${faker.word.noun(6).toUpperCase() + String(new Date().getMilliseconds())}`;

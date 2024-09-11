@@ -43,9 +43,7 @@ export class Tournament extends BaseEntity {
   @ManyToOne(() => EventMap)
   eventMap: EventMap;
 
-  @ManyToMany(() => Brawler, {
-    onDelete: 'CASCADE'
-  })
+  @ManyToMany(() => Brawler)
   @JoinTable()
   bannedBrawlers: Brawler[];
 

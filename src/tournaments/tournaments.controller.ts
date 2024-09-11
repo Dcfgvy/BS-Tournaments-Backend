@@ -3,7 +3,8 @@ import { TournamentsService } from './tournaments.service';
 import { PaginationParamsDto } from '../services/pagination/pagination.dto';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiPagination } from '../services/pagination/api-pagination.decorator';
 
 @Controller('tournaments')
 @ApiTags('Tournaments')
@@ -14,6 +15,13 @@ export class TournamentsController {
 
   @Get('/active')
   @UsePipes(ValidationPipe)
+  @ApiQuery({ name: 'costFrom', required: false, type: Number })
+  @ApiQuery({ name: 'costTo', required: false, type: Number })
+  @ApiQuery({ name: 'playersNumberFrom', required: false, type: Number })
+  @ApiQuery({ name: 'playersNumberTo', required: false, type: Number })
+  @ApiQuery({ name: 'eventId', required: false, type: Number })
+  @ApiQuery({ name: 'bannedBrawlers', required: false, type: Number, isArray: true })
+  @ApiPagination()
   getActiveTournaments(
     @Query('costFrom') costFrom: number,
     @Query('costTo') costTo: number,

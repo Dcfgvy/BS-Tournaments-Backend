@@ -7,3 +7,7 @@ export interface ISettings {
   organizerBanTime: Date;
   telegramSupport: string;
 }
+
+export interface IEntityWithImage {
+  imgUrl?: string;
+}

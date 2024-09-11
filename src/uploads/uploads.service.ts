@@ -31,7 +31,7 @@ export class UploadsService {
   async deleteFile(filepath: string): Promise<boolean> {
     const absolutePath = path.join(__dirname, filepath);
     try {
-      await fs.rm(absolutePath);
+      await fs.unlink(absolutePath);
       return true;
     } catch (err) {
       console.error(`Error deleting file: ${filepath}`, err);

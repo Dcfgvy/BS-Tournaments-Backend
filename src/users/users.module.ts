@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { UsersService } from './services/users/users.service';
 import { AdminCreationService } from './services/admin-creation/admin-creation.service';
 import { appConfig } from '../utils/appConfigs';
 import { User } from '../typeorm/entities/User.entity';
@@ -20,7 +19,6 @@ import { BrawlStarsApiService } from '../services/brawl-stars-api/brawl-stars-ap
       provide: APP_GUARD,
       useClass: ThrottlerGuard
     },
-    UsersService,
     BrawlStarsApiService,
     AdminCreationService
   ],

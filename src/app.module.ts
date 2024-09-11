@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -7,7 +7,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { BrawlStarsApiService } from './services/brawl-stars-api/brawl-stars-api.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { User } from './typeorm/entities/User.entity';
 import { UploadsModule } from './uploads/uploads.module';
 import { PaginationService } from './services/pagination/pagination.service';
@@ -16,6 +16,11 @@ import { appConfig } from './utils/appConfigs';
 import { SettingsService } from './services/settings/settings.service';
 import { Settings } from './typeorm/entities/Settings.entity';
 import { GlobalModule } from './global/global.module';
+import { AuthMiddleware } from './users/middlewares/auth.middleware';
+import { JwtModule } from '@nestjs/jwt';
+import { NodeEnv } from './utils/NodeEnv';
+import { ImageCleanupSubscriber } from './typeorm/subscribers/image-cleanup.subscriber';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -24,12 +29,31 @@ import { GlobalModule } from './global/global.module';
     TypeOrmModule.forFeature([User, Settings]),
     ThrottlerModule.forRoot([{
       ttl: 10000,
-      limit: appConfig.isDevelopment ? 10000 : 10,
+      limit: appConfig.NODE_ENV === NodeEnv.DEV ? undefined : 10,
     }]),
     UploadsModule,
     GlobalModule,
+    JwtModule.register({
+      secret: appConfig.JWT_SECRET
+    })
   ],
   controllers: [AppController],
-  providers: [AppService, BrawlStarsApiService, PaginationService, SettingsService],
+  providers: [
+    AppService, BrawlStarsApiService, PaginationService, SettingsService,
+    ImageCleanupSubscriber,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    }
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+     .apply(AuthMiddleware)
+     .exclude(
+      { path: 'uploads/(.*)', method: RequestMethod.ALL }
+     )
+     .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

@@ -16,6 +16,9 @@ export class EventMap extends BaseEntity {
   @Column()
   apiName: string;
 
-  @ManyToOne(() => Event, event => event.eventMaps)
+  @ManyToOne(() => Event, event => event.eventMaps, { eager: true })
   event: Event;
+
+  @Column()
+  eventId: number;
 }

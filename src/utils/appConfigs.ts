@@ -37,8 +37,14 @@ const envConfig = cleanEnv(process.env, {
 const defaultConfig = {
   LOAD_TEST_DATA: false,
   PORT: 3000,
+  BRAWL_STARS_API_URL: 'https://api.brawlstars.com/v1',
   DB_HOST: 'localhost',
   DB_PORT: 5432,
+  ADMIN_TAGNAME: '#ADMIN',
+  TOUR_RECRUITMENT_MAX_TIME: 4,
+  TOUR_START_AWAITING_TIME: 0.25,
+  TOUR_FREEZE_TIME: 72,
+  ORGANIZER_BAN_TIME: 24,
 };
 
 const devConfig = {

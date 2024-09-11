@@ -4,6 +4,7 @@ import { Brawler } from '../../typeorm/entities/Brawler.entity';
 import { Repository } from 'typeorm';
 import { CreateBrawlerDto } from './dtos/CreateBrawler.dto';
 import { UpdateBrawlerDto } from './dtos/UpdateBrawler.dto';
+import { UserRole } from '../../users/enums/role.enum';
 
 @Injectable()
 export class BrawlersService {
@@ -22,6 +23,15 @@ export class BrawlersService {
       }
     });
   }
+
+  async fetchBrawlerById(id: number, userRoles: UserRole[]): Promise<Brawler> {
+    const brawler = await this.brawlerRepository.findOneBy({
+      id: id
+    });
+    if(brawler?.isDisabled && !userRoles.includes(UserRole.ADMIN)) return null;
+    return brawler;
+  }
+
   createBrawler(
     createBrawlerDto: CreateBrawlerDto
   ): Promise<any> {
@@ -34,14 +44,14 @@ export class BrawlersService {
     id: number,
     updateBrawlerDto: UpdateBrawlerDto
   ): Promise<any> {
-    await this.brawlerRepository.save({
+    return this.brawlerRepository.save({
       id,
       ...updateBrawlerDto
     });
-    return this.brawlerRepository.findOneBy({ id });
   }
 
-  deleteBrawler(id: number): Promise<any> {
-    return this.brawlerRepository.delete({ id });
+  async deleteBrawler(id: number): Promise<any> {
+    const brawler = await this.brawlerRepository.findBy({ id });
+    return this.brawlerRepository.remove(brawler);
   }
 }
