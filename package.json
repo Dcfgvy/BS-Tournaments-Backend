@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "dev": "yarn run dev:postgres & yarn run dev:backend",
+    "dev": "yarn run dev:postgres & yarn run start:dev",
     "dev:postgres": "docker-compose -f docker-compose.yml up -d postgres_db",
     "dev:backend": "docker-compose -f docker-compose.yml up backend",
     "start": "nest start",
@@ -30,6 +30,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/schedule": "^4.1.0",
     "@nestjs/swagger": "^7.4.0",
     "@nestjs/throttler": "^6.1.1",
     "@nestjs/typeorm": "^10.0.2",

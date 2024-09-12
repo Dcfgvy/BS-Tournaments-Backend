@@ -9,6 +9,9 @@ import { AdminCreationService } from './services/admin-creation/admin-creation.s
 import { appConfig } from '../utils/appConfigs';
 import { User } from '../typeorm/entities/User.entity';
 import { BrawlStarsApiService } from '../services/brawl-stars-api/brawl-stars-api.service';
+import { UsersService } from './services/users/users.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BgUnbanService } from './services/bg-unban/bg-unban.service';
 
 @Global()
 @Module({
@@ -20,14 +23,17 @@ import { BrawlStarsApiService } from '../services/brawl-stars-api/brawl-stars-ap
       useClass: ThrottlerGuard
     },
     BrawlStarsApiService,
-    AdminCreationService
+    AdminCreationService,
+    UsersService,
+    BgUnbanService
   ],
   imports: [
     UsersModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
       secret: appConfig.JWT_SECRET
-    })
+    }),
+    ScheduleModule.forRoot()
   ],
   exports: [AuthService]
 })

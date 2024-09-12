@@ -1,21 +1,28 @@
-import { Body, Controller, Get, HttpStatus, Ip, Post, Req, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Ip, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RegisterFormDto } from './dtos/RegisterForm.dto';
 import { AuthService } from './services/auth/auth.service';
 import { UserInterceptor } from './interceptors/user.interceptor';
 import { LoginFormDto } from './dtos/LoginForm.dto';
 import { RefreshTokenDto } from './dtos/RefreshToken.dto';
 import { AuthGuard } from './guards/auth.guard';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { TokenResponseDto } from './dtos/TokenResponse.dto';
 import { GetUser } from './decorators/get-user.decorator';
 import { User } from '../typeorm/entities/User.entity';
+import { ApiPagination } from '../services/pagination/api-pagination.decorator';
+import { AdminGuard } from './guards/admin.guard';
+import { UsersService } from './services/users/users.service';
+import { PaginationParams } from '../services/pagination/pagination.decorator';
+import { IPaginationOptions } from 'nestjs-typeorm-paginate';
+import { BanUserDto } from './dtos/BanUser.dto';
 
 @Controller('users')
 @ApiTags('Users')
 export class UsersController {
   constructor(
-    private authService: AuthService
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService
   ){}
   @Post('/register')
   @UsePipes(ValidationPipe)
@@ -45,11 +52,55 @@ export class UsersController {
   }
 
   @Get('/info')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
+  // not using @UseGuards(AuthGuard) because a banned user won't be able to get information about their ban
   @UseInterceptors(UserInterceptor)
+  @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   getUserInfo(@GetUser() user: User){
+    if(!user) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     return user;
+  }
+
+  @Get('/all')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(UserInterceptor)
+  @ApiBearerAuth()
+  @ApiQuery({ name: 'tag', required: false, type: String })
+  @ApiPagination()
+  @ApiOkResponse({ type: [UserResponseDto] })
+  getAllUsers(
+    @Query('tag') tag: string,
+    @PaginationParams() paginationParams: IPaginationOptions
+  ){
+    return this.usersService.fetchAllUsers(paginationParams, tag);
+  }
+
+  @Put('/ban/:id')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(UserInterceptor)
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  banUser(
+    @Body() banUserDto: BanUserDto,
+    @Param('id', ParseIntPipe) id: number,
+  ){
+    let date: Date = null;
+    if(banUserDto.bannedUntil && new Date(banUserDto.bannedUntil).getTime()){
+      date = new Date(banUserDto.bannedUntil);
+    }
+    return this.usersService.banUser(id, date);
+  }
+
+  @Put('/unban/:id')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(UserInterceptor)
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  unbanUser(
+    @Param('id', ParseIntPipe) id: number,
+  ){
+    return this.usersService.unbanUser(id);
   }
 }

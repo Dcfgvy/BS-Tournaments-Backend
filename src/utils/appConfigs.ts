@@ -29,7 +29,6 @@ const envConfig = cleanEnv(process.env, {
   TOUR_START_AWAITING_TIME: num(),
   TOUR_FREEZE_TIME: num(),
   ORGANIZER_BAN_TIME: num(),
-  TELEGRAM_SUPPORT: str(),
 });
 
 // In next config objects put variables after default config if you want to overwrite default values

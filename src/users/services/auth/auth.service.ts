@@ -20,7 +20,7 @@ export class AuthService {
   ){}
 
   async register(registerFormDto: RegisterFormDto, ip: string){
-    const userTag: string = registerFormDto.tag;
+    const userTag = registerFormDto.tag;
     const user: User = await this.userRepository.findOneBy({
       tag: userTag
     });
@@ -107,29 +107,11 @@ export class AuthService {
   }
 
   async validateRequest(req: Request): Promise<boolean> {
-    if(!(req['user'])){
+    if(!(req['user']))
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-    }
+    if(req['user'].isBanned)
+      throw new HttpException('User banned', HttpStatus.FORBIDDEN);
     return true;
-    // const token = req.headers['authorization']?.split(' ')[1];
-    // if(token){
-    //   let payload: { id: number };
-    //   try {
-    //     payload = this.jwtService.verify(token);
-    //   } catch (error) {
-    //     throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-    //   }
-    //   const user: User = await this.userRepository.findOneBy({ id: payload.id });
-    //   if(user){
-    //     await this.processUserIpAddress(req, user);
-    //     req['user'] = user;
-    //     return true;
-    //   } else {
-    //     throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-    //   }
-    // } else {
-    //   throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
-    // }
   }
 
   async validateRequestByRole(req: Request, role: UserRole): Promise<boolean> {

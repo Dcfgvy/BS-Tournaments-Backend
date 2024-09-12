@@ -25,7 +25,6 @@ export class SettingsService implements OnModuleInit {
       tourStartAwaitingTime: new Date(new Date().getTime() + hour * appConfig.TOUR_START_AWAITING_TIME),
       tourFreezeTime: new Date(new Date().getTime() + hour * appConfig.TOUR_FREEZE_TIME),
       organizerBanTime: new Date(new Date().getTime() + hour * appConfig.ORGANIZER_BAN_TIME),
-      telegramSupport: appConfig.TELEGRAM_SUPPORT,
     };
     // replacing default values from env with data from DB
     for(let i = 0; i < settingsFromDB.length; i++){
