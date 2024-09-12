@@ -32,6 +32,9 @@ export class User extends BaseEntity {
   @Column({ type: 'int', array: true, default: [UserRole.USER] })
   roles: number[];
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @Column({ default: false })
+  isBanned: boolean;
+
+  @CreateDateColumn({ type: 'timestamptz', nullable: true })
   bannedUntil: Date;
 }

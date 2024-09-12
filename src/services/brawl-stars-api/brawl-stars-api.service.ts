@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { Repository } from 'typeorm';
 import { getRandomInt } from '../../utils/other';
 import { appConfig } from '../../utils/appConfigs';
 

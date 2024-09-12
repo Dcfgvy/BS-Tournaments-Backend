@@ -21,7 +21,7 @@ export class UserResponseDto {
 
   @ApiProperty({
     example: '2024-12-31T23:59:59.000Z',
-    description: 'User ban ending date',
+    description: 'OPTIONAL - User ban ending date',
   })
-  bannedUntil: Date;
+  bannedUntil?: Date;
 }

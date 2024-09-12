@@ -12,7 +12,7 @@ const envConfig = cleanEnv(process.env, {
   BRAWL_STARS_API_URL: url(),
   BRAWL_STARS_API_KEY: str(),
   
-  DB_HOST: host(),
+  DB_HOST: str(),
   DB_PORT: port(),
   DB_USER: str(),
   DB_PASS: str(),
