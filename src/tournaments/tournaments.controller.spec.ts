@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TournamentsController } from './tournaments.controller';
-import { TournamentsService } from './tournaments.service';
+import { TournamentsService } from './services/tournaments/tournaments.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Tournament } from '../typeorm/entities/Tournament.entity';
 

@@ -1,11 +1,11 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Ip, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Ip, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { RegisterFormDto } from './dtos/RegisterForm.dto';
 import { AuthService } from './services/auth/auth.service';
 import { UserInterceptor } from './interceptors/user.interceptor';
 import { LoginFormDto } from './dtos/LoginForm.dto';
 import { RefreshTokenDto } from './dtos/RefreshToken.dto';
 import { AuthGuard } from './guards/auth.guard';
-import { ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { TokenResponseDto } from './dtos/TokenResponse.dto';
 import { GetUser } from './decorators/get-user.decorator';
@@ -25,7 +25,6 @@ export class UsersController {
     private readonly usersService: UsersService
   ){}
   @Post('/register')
-  @UsePipes(ValidationPipe)
   @UseInterceptors(UserInterceptor)
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponseDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'User with this tag already exists' })
@@ -35,7 +34,6 @@ export class UsersController {
   }
 
   @Post('/login')
-  @UsePipes(ValidationPipe)
   @ApiResponse({ status: HttpStatus.CREATED, type: TokenResponseDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid credentials' })
   login(@Body() loginFormDto: LoginFormDto){
@@ -43,7 +41,6 @@ export class UsersController {
   }
 
   @Post('/refresh')
-  @UsePipes(ValidationPipe)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: TokenResponseDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid refresh token' })
@@ -102,5 +99,17 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
   ){
     return this.usersService.unbanUser(id);
+  }
+
+  @Post('/become-organizer')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiCreatedResponse({ description: 'Success' })
+  @ApiConflictResponse({ description: 'Already an organizer' })
+  @ApiPaymentRequiredResponse({ description: 'Not enough funds' })
+  becomeOrganizer(
+    @GetUser() user: User,
+  ){
+    return this.usersService.becomeOrganizer(user.id);
   }
 }

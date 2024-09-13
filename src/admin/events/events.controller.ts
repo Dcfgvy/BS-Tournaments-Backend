@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '../../users/guards/admin.guard';
@@ -36,7 +36,6 @@ export class EventsController {
 
   @Post()
   @UseGuards(AdminGuard)
-  @UsePipes(ValidationPipe)
   @ApiBearerAuth()
   createEvent(@Body() createEventDto: CreateEventDto){
     return this.eventsService.createEvent(createEventDto);
@@ -44,7 +43,6 @@ export class EventsController {
 
   @Patch(':id')
   @UseGuards(AdminGuard)
-  @UsePipes(ValidationPipe)
   @ApiBearerAuth()
   @ApiOkResponse({ type: EventResponseDto })
   updateEvent(

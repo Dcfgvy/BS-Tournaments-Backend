@@ -4,7 +4,6 @@ import { User } from "./User.entity";
 import { EventMap } from "./EventMap.entity";
 import { Event } from "./Event.entity";
 import { Brawler } from "./Brawler.entity";
-import { Contestant } from "./Contestant.entity";
 import { Win } from "./Win.entity";
 import { TourChatMessage } from "./TourChatMessage.entity";
 
@@ -47,8 +46,9 @@ export class Tournament extends BaseEntity {
   @JoinTable()
   bannedBrawlers: Brawler[];
 
-  @OneToMany(() => Contestant, contestant => contestant.tournament)
-  contestants: Contestant[];
+  @ManyToMany(() => User)
+  @JoinTable()
+  contestants: User[];
 
   @OneToMany(() => Win, (win) => win.tournament)
   wins: Win[];

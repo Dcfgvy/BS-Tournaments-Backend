@@ -27,6 +27,7 @@ const envConfig = cleanEnv(process.env, {
   ORGANIZER_FEE: num(),
   TOUR_RECRUITMENT_MAX_TIME: num(),
   TOUR_START_AWAITING_TIME: num(),
+  TOUR_PLAYING_MAX_TIME: num(),
   TOUR_FREEZE_TIME: num(),
   ORGANIZER_BAN_TIME: num(),
 });
@@ -42,8 +43,9 @@ const defaultConfig = {
   ADMIN_TAGNAME: '#ADMIN',
   TOUR_RECRUITMENT_MAX_TIME: 4,
   TOUR_START_AWAITING_TIME: 0.25,
+  TOUR_PLAYING_MAX_TIME: 0.5,
   TOUR_FREEZE_TIME: 72,
-  ORGANIZER_BAN_TIME: 24,
+  ORGANIZER_BAN_TIME: 48,
 };
 
 const devConfig = {

@@ -1,4 +1,4 @@
-import { Injectable, OnApplicationBootstrap, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../typeorm/entities/User.entity';

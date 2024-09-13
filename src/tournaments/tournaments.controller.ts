@@ -1,10 +1,14 @@
-import { Controller, DefaultValuePipe, Get, HttpStatus, ParseArrayPipe, ParseIntPipe, Query, UsePipes, ValidationPipe } from '@nestjs/common';
-import { TournamentsService } from './tournaments.service';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, ParseArrayPipe, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
+import { TournamentsService } from './services/tournaments/tournaments.service';
 import { PaginationParamsDto } from '../services/pagination/pagination.dto';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiPagination } from '../services/pagination/api-pagination.decorator';
+import { CreateTournamentDto } from './dtos/CreateTournament.dto';
+import { GetUser } from '../users/decorators/get-user.decorator';
+import { User } from '../typeorm/entities/User.entity';
+import { OrganizerGuard } from '../users/guards/organizer.guard';
 
 @Controller('tournaments')
 @ApiTags('Tournaments')
@@ -14,7 +18,6 @@ export class TournamentsController {
   ) {}
 
   @Get('/active')
-  @UsePipes(ValidationPipe)
   @ApiQuery({ name: 'costFrom', required: false, type: Number })
   @ApiQuery({ name: 'costTo', required: false, type: Number })
   @ApiQuery({ name: 'playersNumberFrom', required: false, type: Number })
@@ -39,6 +42,28 @@ export class TournamentsController {
       playersNumberTo,
       eventId,
       bannedBrawlers,
+    );
+  }
+
+  @Post()
+  @UseGuards(OrganizerGuard)
+  @ApiBearerAuth()
+  @ApiCreatedResponse({ description: 'Success' })
+  @ApiForbiddenResponse({ description: 'Not an organizer' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiConflictResponse({ description: 'User already participates in another tournament' })
+  createTournament(
+    @GetUser() user: User,
+    @Body() tournamentData: CreateTournamentDto
+  ){
+    return this.tournamentsService.createTournament(
+      user,
+      tournamentData.eventId,
+      tournamentData.eventMapId,
+      tournamentData.bannedBrawlesIds,
+      tournamentData.entryCost,
+      tournamentData.playersNumber,
+      tournamentData.prizes,
     );
   }
 }

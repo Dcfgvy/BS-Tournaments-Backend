@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TournamentsService } from './tournaments.service';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { Tournament } from '../typeorm/entities/Tournament.entity';
+import { Tournament } from '../../../typeorm/entities/Tournament.entity';
 
 describe('TournamentsService', () => {
   let service: TournamentsService;

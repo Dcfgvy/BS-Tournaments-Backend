@@ -13,7 +13,7 @@ import { UploadsModule } from './uploads/uploads.module';
 import { PaginationService } from './services/pagination/pagination.service';
 import { dataSourceOptions } from './typeorm/data-source';
 import { appConfig } from './utils/appConfigs';
-import { SettingsService } from './services/settings/settings.service';
+import { GlobalSettings } from './services/settings/settings.service';
 import { Settings } from './typeorm/entities/Settings.entity';
 import { GlobalModule } from './global/global.module';
 import { AuthMiddleware } from './users/middlewares/auth.middleware';
@@ -39,7 +39,7 @@ import { APP_GUARD } from '@nestjs/core';
   ],
   controllers: [AppController],
   providers: [
-    AppService, BrawlStarsApiService, PaginationService, SettingsService,
+    AppService, BrawlStarsApiService, PaginationService, GlobalSettings,
     ImageCleanupSubscriber,
     {
       provide: APP_GUARD,

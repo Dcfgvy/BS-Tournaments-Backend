@@ -3,6 +3,7 @@ export interface ISettings {
   organizerFee: number;
   tourRecruitmentMaxTime: Date;
   tourStartAwaitingTime: Date;
+  tourPlayingMaxTime: Date;
   tourFreezeTime: Date;
   organizerBanTime: Date;
 }

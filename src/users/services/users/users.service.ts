@@ -4,6 +4,8 @@ import { User } from '../../../typeorm/entities/User.entity';
 import { Not, Repository } from 'typeorm';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { appConfig } from '../../../utils/appConfigs';
+import { UserRole } from '../../enums/role.enum';
+import { GlobalSettings } from '../../../services/settings/settings.service';
 
 @Injectable()
 export class UsersService {
@@ -44,5 +46,18 @@ export class UsersService {
     user.isBanned = false;
     user.bannedUntil = new Date();
     return this.userRepository.save(user);
+  }
+
+  async becomeOrganizer(id: number){
+    const user = await this.userRepository.findOneBy({ id });
+    
+    if(!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if(user.balance < GlobalSettings.data.organizerFee) throw new HttpException('Not enough funds', HttpStatus.PAYMENT_REQUIRED);
+    if(user.roles.includes(UserRole.ORGANIZER)) throw new HttpException('Already an organizer', HttpStatus.CONFLICT);
+
+    user.roles = [...user.roles, UserRole.ORGANIZER];
+    user.balance = user.balance - GlobalSettings.data.organizerFee;
+    await this.userRepository.save(user);
+    return;
   }
 }

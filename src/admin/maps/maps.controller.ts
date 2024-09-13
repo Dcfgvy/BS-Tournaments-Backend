@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
 import { EventMapsService } from './maps.service';
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '../../users/guards/admin.guard';
@@ -28,7 +28,6 @@ export class EventMapsController {
 
   @Post()
   @UseGuards(AdminGuard)
-  @UsePipes(ValidationPipe)
   @ApiBearerAuth()
   createEventMap(@Body() createEventMapDto: CreateEventMapDto){
     return this.eventMapsService.createEventMap(createEventMapDto);
@@ -36,7 +35,6 @@ export class EventMapsController {
 
   @Patch(':id')
   @UseGuards(AdminGuard)
-  @UsePipes(ValidationPipe)
   @ApiBearerAuth()
   @ApiOkResponse({ type: EventMapResponseDto })
   updateEventMap(

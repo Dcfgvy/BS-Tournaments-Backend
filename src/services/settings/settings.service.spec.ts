@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SettingsService } from './settings.service';
+import { GlobalSettings } from './settings.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Settings } from '../../typeorm/entities/Settings.entity';
 
-describe('SettingsService', () => {
-  let service: SettingsService;
+describe('GlobalSettings', () => {
+  let service: GlobalSettings;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SettingsService,
+        GlobalSettings,
         {
           provide: getRepositoryToken(Settings),
           useValue: {
@@ -18,7 +18,7 @@ describe('SettingsService', () => {
       ],
     }).compile();
 
-    service = module.get<SettingsService>(SettingsService);
+    service = module.get<GlobalSettings>(GlobalSettings);
   });
 
   it('should be defined', () => {

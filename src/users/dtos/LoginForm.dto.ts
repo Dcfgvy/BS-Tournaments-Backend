@@ -10,7 +10,7 @@ export class LoginFormDto {
 
   @IsNotEmpty()
   @IsString()
-  @Length(8, 32)
+  @Length(0, 32)
   @ApiProperty()
   password: string;
 }

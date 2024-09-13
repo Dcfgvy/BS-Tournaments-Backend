@@ -7,13 +7,13 @@ import { appConfig } from '../../utils/appConfigs';
 import { convertValue } from '../../utils/other';
 
 @Injectable()
-export class SettingsService implements OnModuleInit {
+export class GlobalSettings implements OnModuleInit {
   constructor(
     @InjectRepository(Settings)
     private settingsRepository: Repository<Settings>
   ) {}
 
-  public data: ISettings = null;
+  static data: ISettings = null;
 
   async onModuleInit() {
     const settingsFromDB = await this.settingsRepository.find();
@@ -23,6 +23,7 @@ export class SettingsService implements OnModuleInit {
       organizerFee: appConfig.ORGANIZER_FEE,
       tourRecruitmentMaxTime: new Date(new Date().getTime() + hour * appConfig.TOUR_RECRUITMENT_MAX_TIME),
       tourStartAwaitingTime: new Date(new Date().getTime() + hour * appConfig.TOUR_START_AWAITING_TIME),
+      tourPlayingMaxTime: new Date(new Date().getTime() + hour * appConfig.TOUR_PLAYING_MAX_TIME),
       tourFreezeTime: new Date(new Date().getTime() + hour * appConfig.TOUR_FREEZE_TIME),
       organizerBanTime: new Date(new Date().getTime() + hour * appConfig.ORGANIZER_BAN_TIME),
     };
@@ -31,7 +32,7 @@ export class SettingsService implements OnModuleInit {
       settings[settingsFromDB[i].key] = convertValue(settingsFromDB[i].value, settingsFromDB[i].type);
     }
 
-    this.data = settings;
+    GlobalSettings.data = settings;
 
     // adding new settings that were not saved in DB
     const settingsKeys: string[] = Object.keys(settings);

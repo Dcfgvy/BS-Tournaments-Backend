@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes } from '@nestjs/common';
 import { BrawlersService } from './brawlers.service';
 import { AdminGuard } from '../../users/guards/admin.guard';
 import { CreateBrawlerDto } from './dtos/CreateBrawler.dto';
@@ -36,7 +36,6 @@ export class BrawlersController {
 
   @Post()
   @UseGuards(AdminGuard)
-  @UsePipes(ValidationPipe)
   @ApiBearerAuth()
   createBrawler(@Body() createBrawlerDto: CreateBrawlerDto){
     return this.brawlersService.createBrawler(createBrawlerDto);
@@ -44,7 +43,6 @@ export class BrawlersController {
 
   @Patch(':id')
   @UseGuards(AdminGuard)
-  @UsePipes(ValidationPipe)
   @ApiBearerAuth()
   @ApiOkResponse({ type: BrawlerResponseDto })
   updateBrawler(
