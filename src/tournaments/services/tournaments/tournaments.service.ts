@@ -121,11 +121,66 @@ export class TournamentsService {
 
   async cancelTournament(id: number){
     const queryRunner = this.dbConnection.createQueryRunner();
-
     await queryRunner.startTransaction();
 
-    // try{
-    //   queryRunner.manager.findOne
-    // }
+    const tournament = await queryRunner.manager.findOne(Tournament, {
+      where: {
+        id,
+        status: In([TournamentStatus.RECRUITMENT, TournamentStatus.WAITING_FOR_START, TournamentStatus.STARTED, TournamentStatus.FROZEN])
+      },
+      relations: ['contestants']
+    });
+    if(!tournament) throw new HttpException('Tournament not found', HttpStatus.NOT_FOUND);
+
+    try{
+      tournament.status = TournamentStatus.CANCELLED;
+      for(let i = 0; i < tournament.contestants.length; i++){
+        const contestant = tournament.contestants[i];
+        if(contestant.id !== tournament.organizer.id){
+          contestant.balance += tournament.entryCost;
+          await queryRunner.manager.save(contestant);
+        }
+      }
+      await queryRunner.manager.save(tournament);
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err){
+      await queryRunner.rollbackTransaction();
+      throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+    } finally{
+      await queryRunner.release();
+    }
+  }
+
+  async endTournament(id: number){
+    const queryRunner = this.dbConnection.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    const tournament = await queryRunner.manager.findOne(Tournament, {
+      where: {
+        id,
+        status: TournamentStatus.FROZEN
+      },
+      relations: ['wins']
+    });
+    if(!tournament) throw new HttpException('Tournament not found', HttpStatus.NOT_FOUND);
+
+    try{
+      tournament.status = TournamentStatus.ENDED;
+      for(let i = 0; i < tournament.wins.length; i++){
+        const win = tournament.wins[i];
+        const winner = tournament.wins[i].user;
+        winner.balance += tournament.prizes[win.place - 1] || 0;
+        await queryRunner.manager.save(winner);
+      }
+      await queryRunner.manager.save(tournament);
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err){
+      await queryRunner.rollbackTransaction();
+      throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+    } finally{
+      await queryRunner.release();
+    }
   }
 }

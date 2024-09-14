@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { SettingsService } from '../services/settings/settings.service';
+import { GlobalSettings } from '../services/settings/settings.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Settings } from '../typeorm/entities/Settings.entity';
 
@@ -9,10 +9,10 @@ import { Settings } from '../typeorm/entities/Settings.entity';
     TypeOrmModule.forFeature([Settings])
   ],
   providers: [
-    SettingsService
+    GlobalSettings
   ],
   exports: [
-    SettingsService
+    GlobalSettings
   ]
 })
 export class GlobalModule {}
