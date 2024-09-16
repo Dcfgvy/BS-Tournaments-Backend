@@ -21,6 +21,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { NodeEnv } from './utils/NodeEnv';
 import { ImageCleanupSubscriber } from './typeorm/subscribers/image-cleanup.subscriber';
 import { APP_GUARD } from '@nestjs/core';
+import { BullModule } from '@nestjs/bullmq';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -33,9 +35,17 @@ import { APP_GUARD } from '@nestjs/core';
     }]),
     UploadsModule,
     GlobalModule,
+    // JWT Service needed for AuthMiddleware
     JwtModule.register({
       secret: appConfig.JWT_SECRET
-    })
+    }),
+    BullModule.forRoot({
+      connection: {
+        host: appConfig.REDIS_HOST,
+        port: appConfig.REDIS_PORT,
+      }
+    }),
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [

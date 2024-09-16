@@ -1,9 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { User } from '../../../typeorm/entities/User.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { BrawlStarsApiService } from '../../../services/brawl-stars-api/brawl-stars-api.service';
+import { authProviders } from '../../../utils/testingHelpers';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -11,14 +8,7 @@ describe('AuthService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AuthService,
-        {
-          provide: getRepositoryToken(User),
-          useValue: {
-          }
-        },
-        JwtService,
-        BrawlStarsApiService
+        ...authProviders
       ],
     }).compile();
 

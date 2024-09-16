@@ -1,19 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TournamentsService } from './tournaments.service';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { Tournament } from '../../../typeorm/entities/Tournament.entity';
+import { Connection } from 'typeorm';
+import { mockDbConnection, tournamentsServiceProviders } from '../../../utils/testingHelpers';
 
 describe('TournamentsService', () => {
   let service: TournamentsService;
+  let mockConnection: Partial<Connection>;
 
   beforeEach(async () => {
+    mockConnection = { ...mockDbConnection };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TournamentsService,
+        ...tournamentsServiceProviders,
         {
-          provide: getRepositoryToken(Tournament),
-          useValue: {
-          }
+          provide: Connection,
+          useValue: mockConnection,
         }
       ],
     }).compile();

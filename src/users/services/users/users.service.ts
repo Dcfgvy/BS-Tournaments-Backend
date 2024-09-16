@@ -40,7 +40,10 @@ export class UsersService {
   }
 
   async unbanUser(id: number){
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneBy({
+      id,
+      isBanned: true
+    });
     if(!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
     user.isBanned = false;

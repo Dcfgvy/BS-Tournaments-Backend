@@ -7,30 +7,36 @@ import { LoginFormDto } from '../../dtos/LoginForm.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UserRole } from '../../enums/role.enum';
 import { User } from '../../../typeorm/entities/User.entity';
-import { BrawlStarsApiService } from '../../../services/brawl-stars-api/brawl-stars-api.service';
 import { comparePasswords, hashPassword } from '../../../utils/bcrypt';
 import { RefreshTokenDto } from '../../dtos/RefreshToken.dto';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue, QueueEvents } from 'bullmq';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
-    private brawlStarsApiService: BrawlStarsApiService,
+    @InjectQueue('brawl-stars-api') private brawlStarsApiQueue: Queue
   ){}
 
   async register(registerFormDto: RegisterFormDto, ip: string){
-    const userTag = registerFormDto.tag;
+    const userTag = registerFormDto.tag.toUpperCase();
     const user: User = await this.userRepository.findOneBy({
       tag: userTag
     });
     if(!user){
-      const account_confirmed: boolean = await this.brawlStarsApiService.confirmAccountByTag(userTag, registerFormDto.trophyChange);
-      if(account_confirmed){
-        const userName = await this.brawlStarsApiService.getBSName(userTag);
+      const queueEvents = new QueueEvents('brawl-stars-api');
+      const confirmationJob = await this.brawlStarsApiQueue.add('confirm-account-by-tag', {
+        tag: userTag,
+        trophyChange: registerFormDto.trophyChange
+      });
+      const confirmedUserName: string = await confirmationJob.waitUntilFinished(queueEvents);
+      
+      if(confirmedUserName){
         const newUser = this.userRepository.create({
           tag: userTag,
-          name: userName,
+          name: confirmedUserName,
           password: hashPassword(registerFormDto.password),
           language: registerFormDto.language,
           ip: ip,
@@ -46,7 +52,7 @@ export class AuthService {
 
   async validateUser(tag: string, password: string): Promise<User>{
     const user: User = await this.userRepository.findOneBy({
-      tag
+      tag: tag.toUpperCase()
     });
     if(user && comparePasswords(password, user.password)){
       return user;

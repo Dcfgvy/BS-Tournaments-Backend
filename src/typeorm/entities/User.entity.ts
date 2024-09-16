@@ -35,6 +35,6 @@ export class User extends BaseEntity {
   @Column({ default: false })
   isBanned: boolean;
 
-  @CreateDateColumn({ type: 'timestamptz', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   bannedUntil: Date;
 }

@@ -1,81 +1,73 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
-import { getRandomInt } from '../../utils/other';
 import { appConfig } from '../../utils/appConfigs';
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
 
-@Injectable()
-export class BrawlStarsApiService {
-  constructor(){}
-
-  private requestQueue: { tag: string; battlelog: boolean; resolve: (data: any) => void; reject: (error: any) => void; }[] = [];
-  private isProcessing = false;
-
-  async fetchData(tag: string, battlelog: boolean = true): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if(this.requestQueue.length > 1000) reject('Too many requests in queue');
-      else{
-        this.requestQueue.push({ tag, battlelog, resolve, reject });
-        this.processQueue();
-      }
-    });
+@Processor('brawl-stars-api', {
+  concurrency: 1,
+  // 1 request per second
+  limiter: {
+    max: 5,
+    duration: 5 * 1000
   }
+})
+export class BrawlStarsApiService extends WorkerHost {
 
-  private async processQueue(){
-    if (this.isProcessing || this.requestQueue.length === 0) {
-      return;
-    }
-
-    this.isProcessing = true;
-
-    while (this.requestQueue.length > 0){
-      const { tag, battlelog, resolve, reject } = this.requestQueue.shift()!;
-
-      try {
-        const response = await axios({
-          method: 'get',
-          url: `${appConfig.BRAWL_STARS_API_URL}/players/${encodeURIComponent(tag)}/${battlelog ? 'battlelog': ''}`,
-          headers: {
-            'Authorization': `Bearer ${appConfig.BRAWL_STARS_API_KEY}`
-          }
-        });
-        resolve(response.data);
-      } catch (err) {
-        reject(err);
-      }
-
-      await this.delay(1000 + getRandomInt(0, 100));
-    }
-
-    this.isProcessing = false;
-  }
-
-  private delay(ms: number){
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async confirmAccountByTag(tag: string, lastTrophyChange: number){
-    let battlelog: any;
-    try{
-      battlelog = await this.fetchData(tag);
+  async makeRequest(tag: string, battlelog: boolean = true){
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `${appConfig.BRAWL_STARS_API_URL}/players/${encodeURIComponent(tag)}/${battlelog ? 'battlelog': ''}`,
+        headers: {
+          'Authorization': `Bearer ${appConfig.BRAWL_STARS_API_KEY}`
+        }
+      });
+      return response.data;
     } catch (err) {
-      throw new HttpException('User with this tag not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Intenal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  async process(job: Job): Promise<any> {
+    switch (job.name) {
+      case 'get-name': {
+        const { tag } = job.data;
+        return await this.getBSName(tag);
+      }
+      case 'confirm-account-by-tag':
+        const { tag, trophyChange } = job.data;
+        return await this.confirmAccountByTag(tag, trophyChange);
+    }
+  }
+
+  async confirmAccountByTag(tag: string, lastTrophyChange: number): Promise<string> {
+    const battlelog = await this.makeRequest(tag);
     if(battlelog.items.length === 0) throw new HttpException('No battlelog found', HttpStatus.NOT_FOUND);
 
-    const trophyChange: number | undefined = battlelog.items[0].battle.trophyChange;
+    const lastBattle = battlelog.items[0].battle;
+    const trophyChange: number | undefined = lastBattle.trophyChange;
     if(trophyChange === lastTrophyChange || (trophyChange === undefined && lastTrophyChange === 0)){
-      return true;
+      // get BS name from battlelog for optimisation
+      let allPlayers: any[] = [];
+      if(lastBattle.players){
+        allPlayers = lastBattle.players;
+      } else if(lastBattle.teams?.length > 0){
+        lastBattle.teams.forEach(team => {
+          team.forEach(player => {
+            allPlayers.push(player);
+          })
+        });
+      } else{
+        throw new HttpException('No battlelog found', HttpStatus.NOT_FOUND);
+      }
+      return allPlayers.find((player) => player.tag == tag)?.name || null;
     }
-    return false;
+    return null;
   }
 
-  async getBSName(tag: string){
-    let userData: any;
-    try{
-      userData = await this.fetchData(tag, false);
-    } catch (err) {
-      throw new HttpException('User with this tag not found', HttpStatus.NOT_FOUND);
-    }
+  async getBSName(tag: string): Promise<string>{
+    let userData = await this.makeRequest(tag, false);
 
     const name: string | undefined = userData.name;
     return name || 'No name';

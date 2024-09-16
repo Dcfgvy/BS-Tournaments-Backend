@@ -9,6 +9,7 @@ import { EventMap } from '../typeorm/entities/EventMap.entity';
 import { Event } from '../typeorm/entities/Event.entity';
 import { Brawler } from '../typeorm/entities/Brawler.entity';
 import { BgTournamentsStatusService } from './services/bg-tournaments-status/bg-tournaments-status.service';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   providers: [
@@ -22,6 +23,9 @@ import { BgTournamentsStatusService } from './services/bg-tournaments-status/bg-
   controllers: [TournamentsController],
   imports: [
     TypeOrmModule.forFeature([Tournament, Event, EventMap, Brawler]),
+    BullModule.registerQueue({
+      name: 'brawl-stars-api'
+    })
   ]
 })
 export class TournamentsModule {}

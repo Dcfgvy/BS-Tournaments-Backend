@@ -8,10 +8,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { AdminCreationService } from './services/admin-creation/admin-creation.service';
 import { appConfig } from '../utils/appConfigs';
 import { User } from '../typeorm/entities/User.entity';
-import { BrawlStarsApiService } from '../services/brawl-stars-api/brawl-stars-api.service';
 import { UsersService } from './services/users/users.service';
-import { ScheduleModule } from '@nestjs/schedule';
 import { BgUnbanService } from './services/bg-unban/bg-unban.service';
+import { BullModule } from '@nestjs/bullmq';
 
 @Global()
 @Module({
@@ -22,7 +21,6 @@ import { BgUnbanService } from './services/bg-unban/bg-unban.service';
       provide: APP_GUARD,
       useClass: ThrottlerGuard
     },
-    BrawlStarsApiService,
     AdminCreationService,
     UsersService,
     BgUnbanService
@@ -33,8 +31,10 @@ import { BgUnbanService } from './services/bg-unban/bg-unban.service';
     JwtModule.register({
       secret: appConfig.JWT_SECRET
     }),
-    ScheduleModule.forRoot()
+    BullModule.registerQueue({
+      name: 'brawl-stars-api'
+    })
   ],
-  exports: [AuthService]
+  exports: [AuthService, UsersService]
 })
 export class UsersModule {}

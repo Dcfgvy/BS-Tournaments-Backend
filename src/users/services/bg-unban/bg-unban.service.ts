@@ -10,7 +10,7 @@ export class BgUnbanService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  @Cron(CronExpression.EVERY_10_MINUTES, {
+  @Cron(CronExpression.EVERY_5_MINUTES, {
     name: 'unban_users'
   })
   checkForUsersToUnban(){
