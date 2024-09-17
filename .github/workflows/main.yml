@@ -94,4 +94,7 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
 
+    - name: Print environment variables
+      run: printenv
+
     - run: yarn run test
