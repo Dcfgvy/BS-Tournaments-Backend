@@ -1,9 +1,8 @@
 import * as dotenv from 'dotenv';
-import { cleanEnv, bool, port, url, str, host, num } from 'envalid';
+import { cleanEnv, bool, port, url, str, num } from 'envalid';
 import { NodeEnv } from './NodeEnv';
 
 dotenv.config();
-
 
 const envConfig = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'production', 'ci', 'test'], default: 'development' }),
