@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, ParseArrayPipe, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Param, ParseArrayPipe, ParseIntPipe, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
 import { TournamentsService } from './services/tournaments/tournaments.service';
 import { PaginationParamsDto } from '../services/pagination/pagination.dto';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
@@ -9,6 +9,7 @@ import { CreateTournamentDto } from './dtos/CreateTournament.dto';
 import { GetUser } from '../users/decorators/get-user.decorator';
 import { User } from '../typeorm/entities/User.entity';
 import { OrganizerGuard } from '../users/guards/organizer.guard';
+import { AdminGuard } from '../users/guards/admin.guard';
 
 @Controller('tournaments')
 @ApiTags('Tournaments')
@@ -65,5 +66,17 @@ export class TournamentsController {
       tournamentData.playersNumber,
       tournamentData.prizes,
     );
+  }
+
+  // sign up for a tournament, finish a tournament and fetch all tournaments routes
+
+  @Post('/cancel/:id')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Tournament canceled' })
+  @ApiForbiddenResponse({ description: 'Not an admin' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  cancelTournament(@Param('id', ParseIntPipe) id: number){
+    return this.tournamentsService.cancelTournament(id);
   }
 }

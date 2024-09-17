@@ -25,21 +25,25 @@ export class EventMapsService {
   }
 
   createEventMap(
-    createBrawlerDto: CreateEventMapDto
+    createEventMapDto: CreateEventMapDto
   ): Promise<any> {
     return this.eventMapRepository.save({
-      ...createBrawlerDto
+      ...createEventMapDto,
+      names: JSON.stringify(createEventMapDto.names)
     })
   }
 
   updateEventMap(
     id: number,
-    updateBrawlerDto: UpdateEventMapDto
+    updateEventMapDto: UpdateEventMapDto
   ): Promise<any> {
-    return this.eventMapRepository.save({
+    let payload: any = {
       id,
-      ...updateBrawlerDto
-    });
+      ...updateEventMapDto
+    };
+    if(updateEventMapDto.names)
+      payload.names = JSON.stringify(updateEventMapDto.names);
+    return this.eventMapRepository.save(payload);
   }
 
   async deleteEventMap(id: number): Promise<any> {

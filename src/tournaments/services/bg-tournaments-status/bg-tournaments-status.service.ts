@@ -30,7 +30,7 @@ export class BgTournamentsStatusService {
       const recruitment_tournaments = await this.tournamentsRepository.find({
         where: {
           status: TournamentStatus.RECRUITMENT,
-          lastStatusUpdate: LessThan<Date>(new Date(new Date().getTime() - GlobalSettings.data.tourRecruitmentMaxTime.getTime()))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourRecruitmentMaxTime))
         }
       });
       // cancel tournaments and return funds
@@ -42,33 +42,33 @@ export class BgTournamentsStatusService {
       const waitingForStart_tournaments = await this.tournamentsRepository.find({
         where: {
           status: TournamentStatus.WAITING_FOR_START,
-          lastStatusUpdate: LessThan<Date>(new Date(new Date().getTime() - GlobalSettings.data.tourStartAwaitingTime.getTime()))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourStartAwaitingTime))
         },
         relations: ['organizer']
       });
       // cancel tournaments, return funds and ban organizer for X time
       for(const tournament of waitingForStart_tournaments){
         await this.tournamentsService.cancelTournament(tournament.id);
-        await this.usersService.banUser(tournament.organizer.id, GlobalSettings.data.organizerBanTime);
+        await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + GlobalSettings.data.organizerBanTime));
       }
   
       const started_tournaments = await this.tournamentsRepository.find({
         where: {
           status: TournamentStatus.STARTED,
-          lastStatusUpdate: LessThan<Date>(new Date(new Date().getTime() - GlobalSettings.data.tourPlayingMaxTime.getTime()))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourPlayingMaxTime))
         },
         relations: ['organizer']
       });
       // cancel tournaments, return funds and ban organizer for X time
       for(const tournament of started_tournaments){
         await this.tournamentsService.cancelTournament(tournament.id);
-        await this.usersService.banUser(tournament.organizer.id, GlobalSettings.data.organizerBanTime);
+        await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + GlobalSettings.data.organizerBanTime));
       }
   
       const frozen_tournaments = await this.tournamentsRepository.find({
         where: {
           status: TournamentStatus.FROZEN,
-          lastStatusUpdate: LessThan<Date>(new Date(new Date().getTime() - GlobalSettings.data.tourFreezeTime.getTime()))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourFreezeTime))
         },
         relations: ['wins']
       });

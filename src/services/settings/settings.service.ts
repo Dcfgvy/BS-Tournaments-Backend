@@ -16,16 +16,21 @@ export class GlobalSettings implements OnModuleInit {
   static data: ISettings = null;
 
   async onModuleInit() {
+    if(GlobalSettings.data) return;
+    this.updateSettings();
+  }
+
+  async updateSettings(){
     const settingsFromDB = await this.settingsRepository.find();
     const hour: number = 1000 * 60 * 60;
     let settings: ISettings = {
       payoutCommission: appConfig.PAYOUT_COMMISSION,
       organizerFee: appConfig.ORGANIZER_FEE,
-      tourRecruitmentMaxTime: new Date(new Date().getTime() + hour * appConfig.TOUR_RECRUITMENT_MAX_TIME),
-      tourStartAwaitingTime: new Date(new Date().getTime() + hour * appConfig.TOUR_START_AWAITING_TIME),
-      tourPlayingMaxTime: new Date(new Date().getTime() + hour * appConfig.TOUR_PLAYING_MAX_TIME),
-      tourFreezeTime: new Date(new Date().getTime() + hour * appConfig.TOUR_FREEZE_TIME),
-      organizerBanTime: new Date(new Date().getTime() + hour * appConfig.ORGANIZER_BAN_TIME),
+      tourRecruitmentMaxTime: hour * appConfig.TOUR_RECRUITMENT_MAX_TIME,
+      tourStartAwaitingTime: hour * appConfig.TOUR_START_AWAITING_TIME,
+      tourPlayingMaxTime: hour * appConfig.TOUR_PLAYING_MAX_TIME,
+      tourFreezeTime: hour * appConfig.TOUR_FREEZE_TIME,
+      organizerBanTime:  hour * appConfig.ORGANIZER_BAN_TIME,
     };
     // replacing default values from env with data from DB
     for(let i = 0; i < settingsFromDB.length; i++){
@@ -41,7 +46,7 @@ export class GlobalSettings implements OnModuleInit {
       if(settingsFromDB.filter(s => s.key === currentKey).length === 0){
 
         let type: string = typeof settings[currentKey];
-        if(type === 'object' && new Date(settings[currentKey]).getTime()) type = 'date';
+        if(type === 'object' && new Date(settings[currentKey]).getTime()) type = 'number';
         await this.settingsRepository.save({
           key: currentKey, 
           value: settings[currentKey],

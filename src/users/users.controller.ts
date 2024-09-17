@@ -41,7 +41,6 @@ export class UsersController {
   }
 
   @Post('/refresh')
-  @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: TokenResponseDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid refresh token' })
   refreshToken(@Body() refreshTokenDto: RefreshTokenDto){

@@ -30,21 +30,25 @@ export class EventsService {
   }
 
   createEvent(
-    createBrawlerDto: CreateEventDto
+    createEventDto: CreateEventDto
   ): Promise<any> {
     return this.eventRepository.save({
-      ...createBrawlerDto
+      ...createEventDto,
+      names: JSON.stringify(createEventDto.names)
     })
   }
 
   updateEvent(
     id: number,
-    updateBrawlerDto: UpdateEventDto
+    updateEventDto: UpdateEventDto
   ): Promise<any> {
-    return this.eventRepository.save({
+    let payload: any = {
       id,
-      ...updateBrawlerDto
-    });
+      ...updateEventDto
+    };
+    if(updateEventDto.names)
+      payload.names = JSON.stringify(updateEventDto.names);
+    return this.eventRepository.save(payload);
   }
 
   async deleteEvent(id: number): Promise<any> {

@@ -82,9 +82,14 @@ export class TournamentsService {
       throw new HttpException('Players number is not available for this event', HttpStatus.BAD_REQUEST);
 
     // eventMap for the event should exist
-    const eventMap = await this.eventMapsRepository.findOneBy({
-      id: eventMapId,
-      event: event
+    const eventMap = await this.eventMapsRepository.findOne({
+      where: {
+        id: eventMapId,
+        event: {
+          id: event.id
+        }
+      },
+      relations: ['event']
     });
     if(!eventMap) throw new HttpException('Event map not found', HttpStatus.BAD_REQUEST);
 
@@ -106,7 +111,7 @@ export class TournamentsService {
       throw new HttpException('User already participates in another tournament', HttpStatus.CONFLICT);
 
     // finally create a new tournament
-    return this.tournamentsRepository.create({
+    const newTournament = this.tournamentsRepository.create({
       entryCost,
       playersNumber,
       prizes,
@@ -117,6 +122,7 @@ export class TournamentsService {
       bannedBrawlers,
       contestants: [organizer],
     });
+    return this.tournamentsRepository.save(newTournament);
   }
 
   async cancelTournament(id: number){
@@ -128,7 +134,7 @@ export class TournamentsService {
         id,
         status: In([TournamentStatus.RECRUITMENT, TournamentStatus.WAITING_FOR_START, TournamentStatus.STARTED, TournamentStatus.FROZEN])
       },
-      relations: ['contestants']
+      relations: ['organizer', 'contestants']
     });
     if(!tournament) throw new HttpException('Tournament not found', HttpStatus.NOT_FOUND);
 

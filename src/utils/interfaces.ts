@@ -1,11 +1,12 @@
 export interface ISettings {
   payoutCommission: number;
   organizerFee: number;
-  tourRecruitmentMaxTime: Date;
-  tourStartAwaitingTime: Date;
-  tourPlayingMaxTime: Date;
-  tourFreezeTime: Date;
-  organizerBanTime: Date;
+  // time is stored in milliseconds
+  tourRecruitmentMaxTime: number;
+  tourStartAwaitingTime: number;
+  tourPlayingMaxTime: number;
+  tourFreezeTime: number;
+  organizerBanTime: number;
 }
 
 export interface IEntityWithImage {

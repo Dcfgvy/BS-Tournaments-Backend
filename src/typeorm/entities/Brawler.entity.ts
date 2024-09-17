@@ -6,8 +6,8 @@ export class Brawler extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'json' })
-  names: object;
+  @Column()
+  names: string;
 
   @Column()
   imgUrl: string;

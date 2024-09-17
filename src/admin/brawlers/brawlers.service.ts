@@ -36,7 +36,8 @@ export class BrawlersService {
     createBrawlerDto: CreateBrawlerDto
   ): Promise<any> {
     return this.brawlerRepository.save({
-      ...createBrawlerDto
+      ...createBrawlerDto,
+      names: JSON.stringify(createBrawlerDto.names)
     })
   }
 
@@ -44,10 +45,13 @@ export class BrawlersService {
     id: number,
     updateBrawlerDto: UpdateBrawlerDto
   ): Promise<any> {
-    return this.brawlerRepository.save({
+    let payload: any = {
       id,
       ...updateBrawlerDto
-    });
+    };
+    if(updateBrawlerDto.names)
+      payload.names = JSON.stringify(updateBrawlerDto.names);
+    return this.brawlerRepository.save(payload);
   }
 
   async deleteBrawler(id: number): Promise<any> {
