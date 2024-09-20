@@ -1,18 +1,21 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Param, ParseArrayPipe, ParseIntPipe, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { TournamentsService } from './services/tournaments/tournaments.service';
 import { PaginationParamsDto } from '../services/pagination/pagination.dto';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiOkResponse, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiPagination } from '../services/pagination/api-pagination.decorator';
 import { CreateTournamentDto } from './dtos/CreateTournament.dto';
 import { GetUser } from '../users/decorators/get-user.decorator';
 import { User } from '../typeorm/entities/User.entity';
 import { OrganizerGuard } from '../users/guards/organizer.guard';
 import { AdminGuard } from '../users/guards/admin.guard';
+import { AuthGuard } from '../users/guards/auth.guard';
+import { UserInterceptor } from '../users/interceptors/user.interceptor';
 
-@Controller('tournaments')
 @ApiTags('Tournaments')
+@UseInterceptors(UserInterceptor)
+@Controller('tournaments')
 export class TournamentsController {
   constructor(
     private tournamentsService: TournamentsService,
@@ -25,6 +28,8 @@ export class TournamentsController {
   @ApiQuery({ name: 'playersNumberTo', required: false, type: Number })
   @ApiQuery({ name: 'eventId', required: false, type: Number })
   @ApiQuery({ name: 'bannedBrawlers', required: false, type: Number, isArray: true })
+  @ApiOkResponse({ type: [TournamentsResponseDto] })
+  // !!!!!!!! TournamentsResponseDto, get /my tournaments list !!!!!!!!!!!!!
   @ApiPagination()
   getActiveTournaments(
     @Query('costFrom') costFrom: number,
@@ -68,12 +73,31 @@ export class TournamentsController {
     );
   }
 
-  // sign up for a tournament, finish a tournament and fetch all tournaments routes
+  // finish a tournament, fetch all tournaments routes
+
+  @Post('/signup/:id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiCreatedResponse({ description: 'Success' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiPaymentRequiredResponse({ description: 'Not enough funds' })
+  @ApiConflictResponse({ description: 'User already participates in another tournament' })
+  signUpForTournament(@GetUser() user: User, @Param('id', ParseIntPipe) id: number){
+    return this.tournamentsService.signUpForTournament(user.id, id);
+  }
+
+  @Get('/my')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: [TournamentsResponseDto] })
+  getUserTournaments(@GetUser() user: User){
+    return this.tournamentsService.fetchUserTournaments(user.id);
+  }
 
   @Post('/cancel/:id')
   @UseGuards(AdminGuard)
   @ApiBearerAuth()
-  @ApiOkResponse({ description: 'Tournament canceled' })
+  @ApiCreatedResponse({ description: 'Tournament canceled' })
   @ApiForbiddenResponse({ description: 'Not an admin' })
   @ApiBadRequestResponse({ description: 'Bad request' })
   cancelTournament(@Param('id', ParseIntPipe) id: number){

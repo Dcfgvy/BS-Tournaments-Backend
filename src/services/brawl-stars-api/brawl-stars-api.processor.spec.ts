@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BrawlStarsApiService } from './brawl-stars-api.service';
+import { BrawlStarsApiService } from './brawl-stars-api.processor';
 
 describe('BrawlStarsApiService', () => {
   let service: BrawlStarsApiService;

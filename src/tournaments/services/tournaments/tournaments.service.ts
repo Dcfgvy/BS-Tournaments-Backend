@@ -74,7 +74,7 @@ export class TournamentsService {
     prizes: number[],
   ) {
     // check if event exists
-    const event = await this.eventsRepository.findOneBy({ id: eventId });
+    const event = await this.eventsRepository.findOneBy({ id: eventId, isDisabled: false });
     if(!event) throw new HttpException('Event not found', HttpStatus.BAD_REQUEST);
 
     // playersNumber exists as a players number option for the event
@@ -123,6 +123,46 @@ export class TournamentsService {
       contestants: [organizer],
     });
     return this.tournamentsRepository.save(newTournament);
+  }
+
+  async signUpForTournament(userId: number, tournamentId: number){
+    const queryRunner = this.dbConnection.createQueryRunner();
+
+    const user = await queryRunner.manager.findOneBy(User, { id: userId });
+    if(await this.checkUserParticipation(user))
+      throw new HttpException('User already participates in another tournament', HttpStatus.CONFLICT);
+
+    const tournament = await this.tournamentsRepository.manager.findOne(Tournament, {
+      where: {
+        id: tournamentId,
+        status: TournamentStatus.RECRUITMENT
+      },
+      relations: ['contestants']
+    });
+    if(!tournament) throw new HttpException('Tournament not found or already started', HttpStatus.BAD_REQUEST);
+
+    if(user.balance < tournament.entryCost)
+      throw new HttpException('Not enough funds', HttpStatus.PAYMENT_REQUIRED);
+
+    await queryRunner.startTransaction();
+
+    try{
+      user.balance -= tournament.entryCost;
+      tournament.contestants = [...tournament.contestants, user];
+
+      if(tournament.contestants.length === tournament.playersNumber){
+        tournament.status = TournamentStatus.WAITING_FOR_START;
+      }
+      await queryRunner.manager.save(tournament);
+      await queryRunner.manager.save(user);
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err){
+      await queryRunner.rollbackTransaction();
+      throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR);
+    } finally{
+      await queryRunner.release();
+    }
   }
 
   async cancelTournament(id: number){

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, ValidateNested, IsArray, IsNumber, isNumber } from 'class-validator';
+import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 import { NamesDto } from '../../../utils/dtos';
 import { ApiProperty } from '@nestjs/swagger';
@@ -21,6 +21,18 @@ export class CreateEventDto {
   @IsNotEmpty()
   @ApiProperty({ example: 'Event' })
   apiName: string;
+
+  @IsBoolean()
+  @ApiProperty({ example: false })
+  isSolo: boolean;
+
+  @IsNumber()
+  @ApiProperty({ example: 2 })
+  teamsNumber: number;
+
+  @IsNumber()
+  @ApiProperty({ example: 3 })
+  teamSize: number;
 
   @IsNumber({}, {
     each: true,

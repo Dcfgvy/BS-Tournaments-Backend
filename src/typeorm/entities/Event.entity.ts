@@ -15,6 +15,15 @@ export class Event extends BaseEntity {
 
   @Column()
   apiName: string;
+  
+  @Column({ default: false })
+  isSolo: boolean;
+
+  @Column({ nullable: true })
+  teamsNumber: number;
+
+  @Column({ nullable: true })
+  teamSize: number;
 
   @Column({ type: 'int', array: true })
   playersNumberOptions: Array<number>;

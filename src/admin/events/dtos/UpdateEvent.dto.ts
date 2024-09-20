@@ -25,6 +25,21 @@ export class UpdateEventDto {
 
   @IsBoolean()
   @IsOptional()
+  @ApiProperty({ example: false })
+  isSolo?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({ example: 2 })
+  teamsNumber?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({ example: 3 })
+  teamSize?: number;
+
+  @IsBoolean()
+  @IsOptional()
   @ApiProperty({ example: true })
   isDisabled?: boolean;
 

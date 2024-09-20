@@ -16,6 +16,7 @@ import { UsersService } from './services/users/users.service';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { BanUserDto } from './dtos/BanUser.dto';
+import { TagUpperCasePipe } from './pipes/tag-uppercase.pipe';
 
 @Controller('users')
 @ApiTags('Users')
@@ -24,7 +25,9 @@ export class UsersController {
     private readonly authService: AuthService,
     private readonly usersService: UsersService
   ){}
+
   @Post('/register')
+  @UsePipes(TagUpperCasePipe)
   @UseInterceptors(UserInterceptor)
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponseDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'User with this tag already exists' })
@@ -34,6 +37,7 @@ export class UsersController {
   }
 
   @Post('/login')
+  @UsePipes(TagUpperCasePipe)
   @ApiResponse({ status: HttpStatus.CREATED, type: TokenResponseDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid credentials' })
   login(@Body() loginFormDto: LoginFormDto){

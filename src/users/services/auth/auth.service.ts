@@ -21,7 +21,7 @@ export class AuthService {
   ){}
 
   async register(registerFormDto: RegisterFormDto, ip: string){
-    const userTag = registerFormDto.tag.toUpperCase();
+    const userTag = registerFormDto.tag;
     const user: User = await this.userRepository.findOneBy({
       tag: userTag
     });

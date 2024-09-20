@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { NamesDto } from '../../../utils/dtos';
+import { IsBoolean, IsNumber } from 'class-validator';
 
 export class EventResponseDto {
   @ApiProperty({ example: 1 })
@@ -16,6 +17,15 @@ export class EventResponseDto {
 
   @ApiProperty({ example: 'Event' })
   apiName: string;
+
+  @ApiProperty({ example: false })
+  isSolo: boolean;
+
+  @ApiProperty({ example: 2 })
+  teamsNumber: number;
+
+  @ApiProperty({ example: 3 })
+  teamSize: number;
 
   @ApiProperty({ example: [2, 5, 6] })
   playersNumberOptions: number[];
