@@ -13,13 +13,13 @@ import { Brawler } from '../../../typeorm/entities/Brawler.entity';
 export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
-    private readonly tournamentsRepository: Repository<Tournament>,
+    private readonly tournamentRepository: Repository<Tournament>,
     @InjectRepository(Event)
-    private readonly eventsRepository: Repository<Event>,
+    private readonly eventRepository: Repository<Event>,
     @InjectRepository(EventMap)
-    private readonly eventMapsRepository: Repository<EventMap>,
+    private readonly eventMapRepository: Repository<EventMap>,
     @InjectRepository(Brawler)
-    private readonly brawlersRepository: Repository<Brawler>,
+    private readonly brawlerRepository: Repository<Brawler>,
     private dbConnection: Connection
   ) {}
 
@@ -32,8 +32,11 @@ export class TournamentsService {
     eventId: number,
     bannedBrawlers: number[],
   ) {
-    let query = this.tournamentsRepository
+    let query = this.tournamentRepository
       .createQueryBuilder('tournaments')
+      .leftJoinAndSelect('tournaments.event', 'event')
+      .leftJoinAndSelect('tournaments.eventMap', 'eventMap')
+      .leftJoinAndSelect('tournaments.organizer', 'organizer')
       .leftJoinAndSelect('tournaments.bannedBrawlers', 'brawlers')
       .leftJoinAndSelect('tournaments.contestants', 'contestants')
       .where('tournaments.status = :status', { status: TournamentStatus.RECRUITMENT })
@@ -49,15 +52,28 @@ export class TournamentsService {
     }
 
     query = query
-      .groupBy('tournaments.id, brawlers.id, contestants.id')
+      .groupBy('tournaments.id, brawlers.id, contestants.id, event.id, eventMap.id, organizer.id')
       .orderBy('tournaments.playersNumber - COUNT(contestants.id)', 'ASC')
       .addOrderBy('EXTRACT(EPOCH FROM (NOW() - tournaments.lastStatusUpdate))', 'DESC');
   
     return paginate<Tournament>(query, paginationOptions);
   }
 
+  async fetchUserTournaments(userId: number, active: boolean = true){
+    const tournaments = await this.tournamentRepository.find({
+      where: {
+        contestants: { id: userId },
+        status: active ?
+          In([TournamentStatus.RECRUITMENT, TournamentStatus.WAITING_FOR_START, TournamentStatus.STARTED])
+          : In([TournamentStatus.CANCELLED, TournamentStatus.ENDED, TournamentStatus.FROZEN])
+      },
+      relations: ['event', 'eventMap', 'contestants', 'organizer']
+    });
+    return tournaments;
+  }
+
   async checkUserParticipation(user: User){
-    const tournaments = await this.tournamentsRepository.findBy({
+    const tournaments = await this.tournamentRepository.findBy({
       contestants: { id: user.id },
       status: In([TournamentStatus.RECRUITMENT, TournamentStatus.WAITING_FOR_START, TournamentStatus.STARTED])
     });
@@ -74,7 +90,7 @@ export class TournamentsService {
     prizes: number[],
   ) {
     // check if event exists
-    const event = await this.eventsRepository.findOneBy({ id: eventId, isDisabled: false });
+    const event = await this.eventRepository.findOneBy({ id: eventId, isDisabled: false });
     if(!event) throw new HttpException('Event not found', HttpStatus.BAD_REQUEST);
 
     // playersNumber exists as a players number option for the event
@@ -82,7 +98,7 @@ export class TournamentsService {
       throw new HttpException('Players number is not available for this event', HttpStatus.BAD_REQUEST);
 
     // eventMap for the event should exist
-    const eventMap = await this.eventMapsRepository.findOne({
+    const eventMap = await this.eventMapRepository.findOne({
       where: {
         id: eventMapId,
         event: {
@@ -94,7 +110,7 @@ export class TournamentsService {
     if(!eventMap) throw new HttpException('Event map not found', HttpStatus.BAD_REQUEST);
 
     // all bannedBrawlers should exist
-    const bannedBrawlers = await this.brawlersRepository.findBy({ id: In(bannedBrawlesIds) });
+    const bannedBrawlers = await this.brawlerRepository.findBy({ id: In(bannedBrawlesIds) });
     if(bannedBrawlers.length !== bannedBrawlesIds.length)
       throw new HttpException('Some brawlers not found', HttpStatus.BAD_REQUEST);
 
@@ -111,7 +127,7 @@ export class TournamentsService {
       throw new HttpException('User already participates in another tournament', HttpStatus.CONFLICT);
 
     // finally create a new tournament
-    const newTournament = this.tournamentsRepository.create({
+    const newTournament = this.tournamentRepository.create({
       entryCost,
       playersNumber,
       prizes,
@@ -122,7 +138,7 @@ export class TournamentsService {
       bannedBrawlers,
       contestants: [organizer],
     });
-    return this.tournamentsRepository.save(newTournament);
+    return this.tournamentRepository.save(newTournament);
   }
 
   async signUpForTournament(userId: number, tournamentId: number){
@@ -132,7 +148,7 @@ export class TournamentsService {
     if(await this.checkUserParticipation(user))
       throw new HttpException('User already participates in another tournament', HttpStatus.CONFLICT);
 
-    const tournament = await this.tournamentsRepository.manager.findOne(Tournament, {
+    const tournament = await this.tournamentRepository.manager.findOne(Tournament, {
       where: {
         id: tournamentId,
         status: TournamentStatus.RECRUITMENT

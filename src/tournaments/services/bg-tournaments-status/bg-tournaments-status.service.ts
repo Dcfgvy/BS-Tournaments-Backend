@@ -12,7 +12,7 @@ import { UsersService } from '../../../users/services/users/users.service';
 export class BgTournamentsStatusService {
   constructor(
     @InjectRepository(Tournament)
-    private readonly tournamentsRepository: Repository<Tournament>,
+    private readonly tournamentRepository: Repository<Tournament>,
     private readonly tournamentsService: TournamentsService,
     private readonly usersService: UsersService
   ) {}
@@ -27,7 +27,7 @@ export class BgTournamentsStatusService {
     this.isRunning = true;
 
     try{
-      const recruitment_tournaments = await this.tournamentsRepository.find({
+      const recruitment_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.RECRUITMENT,
           lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourRecruitmentMaxTime))
@@ -39,7 +39,7 @@ export class BgTournamentsStatusService {
       }
   
   
-      const waitingForStart_tournaments = await this.tournamentsRepository.find({
+      const waitingForStart_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.WAITING_FOR_START,
           lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourStartAwaitingTime))
@@ -52,7 +52,7 @@ export class BgTournamentsStatusService {
         await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + GlobalSettings.data.organizerBanTime));
       }
   
-      const started_tournaments = await this.tournamentsRepository.find({
+      const started_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.STARTED,
           lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourPlayingMaxTime))
@@ -65,7 +65,7 @@ export class BgTournamentsStatusService {
         await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + GlobalSettings.data.organizerBanTime));
       }
   
-      const frozen_tournaments = await this.tournamentsRepository.find({
+      const frozen_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.FROZEN,
           lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourFreezeTime))

@@ -12,6 +12,7 @@ import { OrganizerGuard } from '../users/guards/organizer.guard';
 import { AdminGuard } from '../users/guards/admin.guard';
 import { AuthGuard } from '../users/guards/auth.guard';
 import { UserInterceptor } from '../users/interceptors/user.interceptor';
+import { TournamentsResponseDto } from './dtos/TournamentResponse.dto';
 
 @ApiTags('Tournaments')
 @UseInterceptors(UserInterceptor)
@@ -29,7 +30,6 @@ export class TournamentsController {
   @ApiQuery({ name: 'eventId', required: false, type: Number })
   @ApiQuery({ name: 'bannedBrawlers', required: false, type: Number, isArray: true })
   @ApiOkResponse({ type: [TournamentsResponseDto] })
-  // !!!!!!!! TournamentsResponseDto, get /my tournaments list !!!!!!!!!!!!!
   @ApiPagination()
   getActiveTournaments(
     @Query('costFrom') costFrom: number,
@@ -86,12 +86,20 @@ export class TournamentsController {
     return this.tournamentsService.signUpForTournament(user.id, id);
   }
 
-  @Get('/my')
+  @Get('/my/active')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: [TournamentsResponseDto] })
-  getUserTournaments(@GetUser() user: User){
-    return this.tournamentsService.fetchUserTournaments(user.id);
+  getUserActiveTournaments(@GetUser() user: User){
+    return this.tournamentsService.fetchUserTournaments(user.id, true);
+  }
+
+  @Get('/my/past')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: [TournamentsResponseDto] })
+  getUserPastTournaments(@GetUser() user: User){
+    return this.tournamentsService.fetchUserTournaments(user.id, false);
   }
 
   @Post('/cancel/:id')

@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsString, Length } from "class-validator";
-import {  } from "class-transformer";
+import { IsInt, IsNotEmpty } from "class-validator";
 
 export class CreateTournamentDto {
   @IsNotEmpty()
