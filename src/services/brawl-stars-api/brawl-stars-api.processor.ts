@@ -24,8 +24,8 @@ export class BrawlStarsApiService extends WorkerHost {
         const { tag, trophyChange } = job.data;
         return await this.confirmAccountByTag(tag, trophyChange);
       case 'confirm-winners':
-        const { organizerTag, event, eventMap, winners, teamsNumber, teamSize } = job.data;
-        return await this.confirmWinners(organizerTag, event, eventMap, winners, teamsNumber, teamSize);
+        const { organizerTag, event, eventMap, bannedBrawlers, winners, teamSize } = job.data;
+        return await this.confirmWinners(organizerTag, event, eventMap, bannedBrawlers, winners, teamSize);
     }
   }
 
@@ -79,22 +79,23 @@ export class BrawlStarsApiService extends WorkerHost {
     organizerTag: string,
     event: string,
     eventMap: string,
-    winners: string[]
+    bannedBrawlers: string[],
+    winners: string[],
   );
   confirmWinners(
     organizerTag: string,
     event: string,
     eventMap: string,
+    bannedBrawlers: string[],
     winners: string[],
-    teamsNumber: number,
     teamSize: number,
   );
   async confirmWinners(
     organizerTag: string,
     event: string,
     eventMap: string,
+    bannedBrawlers: string[],
     winners: string[],
-    teamsNumber?: number,
     teamSize?: number,
   ): Promise<boolean> {
     const battlelog = await this.makeRequest(organizerTag);
@@ -109,20 +110,54 @@ export class BrawlStarsApiService extends WorkerHost {
 
       const allPlayers = lastBattle.players;
       for(let i = 0; i < winners.length; i++){
-        if(allPlayers[i].tag != winners[i]) return false;
+        if(winners[i] == 'BOT'){
+          if(!String(allPlayers[i].name).startsWith('Bot') || allPlayers[i].tag.length > 4){
+            return false;
+          }
+        }
+        else if(allPlayers[i].tag != winners[i] || bannedBrawlers.includes(allPlayers[i].brawler.name)) return false;
       }
       return true;
-    } else if(lastBattle.teams?.length > 0){
+    } else if(lastBattle.teams?.length > 0 && Number(teamSize) > 1){
 
-      for(let i = 0; i < teamsNumber; i++){
+      for(let i = 0; i < winners.length / teamSize; i++){
         const team: any[] = lastBattle.teams[i];
         const curTeamSize: number = team.length;
         if(curTeamSize !== teamSize) throw new Error('Invalid teams');
 
         const teamPlayers = winners.slice(curTeamSize * i, i + curTeamSize);
-        teamPlayers.forEach(player => {
-          if(!team.includes(player)) return false;
-        });
+        let foundBotsTags: string[] = [];
+        let foundPlayerTags: string[] = []; 
+        for(let j = 0; j < teamPlayers.length; j++){
+
+          const playerTag = teamPlayers[j];
+          if(playerTag == 'BOT'){
+            const bot = team.find((teamPlayer) => {
+              if(
+                String(teamPlayer.name).startsWith('Bot') &&
+                teamPlayer.tag.length <= 4 &&
+                foundBotsTags.indexOf(teamPlayer.tag) === -1
+              ){
+                foundBotsTags.push(teamPlayer.tag);
+                return true;
+              }
+              return false;
+            })
+            if(!bot){
+              // global return
+              return false;
+            }
+          }
+          else if(!team.find((teamPlayer) => {
+            const result = teamPlayer.tag == playerTag &&
+              !bannedBrawlers.includes(teamPlayer.brawler.name) &&
+              !foundPlayerTags.includes(teamPlayer.tag);
+
+            if(result) foundPlayerTags.push(teamPlayer.tag);
+            return result;
+          })) return false;
+
+        }
       }
       return true;
     }

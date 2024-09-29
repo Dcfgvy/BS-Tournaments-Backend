@@ -30,7 +30,7 @@ export class UploadsController {
       required: ['file'],
     }
   })
-  uploadImage(@UploadedFile() file: Express.Multer.File){
+  uploadImage(@UploadedFile('file') file: Express.Multer.File){
     return this.uploadService.uploadImage(file);
   }
 

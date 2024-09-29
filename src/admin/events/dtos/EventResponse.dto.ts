@@ -21,9 +21,6 @@ export class EventResponseDto {
   @ApiProperty({ example: false })
   isSolo: boolean;
 
-  @ApiProperty({ example: 2 })
-  teamsNumber: number;
-
   @ApiProperty({ example: 3 })
   teamSize: number;
 

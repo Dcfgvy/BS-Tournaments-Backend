@@ -27,10 +27,6 @@ export class CreateEventDto {
   isSolo: boolean;
 
   @IsNumber()
-  @ApiProperty({ example: 2 })
-  teamsNumber: number;
-
-  @IsNumber()
   @ApiProperty({ example: 3 })
   teamSize: number;
 

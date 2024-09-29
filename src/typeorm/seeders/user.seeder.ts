@@ -14,7 +14,7 @@ export default class UserSeeder implements Seeder {
 
     console.log('Creating organizer...')
     await repository.insert({
-      tag: '#ORG12',
+      tag: appConfig.DB_SEED_ORGANIZER_TAG,
       name: 'Organizer',
       password: hashPassword(appConfig.DB_SEED_ORGANIZER_PASSWORD),
       balance: 10000,

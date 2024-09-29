@@ -1,9 +1,9 @@
-import { Body, Controller, DefaultValuePipe, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { TournamentsService } from './services/tournaments/tournaments.service';
 import { PaginationParamsDto } from '../services/pagination/pagination.dto';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiOkResponse, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiPagination } from '../services/pagination/api-pagination.decorator';
 import { CreateTournamentDto } from './dtos/CreateTournament.dto';
 import { GetUser } from '../users/decorators/get-user.decorator';
@@ -13,6 +13,10 @@ import { AdminGuard } from '../users/guards/admin.guard';
 import { AuthGuard } from '../users/guards/auth.guard';
 import { UserInterceptor } from '../users/interceptors/user.interceptor';
 import { TournamentsResponseDto } from './dtos/TournamentResponse.dto';
+import { FinishTournamentDto } from './dtos/FinishTournament.dto';
+import { StartTournamentDto } from './dtos/StartTournament.dto';
+import { TournamentCreationDatesDto } from './dtos/TournamentCreationDates.dto';
+import { TournamentStatus } from './enums/tournament-status.enum';
 
 @ApiTags('Tournaments')
 @UseInterceptors(UserInterceptor)
@@ -51,6 +55,51 @@ export class TournamentsController {
     );
   }
 
+  @Get()
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiQuery({ name: 'costFrom', required: false, type: Number })
+  @ApiQuery({ name: 'costTo', required: false, type: Number })
+  @ApiQuery({ name: 'playersNumberFrom', required: false, type: Number })
+  @ApiQuery({ name: 'playersNumberTo', required: false, type: Number })
+  @ApiQuery({ name: 'eventId', required: false, type: Number })
+  @ApiQuery({ name: 'bannedBrawlers', required: false, type: Number, isArray: true })
+  @ApiQuery({ name: 'createdFrom', required: false, type: String, example: '2024-03-04T00:00:00.000Z' })
+  @ApiQuery({ name: 'createdTo', required: false, type: String, example: '2024-04-05T00:00:00.000Z' })
+  @ApiQuery({ name: 'status', required: false, type: Number })
+  @ApiQuery({ name: 'tournamentId', required: false, type: Number })
+  @ApiQuery({ name: 'contestantTags', required: false, type: String, isArray: true })
+  @ApiOkResponse({ type: [TournamentsResponseDto] })
+  @ApiPagination()
+  getAllTournaments(
+    @Query('costFrom') costFrom: number,
+    @Query('costTo') costTo: number,
+    @Query('playersNumberFrom') playersNumberFrom: number,
+    @Query('playersNumberTo') playersNumberTo: number,
+    @Query('eventId') eventId: number,
+    @Query('bannedBrawlers', new DefaultValuePipe([]), new ParseArrayPipe({ items: Number, separator: ',' })) bannedBrawlers: number[],
+    @Query() creationDates: TournamentCreationDatesDto,
+    @Query('status') status: TournamentStatus,
+    @Query('tournamentId') tournamentId: number,
+    @Query('contestantTags', new DefaultValuePipe([]), new ParseArrayPipe({ items: String, separator: ',' })) contestantTags: string[],
+    @PaginationParams() paginationParams: PaginationParamsDto,
+  ){
+    return this.tournamentsService.fetchAllTournaments(
+      paginationParams as IPaginationOptions,
+      costFrom,
+      costTo,
+      playersNumberFrom,
+      playersNumberTo,
+      eventId,
+      bannedBrawlers,
+      creationDates.createdFrom,
+      creationDates.createdTo,
+      status,
+      tournamentId,
+      contestantTags.map(c => decodeURIComponent(c).toUpperCase()),
+    );
+  }
+
   @Post()
   @UseGuards(OrganizerGuard)
   @ApiBearerAuth()
@@ -73,9 +122,7 @@ export class TournamentsController {
     );
   }
 
-  // finish a tournament, fetch all tournaments routes
-
-  @Post('/signup/:id')
+  @Post('/sign-up/:id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiCreatedResponse({ description: 'Success' })
@@ -84,6 +131,35 @@ export class TournamentsController {
   @ApiConflictResponse({ description: 'User already participates in another tournament' })
   signUpForTournament(@GetUser() user: User, @Param('id', ParseIntPipe) id: number){
     return this.tournamentsService.signUpForTournament(user.id, id);
+  }
+
+  @Put('/invite-link/:id')
+  @UseGuards(OrganizerGuard)
+  @ApiBearerAuth()
+  @ApiNoContentResponse()
+  updateTournamentLink(@GetUser() user: User, @Body() data: StartTournamentDto, @Param('id', ParseIntPipe) id: number){
+    return this.tournamentsService.updateTournamentLink(user.id, id, data.inviteLink);
+  }
+
+  @Post('/finish/:id')
+  @UseGuards(OrganizerGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ description: `This action checks if the winners organizer sends are correct. If so, updates the tournament's state to FROZEN.\n
+    To pass a winner as a bot (in case some participants didn't connect to the game) put "BOT" instead of the #USERTAG, e.x.:
+    winners: ["#PLAYER1", "BOT", "#PLAYER34"]` })
+  @ApiCreatedResponse()
+  finishTournament(@GetUser() user: User, @Body() data: FinishTournamentDto, @Param('id') id: number){
+    return this.tournamentsService.finishTournament(user.id, id, data.winners);
+  }
+
+  @Post('/cancel/:id')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiCreatedResponse({ description: 'Tournament canceled' })
+  @ApiForbiddenResponse({ description: 'Not an admin' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  cancelTournament(@Param('id', ParseIntPipe) id: number){
+    return this.tournamentsService.cancelTournament(id);
   }
 
   @Get('/my/active')
@@ -100,15 +176,5 @@ export class TournamentsController {
   @ApiOkResponse({ type: [TournamentsResponseDto] })
   getUserPastTournaments(@GetUser() user: User){
     return this.tournamentsService.fetchUserTournaments(user.id, false);
-  }
-
-  @Post('/cancel/:id')
-  @UseGuards(AdminGuard)
-  @ApiBearerAuth()
-  @ApiCreatedResponse({ description: 'Tournament canceled' })
-  @ApiForbiddenResponse({ description: 'Not an admin' })
-  @ApiBadRequestResponse({ description: 'Bad request' })
-  cancelTournament(@Param('id', ParseIntPipe) id: number){
-    return this.tournamentsService.cancelTournament(id);
   }
 }

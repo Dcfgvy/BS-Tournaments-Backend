@@ -19,6 +19,7 @@ const envConfig = cleanEnv(process.env, {
   REDIS_HOST: str(),
   REDIS_PORT: num(),
   DB_SEED_USER_PASSWORD: str(),
+  DB_SEED_ORGANIZER_TAG: str(),
   DB_SEED_ORGANIZER_PASSWORD: str(),
   JWT_SECRET: str(),
   ADMIN_TAGNAME: str(),

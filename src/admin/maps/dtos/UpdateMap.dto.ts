@@ -23,11 +23,6 @@ export class UpdateEventMapDto {
   @ApiProperty({ example: 'EveMapnt' })
   apiName?: string;
 
-  @IsBoolean()
-  @IsOptional()
-  @ApiProperty({ example: true })
-  isDisabled?: boolean;
-
   @IsNumber()
   @IsOptional()
   @ApiProperty({ example: 2 })

@@ -20,9 +20,6 @@ export class Event extends BaseEntity {
   isSolo: boolean;
 
   @Column({ nullable: true })
-  teamsNumber: number;
-
-  @Column({ nullable: true })
   teamSize: number;
 
   @Column({ type: 'int', array: true })

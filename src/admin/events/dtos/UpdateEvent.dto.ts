@@ -30,11 +30,6 @@ export class UpdateEventDto {
 
   @IsNumber()
   @IsOptional()
-  @ApiProperty({ example: 2 })
-  teamsNumber?: number;
-
-  @IsNumber()
-  @IsOptional()
   @ApiProperty({ example: 3 })
   teamSize?: number;
 
