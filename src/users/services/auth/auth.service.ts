@@ -68,7 +68,7 @@ export class AuthService {
       const refreshPayload = { id: user.id, uuid: uuidv4() };
       return {
         tokenType: 'Bearer',
-        accessToken: this.jwtService.sign(accessPayload, { expiresIn: '1h' }),
+        accessToken: this.jwtService.sign(accessPayload),
         expiresIn: 3600,
         refreshToken: this.jwtService.sign(refreshPayload),
       };
@@ -92,7 +92,7 @@ export class AuthService {
       const refreshPayload = { id: payload.id, timestamp: new Date().getTime() + 1 };
       return {
         tokenType: 'Bearer',
-        accessToken: this.jwtService.sign(accessPayload, { expiresIn: '1h' }),
+        accessToken: this.jwtService.sign(accessPayload),
         expiresIn: 3600,
         refreshToken: this.jwtService.sign(refreshPayload),
       };

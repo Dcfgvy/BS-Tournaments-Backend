@@ -29,7 +29,8 @@ import { BullModule } from '@nestjs/bullmq';
     UsersModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: appConfig.JWT_SECRET
+      secret: appConfig.JWT_SECRET,
+      signOptions: { expiresIn: '1h' }
     }),
     BullModule.registerQueue({
       name: 'brawl-stars-api'

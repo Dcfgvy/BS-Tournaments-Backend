@@ -194,6 +194,17 @@ export class TournamentsService {
     return tournaments;
   }
 
+  async fetchTournamentById(id: number, tournamentStatusCodes: TournamentStatus[]): Promise<Tournament> {
+    const tournament = await this.tournamentRepository.findOne({
+      where: {
+        id: id || -1,
+        status: tournamentStatusCodes.length > 0 ? In(tournamentStatusCodes) : undefined
+      },
+      relations: ['event', 'eventMap', 'contestants', 'organizer'],
+    });
+    return tournament;
+  }
+
   async checkUserParticipation(user: User) {
     const tournaments = await this.tournamentRepository.findBy({
       contestants: { id: user.id },

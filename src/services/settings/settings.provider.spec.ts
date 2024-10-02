@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GlobalSettings } from './settings.service';
+import { GlobalSettings } from './settings.provider';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Settings } from '../../typeorm/entities/Settings.entity';
 

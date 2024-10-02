@@ -4,7 +4,7 @@ import { Tournament } from '../../../typeorm/entities/Tournament.entity';
 import { LessThan, Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { TournamentStatus } from '../../enums/tournament-status.enum';
-import { GlobalSettings } from '../../../services/settings/settings.service';
+import { GlobalSettings } from '../../../services/settings/settings.provider';
 import { TournamentsService } from '../tournaments/tournaments.service';
 import { UsersService } from '../../../users/services/users/users.service';
 

@@ -5,7 +5,7 @@ import { Not, Repository } from 'typeorm';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { appConfig } from '../../../utils/appConfigs';
 import { UserRole } from '../../enums/role.enum';
-import { GlobalSettings } from '../../../services/settings/settings.service';
+import { GlobalSettings } from '../../../services/settings/settings.provider';
 
 @Injectable()
 export class UsersService {

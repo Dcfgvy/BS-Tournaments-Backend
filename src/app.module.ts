@@ -12,7 +12,7 @@ import { User } from './typeorm/entities/User.entity';
 import { UploadsModule } from './uploads/uploads.module';
 import { dataSourceOptions } from './typeorm/data-source';
 import { appConfig } from './utils/appConfigs';
-import { GlobalSettings } from './services/settings/settings.service';
+import { GlobalSettings } from './services/settings/settings.provider';
 import { Settings } from './typeorm/entities/Settings.entity';
 import { GlobalModule } from './global/global.module';
 import { AuthMiddleware } from './users/middlewares/auth.middleware';
@@ -34,9 +34,10 @@ import { ScheduleModule } from '@nestjs/schedule';
     }]),
     UploadsModule,
     GlobalModule,
-    // JWT Service needed for AuthMiddleware
+    // JWT module needed for AuthMiddleware
     JwtModule.register({
-      secret: appConfig.JWT_SECRET
+      secret: appConfig.JWT_SECRET,
+      signOptions: { expiresIn: '1h' }
     }),
     BullModule.forRoot({
       connection: {

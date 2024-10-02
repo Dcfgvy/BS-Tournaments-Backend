@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { GlobalSettings } from '../services/settings/settings.service';
+import { GlobalSettings } from '../services/settings/settings.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Settings } from '../typeorm/entities/Settings.entity';
 
