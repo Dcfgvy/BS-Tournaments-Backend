@@ -3,9 +3,12 @@ import { AppModule } from './app.module';
 import { appConfig } from './utils/appConfigs';
 import { ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from './utils/swagger';
+import { NodeEnv } from './utils/NodeEnv';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: (appConfig.NODE_ENV === NodeEnv.DEV) ? console : false,
+  });
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   setupSwagger(app);

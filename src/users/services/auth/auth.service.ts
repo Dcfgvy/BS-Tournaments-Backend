@@ -69,7 +69,7 @@ export class AuthService {
         tokenType: 'Bearer',
         accessToken: this.jwtService.sign(accessPayload, { expiresIn: 3600 }),
         expiresIn: 3600,
-        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: '90d' }),
+        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: '30d' }),
       };
     }
     else {
