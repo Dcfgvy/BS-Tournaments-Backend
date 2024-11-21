@@ -15,6 +15,7 @@ export class WsAuthGuard implements CanActivate {
       client.data.user = user;
       return !!user;
     } catch (error) {
+      client.emit('invalid-token');
       return false;
     }
   }

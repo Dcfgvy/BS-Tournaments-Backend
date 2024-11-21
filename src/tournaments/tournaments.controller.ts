@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Put, Query, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { TournamentsService } from './services/tournaments/tournaments.service';
 import { PaginationParamsDto } from '../services/pagination/pagination.dto';
 import { PaginationParams } from '../services/pagination/pagination.decorator';
@@ -17,6 +17,7 @@ import { FinishTournamentDto } from './dtos/FinishTournament.dto';
 import { StartTournamentDto } from './dtos/StartTournament.dto';
 import { TournamentCreationDatesDto } from './dtos/TournamentCreationDates.dto';
 import { TournamentStatus } from './enums/tournament-status.enum';
+import { Response } from 'express';
 
 @ApiTags('Tournaments')
 @UseInterceptors(UserInterceptor)
@@ -160,6 +161,19 @@ export class TournamentsController {
   @ApiBadRequestResponse({ description: 'Bad request' })
   cancelTournament(@Param('id', ParseIntPipe) id: number){
     return this.tournamentsService.cancelTournament(id);
+  }
+
+  @Get('export-chat/:id')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: File, description: 'CSV file' })
+  @ApiForbiddenResponse({ description: 'Not an admin' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  async exportChatLog(@Param('id', ParseIntPipe) id: number, @Res() res: Response){
+    const csvData = await this.tournamentsService.exportChatToCSV(id);
+    res.setHeader('Content-Type', 'text/csv');
+    res.attachment('chat-log.csv');
+    res.send(csvData);
   }
 
   @Get('/my/active')

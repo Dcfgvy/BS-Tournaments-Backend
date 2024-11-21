@@ -14,6 +14,7 @@ import { TournamentChatGateway } from './gateways/tournament-chat/tournament-cha
 import { WsAuthGuard } from '../users/guards/ws-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { appConfig } from '../utils/appConfigs';
+import { TourChatMessage } from '../typeorm/entities/TourChatMessage.entity';
 
 @Module({
   providers: [
@@ -28,7 +29,7 @@ import { appConfig } from '../utils/appConfigs';
   ],
   controllers: [TournamentsController],
   imports: [
-    TypeOrmModule.forFeature([Tournament, Event, EventMap, Brawler]),
+    TypeOrmModule.forFeature([Tournament, TourChatMessage, Event, EventMap, Brawler]),
     BullModule.registerQueue({
       name: 'brawl-stars-api'
     }),

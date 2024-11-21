@@ -13,7 +13,7 @@ export class GlobalSettings implements OnModuleInit {
     private settingsRepository: Repository<Settings>
   ) {}
 
-  static data: ISettings = null;
+  public static data: ISettings = null;
 
   async onModuleInit() {
     if(GlobalSettings.data) return;

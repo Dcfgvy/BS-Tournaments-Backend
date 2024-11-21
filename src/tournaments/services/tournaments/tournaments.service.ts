@@ -11,12 +11,17 @@ import { Brawler } from '../../../typeorm/entities/Brawler.entity';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue, QueueEvents } from 'bullmq';
 import { Win } from '../../../typeorm/entities/Win.entity';
+import { TourChatMessage } from '../../../typeorm/entities/TourChatMessage.entity';
+import { createObjectCsvStringifier } from 'csv-writer';
+import { formatDate } from '../../../utils/other';
 
 @Injectable()
 export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
     private readonly tournamentRepository: Repository<Tournament>,
+    @InjectRepository(TourChatMessage)
+    private readonly tourChatMessageRepository: Repository<TourChatMessage>,
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
     @InjectRepository(EventMap)
@@ -569,5 +574,38 @@ export class TournamentsService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async exportChatToCSV(tournamentId: number): Promise<string> {
+    const chatMessages = await this.tourChatMessageRepository.find({
+      where: {
+        tournament: {
+          id: tournamentId
+        }
+      },
+      order: { createdAt: 'ASC' },
+      relations: ['user'],
+    });
+
+    let data = [];
+    for(const message of chatMessages){
+      data.push({
+        createdAt: formatDate(message.createdAt),
+        user_id: message.user.id,
+        user_tag: message.user.tag,
+        text: message.text,
+      })
+    }
+
+    const csvStringifier = createObjectCsvStringifier({
+      header: [
+        { id: 'createdAt', title: 'Time of sending' },
+        { id: 'user_id', title: 'Sender ID' },
+        { id: 'user_tag', title: 'Sender tag' },
+        { id: 'text', title: 'Message' },
+      ],
+    });
+    const csvContent = csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(data);
+    return csvContent;
   }
 }
