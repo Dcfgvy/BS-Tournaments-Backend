@@ -61,21 +61,25 @@ export class AuthService {
     }
   }
 
-  async login(loginFromDto: LoginFormDto){
-    const user: User = await this.validateUser(loginFromDto.tag, loginFromDto.password);
+  async createTokens(user: User): Promise<any> {
     if(user){
       const accessPayload = { id: user.id, uuid: uuidv4() };
       const refreshPayload = { id: user.id, uuid: uuidv4() };
       return {
         tokenType: 'Bearer',
-        accessToken: this.jwtService.sign(accessPayload),
+        accessToken: this.jwtService.sign(accessPayload, { expiresIn: 3600 }),
         expiresIn: 3600,
-        refreshToken: this.jwtService.sign(refreshPayload),
+        refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: '90d' }),
       };
     }
     else {
       throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async login(loginFromDto: LoginFormDto){
+    const user: User = await this.validateUser(loginFromDto.tag, loginFromDto.password);
+    return this.createTokens(user);
   }
 
   async updateToken(refreshTokenDto: RefreshTokenDto){
@@ -87,18 +91,7 @@ export class AuthService {
     }
 
     const user: User = await this.userRepository.findOneBy({ id: payload.id });
-    if(user){
-      const accessPayload = { id: payload.id, timestamp: new Date().getTime() };
-      const refreshPayload = { id: payload.id, timestamp: new Date().getTime() + 1 };
-      return {
-        tokenType: 'Bearer',
-        accessToken: this.jwtService.sign(accessPayload),
-        expiresIn: 3600,
-        refreshToken: this.jwtService.sign(refreshPayload),
-      };
-    } else {
-      throw new HttpException('Invalid refresh token', HttpStatus.BAD_REQUEST);
-    }
+    return this.createTokens(user);
   }
 
   async processUserIpAddress(req: any, user: User): Promise<void> {

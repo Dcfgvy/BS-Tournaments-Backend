@@ -34,7 +34,6 @@ import { appConfig } from '../utils/appConfigs';
     }),
     JwtModule.register({
       secret: appConfig.JWT_SECRET,
-      signOptions: { expiresIn: '1h' }
     }),
   ],
   exports: [TournamentChatGateway]

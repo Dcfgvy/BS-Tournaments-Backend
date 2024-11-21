@@ -38,7 +38,6 @@ import { TournamentSubscriber } from './typeorm/subscribers/tournament.subscribe
     // JWT module needed for AuthMiddleware
     JwtModule.register({
       secret: appConfig.JWT_SECRET,
-      signOptions: { expiresIn: '1h' }
     }),
     BullModule.forRoot({
       connection: {
