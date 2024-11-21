@@ -22,6 +22,7 @@ import { ImageCleanupSubscriber } from './typeorm/subscribers/image-cleanup.subs
 import { APP_GUARD } from '@nestjs/core';
 import { BullModule } from '@nestjs/bullmq';
 import { ScheduleModule } from '@nestjs/schedule';
+import { TournamentSubscriber } from './typeorm/subscribers/tournament.subscriber';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ScheduleModule } from '@nestjs/schedule';
   providers: [
     AppService, BrawlStarsApiService, GlobalSettings,
     ImageCleanupSubscriber,
+    TournamentSubscriber,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard

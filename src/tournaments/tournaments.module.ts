@@ -14,7 +14,6 @@ import { TournamentChatGateway } from './gateways/tournament-chat/tournament-cha
 import { WsAuthGuard } from '../users/guards/ws-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { appConfig } from '../utils/appConfigs';
-import { TournamentSubscriber } from '../typeorm/subscribers/tournament.subscriber';
 
 @Module({
   providers: [
@@ -26,7 +25,6 @@ import { TournamentSubscriber } from '../typeorm/subscribers/tournament.subscrib
     BgTournamentsStatusService,
     TournamentChatGateway,
     WsAuthGuard,
-    TournamentSubscriber
   ],
   controllers: [TournamentsController],
   imports: [

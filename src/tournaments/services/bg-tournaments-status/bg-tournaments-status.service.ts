@@ -19,7 +19,7 @@ export class BgTournamentsStatusService {
 
   private isRunning: boolean = false;
 
-  @Cron(CronExpression.EVERY_MINUTE, {
+  @Cron(CronExpression.EVERY_30_SECONDS, {
     name: 'update_tournaments_status'
   })
   async updateTournamentsStatus() {
