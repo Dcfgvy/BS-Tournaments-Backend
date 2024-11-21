@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UploadsService {
+  private readonly logger: Logger = new Logger(UploadsService.name);
+
   async uploadImage(file: Express.Multer.File): Promise<string> {
     const uploadsDir = path.join(__dirname, 'uploaded', 'images');
     await fs.mkdir(uploadsDir, { recursive: true });
@@ -23,7 +25,7 @@ export class UploadsService {
       const fileContent = await fs.readFile(filePath);
       return fileContent.toString('base64');
     } catch (err) {
-      console.error(`Error reading file: ${filename}`, err);
+      this.logger.error(`Error reading file: ${filename}`, err);
       return null;
     }
   }
@@ -34,7 +36,7 @@ export class UploadsService {
       await fs.unlink(absolutePath);
       return true;
     } catch (err) {
-      console.error(`Error deleting file: ${filepath}`, err);
+      this.logger.error(`Error deleting file: ${filepath}`, err);
       return false;
     }
   }

@@ -33,7 +33,6 @@ implements OnGatewayInit, OnGatewayConnection {
   }
 
   async handleConnection(client: Socket, ...args: any[]){
-    // console.log(`Client connected: ${client.id}`);
     try {
       const tournamentId = Number(client.handshake.query.tournamentId);
       const token = client.handshake.query.accessToken as string;
@@ -56,10 +55,10 @@ implements OnGatewayInit, OnGatewayConnection {
 
       // Add the user to a room based on tournament ID
       client.join(`tournament-${tournamentId}`);
-      console.log(`User ${user.id} connected to tournament ${tournamentId}`);
+      this.logger.log(`User ${user.id} connected to tournament ${tournamentId}`);
     } catch (error) {
       client.disconnect(); // Disconnect if any error occurs
-      console.error('Connection error: ', error);
+      this.logger.error('Connection error: ', error);
     }
   }
 
@@ -82,6 +81,6 @@ implements OnGatewayInit, OnGatewayConnection {
 
   disconnectContestantsByTournamentId(id: number): void {
     this.server.in(`tournament-${id}`).disconnectSockets();
-    // console.log(`Contestants in tournament ${id} disconnected`);
+    this.logger.log(`Contestants in tournament ${id} disconnected`);
   }
 }

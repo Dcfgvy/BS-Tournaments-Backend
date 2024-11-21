@@ -15,7 +15,6 @@ export class ImageCleanupSubscriber implements EntitySubscriberInterface {
   }
 
   async afterRemove(event: RemoveEvent<any>): Promise<void> {
-    console.log(event.entity);
     if (event.entity && 'imgUrl' in event.entity) {
       const entityWithImage = event.entity as IEntityWithImage;
       const { imgUrl } = entityWithImage;

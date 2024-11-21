@@ -8,6 +8,8 @@ import { InjectConnection } from "@nestjs/typeorm";
 @Injectable()
 @EventSubscriber()
 export class TournamentSubscriber implements EntitySubscriberInterface {
+  private readonly logger: Logger = new Logger(TournamentSubscriber.name);
+
   constructor(
     @InjectConnection() readonly connection: Connection,
     @Inject(TournamentChatGateway) private tournamentChatGateway: TournamentChatGateway) {
@@ -35,7 +37,7 @@ export class TournamentSubscriber implements EntitySubscriberInterface {
           }, 1000);
         }
       } catch (err){
-        console.error(err);
+        this.logger.error(err);
       }
     }
   }

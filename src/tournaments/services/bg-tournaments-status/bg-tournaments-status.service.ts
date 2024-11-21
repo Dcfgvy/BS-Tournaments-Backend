@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tournament } from '../../../typeorm/entities/Tournament.entity';
 import { LessThan, Repository } from 'typeorm';
@@ -17,6 +17,7 @@ export class BgTournamentsStatusService {
     private readonly usersService: UsersService
   ) {}
 
+  private readonly logger: Logger = new Logger(BgTournamentsStatusService.name);
   private isRunning: boolean = false;
 
   @Cron(CronExpression.EVERY_30_SECONDS, {
@@ -77,7 +78,7 @@ export class BgTournamentsStatusService {
         await this.tournamentsService.endTournament(tournament.id);
       }
     } catch(err) {
-      console.error('Error in Background Tournaments Status service', err);
+      this.logger.error(err);
     }
 
     this.isRunning = false;
