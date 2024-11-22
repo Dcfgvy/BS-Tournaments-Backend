@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../../typeorm/entities/User.entity';
+import { User } from '../../../database/entities/User.entity';
 import { Not, Repository } from 'typeorm';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { appConfig } from '../../../utils/appConfigs';
 import { UserRole } from '../../enums/role.enum';
-import { GlobalSettings } from '../../../services/settings/settings.provider';
+import { SettingsService } from 'src/settings/settings.service';
 
 @Injectable()
 export class UsersService {
@@ -55,11 +55,11 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({ id });
     
     if(!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    if(user.balance < GlobalSettings.data.organizerFee) throw new HttpException('Not enough funds', HttpStatus.PAYMENT_REQUIRED);
+    if(user.balance < SettingsService.data.organizerFee) throw new HttpException('Not enough funds', HttpStatus.PAYMENT_REQUIRED);
     if(user.roles.includes(UserRole.ORGANIZER)) throw new HttpException('Already an organizer', HttpStatus.CONFLICT);
 
     user.roles = [...user.roles, UserRole.ORGANIZER];
-    user.balance = user.balance - GlobalSettings.data.organizerFee;
+    user.balance = user.balance - SettingsService.data.organizerFee;
     await this.userRepository.save(user);
     return;
   }

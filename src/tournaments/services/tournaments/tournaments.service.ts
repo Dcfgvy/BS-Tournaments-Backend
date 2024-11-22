@@ -1,17 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, In, Repository } from 'typeorm';
-import { Tournament } from '../../../typeorm/entities/Tournament.entity';
+import { Tournament } from '../../../database/entities/Tournament.entity';
 import { TournamentStatus } from '../../enums/tournament-status.enum';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { User } from '../../../typeorm/entities/User.entity';
-import { Event } from '../../../typeorm/entities/Event.entity';
-import { EventMap } from '../../../typeorm/entities/EventMap.entity';
-import { Brawler } from '../../../typeorm/entities/Brawler.entity';
+import { User } from '../../../database/entities/User.entity';
+import { Event } from '../../../database/entities/Event.entity';
+import { EventMap } from '../../../database/entities/EventMap.entity';
+import { Brawler } from '../../../database/entities/Brawler.entity';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue, QueueEvents } from 'bullmq';
-import { Win } from '../../../typeorm/entities/Win.entity';
-import { TourChatMessage } from '../../../typeorm/entities/TourChatMessage.entity';
+import { Win } from '../../../database/entities/Win.entity';
+import { TourChatMessage } from '../../../database/entities/TourChatMessage.entity';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { formatDate } from '../../../utils/other';
 

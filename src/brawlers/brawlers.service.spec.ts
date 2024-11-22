@@ -1,24 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AdminCreationService } from './admin-creation.service';
-import { User } from '../../../database/entities/User.entity';
+import { BrawlersService } from './brawlers.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Brawler } from '../database/entities/Brawler.entity';
 
-describe('AdminCreationService', () => {
-  let service: AdminCreationService;
+describe('BrawlersService', () => {
+  let service: BrawlersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AdminCreationService,
+        BrawlersService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(Brawler),
           useValue: {
           }
         }
       ],
     }).compile();
 
-    service = module.get<AdminCreationService>(AdminCreationService);
+    service = module.get<BrawlersService>(BrawlersService);
   });
 
   it('should be defined', () => {

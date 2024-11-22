@@ -4,17 +4,17 @@ import { TournamentsController } from './tournaments.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Tournament } from '../typeorm/entities/Tournament.entity';
-import { EventMap } from '../typeorm/entities/EventMap.entity';
-import { Event } from '../typeorm/entities/Event.entity';
-import { Brawler } from '../typeorm/entities/Brawler.entity';
+import { Tournament } from '../database/entities/Tournament.entity';
+import { EventMap } from '../database/entities/EventMap.entity';
+import { Event } from '../database/entities/Event.entity';
+import { Brawler } from '../database/entities/Brawler.entity';
 import { BgTournamentsStatusService } from './services/bg-tournaments-status/bg-tournaments-status.service';
 import { BullModule } from '@nestjs/bullmq';
 import { TournamentChatGateway } from './gateways/tournament-chat/tournament-chat.gateway';
 import { WsAuthGuard } from '../users/guards/ws-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { appConfig } from '../utils/appConfigs';
-import { TourChatMessage } from '../typeorm/entities/TourChatMessage.entity';
+import { TourChatMessage } from '../database/entities/TourChatMessage.entity';
 
 @Module({
   providers: [

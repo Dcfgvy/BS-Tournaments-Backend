@@ -3,7 +3,7 @@ import { BgTournamentsStatusService } from './bg-tournaments-status.service';
 import { UsersService } from '../../../users/services/users/users.service';
 import { Connection } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from '../../../typeorm/entities/User.entity';
+import { User } from '../../../database/entities/User.entity';
 import { mockDbConnection, tournamentsServiceProviders } from '../../../utils/testingHelpers';
 
 describe('BgTournamentsStatusService', () => {

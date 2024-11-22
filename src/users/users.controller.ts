@@ -9,11 +9,11 @@ import { ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNotFoundResp
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { TokenResponseDto } from './dtos/TokenResponse.dto';
 import { GetUser } from './decorators/get-user.decorator';
-import { User } from '../typeorm/entities/User.entity';
-import { ApiPagination } from '../services/pagination/api-pagination.decorator';
+import { User } from '../database/entities/User.entity';
+import { ApiPagination } from '../other/pagination/api-pagination.decorator';
 import { AdminGuard } from './guards/admin.guard';
 import { UsersService } from './services/users/users.service';
-import { PaginationParams } from '../services/pagination/pagination.decorator';
+import { PaginationParams } from '../other/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { BanUserDto } from './dtos/BanUser.dto';
 import { TagUpperCasePipe } from './pipes/tag-uppercase.pipe';

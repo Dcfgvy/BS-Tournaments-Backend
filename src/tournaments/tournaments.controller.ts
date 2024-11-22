@@ -1,13 +1,13 @@
 import { Body, Controller, DefaultValuePipe, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Put, Query, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { TournamentsService } from './services/tournaments/tournaments.service';
-import { PaginationParamsDto } from '../services/pagination/pagination.dto';
-import { PaginationParams } from '../services/pagination/pagination.decorator';
+import { PaginationParamsDto } from '../other/pagination/pagination.dto';
+import { PaginationParams } from '../other/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ApiPagination } from '../services/pagination/api-pagination.decorator';
+import { ApiPagination } from '../other/pagination/api-pagination.decorator';
 import { CreateTournamentDto } from './dtos/CreateTournament.dto';
 import { GetUser } from '../users/decorators/get-user.decorator';
-import { User } from '../typeorm/entities/User.entity';
+import { User } from '../database/entities/User.entity';
 import { OrganizerGuard } from '../users/guards/organizer.guard';
 import { AdminGuard } from '../users/guards/admin.guard';
 import { AuthGuard } from '../users/guards/auth.guard';

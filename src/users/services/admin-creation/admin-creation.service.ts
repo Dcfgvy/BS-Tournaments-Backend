@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../../typeorm/entities/User.entity';
+import { User } from '../../../database/entities/User.entity';
 import { appConfig } from '../../../utils/appConfigs';
 import { UserRole } from '../../enums/role.enum';
 import { hashPassword } from '../../../utils/bcrypt';

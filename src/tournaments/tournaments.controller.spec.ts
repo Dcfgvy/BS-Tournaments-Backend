@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TournamentsController } from './tournaments.controller';
 import { UsersService } from '../users/services/users/users.service';
-import { User } from '../typeorm/entities/User.entity';
+import { User } from '../database/entities/User.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { authProviders, mockDbConnection, tournamentsServiceProviders } from '../utils/testingHelpers';

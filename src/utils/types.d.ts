@@ -1,4 +1,4 @@
-import { User } from "../typeorm/entities/User.entity";
+import { User } from "../database/entities/User.entity";
 
 declare global {
   namespace Express {

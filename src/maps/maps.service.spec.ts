@@ -1,24 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BgUnbanService } from './bg-unban.service';
+import { EventMapsService } from './maps.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from '../../../database/entities/User.entity';
+import { EventMap } from '../database/entities/EventMap.entity';
 
-describe('BgUnbanService', () => {
-  let service: BgUnbanService;
+describe('EventMapsService', () => {
+  let service: EventMapsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        BgUnbanService,
+        EventMapsService,
         {
-          provide: getRepositoryToken(User),
-          useValue: {
-          }
+          provide: getRepositoryToken(EventMap),
+          useValue: {}
         }
       ],
     }).compile();
 
-    service = module.get<BgUnbanService>(BgUnbanService);
+    service = module.get<EventMapsService>(EventMapsService);
   });
 
   it('should be defined', () => {

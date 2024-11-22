@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginFormDto } from '../../dtos/LoginForm.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UserRole } from '../../enums/role.enum';
-import { User } from '../../../typeorm/entities/User.entity';
+import { User } from '../../../database/entities/User.entity';
 import { comparePasswords, hashPassword } from '../../../utils/bcrypt';
 import { RefreshTokenDto } from '../../dtos/RefreshToken.dto';
 import { InjectQueue } from '@nestjs/bullmq';

@@ -7,7 +7,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AdminCreationService } from './services/admin-creation/admin-creation.service';
 import { appConfig } from '../utils/appConfigs';
-import { User } from '../typeorm/entities/User.entity';
+import { User } from '../database/entities/User.entity';
 import { UsersService } from './services/users/users.service';
 import { BgUnbanService } from './services/bg-unban/bg-unban.service';
 import { BullModule } from '@nestjs/bullmq';

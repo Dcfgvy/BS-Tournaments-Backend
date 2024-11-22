@@ -2,39 +2,39 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { AdminModule } from './admin/admin.module';
 import { PaymentsModule } from './payments/payments.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
-import { BrawlStarsApiService } from './services/brawl-stars-api/brawl-stars-api.processor';
+import { BrawlStarsApiService } from './other/brawl-stars-api/brawl-stars-api.processor';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { User } from './typeorm/entities/User.entity';
+import { User } from './database/entities/User.entity';
 import { UploadsModule } from './uploads/uploads.module';
-import { dataSourceOptions } from './typeorm/data-source';
+import { dataSourceOptions } from './database/data-source';
 import { appConfig } from './utils/appConfigs';
-import { GlobalSettings } from './services/settings/settings.provider';
-import { Settings } from './typeorm/entities/Settings.entity';
-import { GlobalModule } from './global/global.module';
+import { Settings } from './database/entities/Settings.entity';
 import { AuthMiddleware } from './users/middlewares/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { NodeEnv } from './utils/NodeEnv';
-import { ImageCleanupSubscriber } from './typeorm/subscribers/image-cleanup.subscriber';
+import { ImageCleanupSubscriber } from './database/subscribers/image-cleanup.subscriber';
 import { APP_GUARD } from '@nestjs/core';
 import { BullModule } from '@nestjs/bullmq';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TournamentSubscriber } from './typeorm/subscribers/tournament.subscriber';
+import { TournamentSubscriber } from './database/subscribers/tournament.subscriber';
+import { EventsModule } from './events/events.module';
+import { BrawlersModule } from './brawlers/brawlers.module';
+import { EventMapsModule } from './maps/maps.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
-    UsersModule, AdminModule, PaymentsModule, TournamentsModule, 
+    UsersModule, PaymentsModule, TournamentsModule, EventsModule, BrawlersModule, EventMapsModule, 
     TypeOrmModule.forRoot(dataSourceOptions),
     TypeOrmModule.forFeature([User, Settings]),
     ThrottlerModule.forRoot([{
-      ttl: 10000,
-      limit: appConfig.NODE_ENV === NodeEnv.DEV ? undefined : 10,
+      ttl: 60,
+      limit: appConfig.NODE_ENV === NodeEnv.DEV ? undefined : 60,
     }]),
     UploadsModule,
-    GlobalModule,
     // JWT module needed for AuthMiddleware
     JwtModule.register({
       secret: appConfig.JWT_SECRET,
@@ -45,11 +45,12 @@ import { TournamentSubscriber } from './typeorm/subscribers/tournament.subscribe
         port: appConfig.REDIS_PORT,
       }
     }),
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
+    SettingsModule
   ],
   controllers: [AppController],
   providers: [
-    AppService, BrawlStarsApiService, GlobalSettings,
+    AppService, BrawlStarsApiService,
     ImageCleanupSubscriber,
     TournamentSubscriber,
     {

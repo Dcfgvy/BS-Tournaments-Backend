@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { TournamentStatus } from "../enums/tournament-status.enum";
 import { UserResponseDto } from "../../users/dtos/UserResponse.dto";
-import { EventResponseDto } from "../../admin/events/dtos/EventResponse.dto";
-import { EventMapNoEventResponseDto } from "../../admin/maps/dtos/MapNoEventResponse.dto";
+import { EventResponseDto } from "../../events/dtos/EventResponse.dto";
+import { EventMapNoEventResponseDto } from "../../maps/dtos/MapNoEventResponse.dto";
 
 export class TournamentsResponseDto {
   @ApiProperty({ example: 1 })

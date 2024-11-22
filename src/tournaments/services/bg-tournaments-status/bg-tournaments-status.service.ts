@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Tournament } from '../../../typeorm/entities/Tournament.entity';
+import { Tournament } from '../../../database/entities/Tournament.entity';
 import { LessThan, Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { TournamentStatus } from '../../enums/tournament-status.enum';
-import { GlobalSettings } from '../../../services/settings/settings.provider';
+import { SettingsService } from 'src/settings/settings.service';
 import { TournamentsService } from '../tournaments/tournaments.service';
 import { UsersService } from '../../../users/services/users/users.service';
 
@@ -31,7 +31,7 @@ export class BgTournamentsStatusService {
       const recruitment_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.RECRUITMENT,
-          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourRecruitmentMaxTime))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - SettingsService.data.tourRecruitmentMaxTime))
         }
       });
       // cancel tournaments and return funds
@@ -43,33 +43,33 @@ export class BgTournamentsStatusService {
       const waitingForStart_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.WAITING_FOR_START,
-          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourStartAwaitingTime))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - SettingsService.data.tourStartAwaitingTime))
         },
         relations: ['organizer']
       });
       // cancel tournaments, return funds and ban organizer for X time
       for(const tournament of waitingForStart_tournaments){
         await this.tournamentsService.cancelTournament(tournament.id);
-        await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + GlobalSettings.data.organizerBanTime));
+        await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + SettingsService.data.organizerBanTime));
       }
   
       const started_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.STARTED,
-          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourPlayingMaxTime))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - SettingsService.data.tourPlayingMaxTime))
         },
         relations: ['organizer']
       });
       // cancel tournaments, return funds and ban organizer for X time
       for(const tournament of started_tournaments){
         await this.tournamentsService.cancelTournament(tournament.id);
-        await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + GlobalSettings.data.organizerBanTime));
+        await this.usersService.banUser(tournament.organizer.id, new Date(Date.now() + SettingsService.data.organizerBanTime));
       }
   
       const frozen_tournaments = await this.tournamentRepository.find({
         where: {
           status: TournamentStatus.FROZEN,
-          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - GlobalSettings.data.tourFreezeTime))
+          lastStatusUpdate: LessThan<Date>(new Date(Date.now() - SettingsService.data.tourFreezeTime))
         },
         relations: ['wins']
       });

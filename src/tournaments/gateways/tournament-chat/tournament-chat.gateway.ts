@@ -9,7 +9,7 @@ import { WsAuthGuard } from '../../../users/guards/ws-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { TournamentStatus } from '../../enums/tournament-status.enum';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { TourChatMessage } from '../../../typeorm/entities/TourChatMessage.entity';
+import { TourChatMessage } from '../../../database/entities/TourChatMessage.entity';
 import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
