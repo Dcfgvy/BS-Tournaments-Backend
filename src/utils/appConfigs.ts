@@ -25,13 +25,14 @@ const envConfig = cleanEnv(process.env, {
   ADMIN_TAGNAME: str(),
   ADMIN_PASSWORD: str(),
 
-  PAYOUT_COMMISSION: num(),
-  ORGANIZER_FEE: num(),
   TOUR_RECRUITMENT_MAX_TIME: num(),
   TOUR_START_AWAITING_TIME: num(),
   TOUR_PLAYING_MAX_TIME: num(),
   TOUR_FREEZE_TIME: num(),
   ORGANIZER_BAN_TIME: num(),
+  
+  PAYOUT_COMMISSION: num(),
+  ORGANIZER_FEE: num(),
 });
 
 // In next config objects put variables after default config if you want to overwrite default values
