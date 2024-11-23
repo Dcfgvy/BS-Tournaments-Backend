@@ -8,6 +8,8 @@ import { Event } from "../database/entities/Event.entity";
 import { EventMap } from "../database/entities/EventMap.entity";
 import { Brawler } from "../database/entities/Brawler.entity";
 import { TournamentsService } from "../tournaments/services/tournaments/tournaments.service";
+import { TourChatMessage } from "../database/entities/TourChatMessage.entity";
+import { Connection } from "typeorm";
 
 export const authProviders = [
   AuthService,
@@ -43,6 +45,11 @@ export const tournamentsServiceProviders = [
     }
   },
   {
+    provide: getRepositoryToken(TourChatMessage),
+    useValue: {
+    }
+  },
+  {
     provide: getRepositoryToken(Event),
     useValue: {
     }
@@ -57,4 +64,15 @@ export const tournamentsServiceProviders = [
     useValue: {
     }
   },
+  {
+    provide: Connection,
+    useValue: {
+      ...mockDbConnection
+    }
+  },
+  {
+    provide: getQueueToken('brawl-stars-api'),
+    useValue: {
+    }
+  }
 ];
