@@ -1,5 +1,5 @@
 import { appConfig } from '../utils/appConfigs';
-import { DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import * as path from 'path';
 
 export const dataSourceOptions: DataSourceOptions = {
@@ -9,6 +9,10 @@ export const dataSourceOptions: DataSourceOptions = {
   username: appConfig.DB_USER,
   password: appConfig.DB_PASS,
   database: appConfig.DB_NAME,
-  entities: [path.join(__dirname, 'entities', '*.entity.{ts,js}')],
+  entities: [path.join(__dirname, 'entities', '**', '*.entity.{ts,js}')],
+  migrations: [path.join(__dirname, 'migrations', '**', '*.{ts,js}')],
+  migrationsRun: true,
   synchronize: appConfig.isProduction ? false : true,
 };
+
+export const AppDataSource = new DataSource(dataSourceOptions);

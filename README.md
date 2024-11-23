@@ -55,3 +55,9 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+## Migrations
+
+```bash
+# generate a migration
+$ npx ts-node-esm -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate ./src/database/migrations/{MIGRATION_NAME} -d ./src/database/data-source.ts
+```
