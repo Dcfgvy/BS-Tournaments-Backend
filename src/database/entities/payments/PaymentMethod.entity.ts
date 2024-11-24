@@ -7,10 +7,10 @@ export class PaymentMethod extends BaseEntity {
   id: number;
 
   @Column()
-  name: string;
+  names: string;
 
   @Column({ type: 'text' })
-  description: string;
+  descriptions: string;
 
   @Column()
   imgUrl: string;
