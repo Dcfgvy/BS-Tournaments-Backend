@@ -17,4 +17,7 @@ export class PaymentMethod extends BaseEntity {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 }) // 0.15 = 15%
   comission: number;
+
+  @Column({ default: true })
+  isActive: boolean;
 }
