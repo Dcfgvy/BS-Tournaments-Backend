@@ -6,7 +6,10 @@ export class WithdrawalMethod extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column() // name for internal processes, for example "cryptobot", or "paypal"
+  methodName: string;
+
+  @Column() // names in different languages, shown to users, e.g. {"en": "Crypto Bot", "ru": "Крипто-бот"}
   names: string;
 
   @Column({ type: 'text' })
