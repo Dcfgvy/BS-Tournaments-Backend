@@ -51,3 +51,7 @@ export function formatDate(date: Date): string {
 
   return `${day} ${month} ${hours}:${minutes}:${seconds}`;
 }
+
+export type UrlRedirect = {
+  url: string;
+}

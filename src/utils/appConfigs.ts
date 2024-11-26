@@ -8,7 +8,6 @@ const envConfig = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'production', 'ci', 'test'], default: 'development' }),
   LOAD_TEST_DATA: bool({ choices: [true, false], default: false }),
   PORT: port(),
-  BRAWL_STARS_API_URL: url(),
   BRAWL_STARS_API_KEY: str(),
   
   DB_HOST: str(),
@@ -17,7 +16,7 @@ const envConfig = cleanEnv(process.env, {
   DB_PASS: str(),
   DB_NAME: str(),
   REDIS_HOST: str(),
-  REDIS_PORT: num(),
+  REDIS_PORT: port(),
   DB_SEED_USER_PASSWORD: str(),
   DB_SEED_ORGANIZER_TAG: str(),
   DB_SEED_ORGANIZER_PASSWORD: str(),
@@ -30,9 +29,12 @@ const envConfig = cleanEnv(process.env, {
   TOUR_PLAYING_MAX_TIME: num(),
   TOUR_FREEZE_TIME: num(),
   ORGANIZER_BAN_TIME: num(),
-  
+
   PAYOUT_COMMISSION: num(),
   ORGANIZER_FEE: num(),
+  CRYPTO_BOT_TOKEN: str(),
+  CRYPTO_ASSET: str(),
+  COINS_EXCHANGE_RATE: num(),
 });
 
 // In next config objects put variables after default config if you want to overwrite default values
@@ -40,7 +42,6 @@ const envConfig = cleanEnv(process.env, {
 const defaultConfig = {
   LOAD_TEST_DATA: false,
   PORT: 3000,
-  BRAWL_STARS_API_URL: 'https://api.brawlstars.com/v1',
   DB_HOST: 'localhost',
   DB_PORT: 5432,
   REDIS_HOST: 'localhost',
@@ -51,6 +52,7 @@ const defaultConfig = {
   TOUR_PLAYING_MAX_TIME: 0.5,
   TOUR_FREEZE_TIME: 72,
   ORGANIZER_BAN_TIME: 48,
+  COINS_EXCHANGE_RATE: 100,
 };
 
 const devConfig = {

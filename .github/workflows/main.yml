@@ -13,7 +13,6 @@ env:
   NODE_ENV: ci
   LOAD_TEST_DATA: false
   PORT: 3000
-  BRAWL_STARS_API_URL: https://api.brawlstars.com/v1
   BRAWL_STARS_API_KEY: ${{ secrets.BRAWL_STARS_API_KEY }}
   DB_HOST: localhost
   DB_PORT: 5432
@@ -35,6 +34,9 @@ env:
   ORGANIZER_BAN_TIME: 24
   PAYOUT_COMMISSION: 4
   ORGANIZER_FEE: 500
+  CRYPTO_BOT_TOKEN: ""
+  CRYPTO_ASSET: USDT
+  COINS_EXCHANGE_RATE: 100
 
 jobs:
   install-deps:

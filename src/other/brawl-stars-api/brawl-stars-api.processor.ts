@@ -33,7 +33,7 @@ export class BrawlStarsApiService extends WorkerHost {
     try {
       const response = await axios({
         method: 'get',
-        url: `${appConfig.BRAWL_STARS_API_URL}/players/${encodeURIComponent(tag)}/${battlelog ? 'battlelog': ''}`,
+        url: `https://api.brawlstars.com/v1/players/${encodeURIComponent(tag)}/${battlelog ? 'battlelog': ''}`,
         headers: {
           'Authorization': `Bearer ${appConfig.BRAWL_STARS_API_KEY}`
         }

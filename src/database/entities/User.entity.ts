@@ -20,6 +20,9 @@ export class User extends BaseEntity {
   })
   password: string;
 
+  @Column({ nullable: true })
+  telegramId: string;
+
   @Column({ default: 0.00 })
   balance: number;
 
