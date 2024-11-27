@@ -415,6 +415,7 @@ export class TournamentsService {
   ): Promise<void> {
     winners = winners.map((winner) => winner.toUpperCase());
     const queryRunner = this.dbConnection.createQueryRunner();
+    await queryRunner.connect();
 
     const tournament = await queryRunner.manager
       .createQueryBuilder(Tournament, 'tournament')
@@ -494,6 +495,7 @@ export class TournamentsService {
 
   async cancelTournament(id: number) {
     const queryRunner = this.dbConnection.createQueryRunner();
+    await queryRunner.connect();
 
     const tournament = await queryRunner.manager.findOne(Tournament, {
       where: {
@@ -539,6 +541,7 @@ export class TournamentsService {
 
   async endTournament(id: number) {
     const queryRunner = this.dbConnection.createQueryRunner();
+    await queryRunner.connect();
 
     const tournament = await queryRunner.manager.findOne(Tournament, {
       where: {

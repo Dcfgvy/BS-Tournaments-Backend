@@ -6,7 +6,7 @@ export class PaymentMethod extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column() // name for internal processes, for example "cryptobot", or "paypal"
+  @Column() // name for internal processes, for example "crypto-bot", or "paypal"
   methodName: string;
 
   @Column() // names in different languages, shown to users, e.g. {"en": "Crypto Bot", "ru": "Крипто-бот"}
@@ -17,6 +17,12 @@ export class PaymentMethod extends BaseEntity {
 
   @Column()
   imgUrl: string;
+
+  @Column()
+  minAmount: number;
+
+  @Column()
+  maxAmount: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 }) // 0.15 = 15%
   comission: number;

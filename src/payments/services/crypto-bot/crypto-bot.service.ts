@@ -3,6 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import axios from 'axios';
 import { Payment } from 'src/database/entities/payments/Payment.entity';
 import { Withdrawal } from 'src/database/entities/payments/Withdrawal.entity';
+import { CryptoBotWithdrawalDto } from 'src/payments/dtos/CryptoBotWithdrawal.dto';
 import { depositCryptoAmount, withdrawalCryptoAmount } from 'src/payments/functions';
 import { IPaymentService } from 'src/payments/interfaces/payment-service.interface';
 import { appConfig } from 'src/utils/appConfigs';
@@ -60,11 +61,10 @@ export class CryptoBotService implements IPaymentService {
     throw new HttpException('Error creating invoice', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  async withdraw(withdrawal: Withdrawal): Promise<void> {
+  async withdraw(withdrawal: Withdrawal, payload: CryptoBotWithdrawalDto): Promise<void> {
     const user = withdrawal.user;
     if(!user) throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
-    const tgId = Number(user.telegramId);
-    if(!tgId) throw new HttpException('User has no Telegram ID', HttpStatus.FORBIDDEN);
+    const tgId = payload.telegramUserId;
 
     const amountAfterComission = withdrawalCryptoAmount(withdrawal.amount, withdrawal.method.comission);
     if(amountAfterComission < this.minCryptoWithdrawalAmount || amountAfterComission > this.maxCryptoWithdrawalAmount){
@@ -79,7 +79,7 @@ export class CryptoBotService implements IPaymentService {
         'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
       },
       data: {
-        user_id: user.id,
+        user_id: tgId,
         asset: appConfig.CRYPTO_ASSET,
         amount: amountAfterComission,
         spend_id: spendId,
