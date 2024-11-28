@@ -25,6 +25,7 @@ export class CryptoBotService implements IPaymentService {
   public minCryptoWithdrawalAmount: number = 0;
   public maxCryptoWithdrawalAmount: number = Infinity;
   private readonly logger = new Logger(CryptoBotService.name);
+  public readonly cryptoBotUrl: string = appConfig.isProduction ? 'https://pay.crypt.bot' : 'https://testnet-pay.crypt.bot'
   
   constructor(){
     try{
@@ -38,7 +39,7 @@ export class CryptoBotService implements IPaymentService {
     const { id, amount, method } = payment;
     const response = await axios({
       method: 'POST',
-      url: 'https://pay.crypt.bot/api/createInvoice',
+      url: `${this.cryptoBotUrl}/api/createInvoice`,
       headers: {
         'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
       },
@@ -74,7 +75,7 @@ export class CryptoBotService implements IPaymentService {
     const spendId = `${user.id}-${new Date().getTime()}-${uuid()}`;
     const response = await axios({
       method: 'POST',
-      url: 'https://pay.crypt.bot/api/transfer',
+      url: `${this.cryptoBotUrl}/api/transfer`,
       headers: {
         'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
       },
@@ -93,7 +94,7 @@ export class CryptoBotService implements IPaymentService {
   async getCryptoBotExchangeRates(): Promise<ExchangeRate[]> {
     const response = await axios({
       method: 'GET',
-      url: 'https://pay.crypt.bot/api/getExchangeRates',
+      url: `${this.cryptoBotUrl}/api/getExchangeRates`,
       headers: {
         'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
       },

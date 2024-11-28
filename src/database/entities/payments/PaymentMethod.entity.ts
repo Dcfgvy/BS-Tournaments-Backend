@@ -15,7 +15,7 @@ export class PaymentMethod extends BaseEntity {
   @Column({ type: 'text' })
   descriptions: string;
 
-  @Column()
+  @Column({ nullable: true })
   imgUrl: string;
 
   @Column()

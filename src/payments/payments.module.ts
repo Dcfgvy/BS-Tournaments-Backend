@@ -9,12 +9,13 @@ import { Withdrawal } from 'src/database/entities/payments/Withdrawal.entity';
 import { WithdrawalMethod } from 'src/database/entities/payments/WithdrawalMethod.entity';
 import { Payment } from 'src/database/entities/payments/Payment.entity';
 import { PaymentMethod } from 'src/database/entities/payments/PaymentMethod.entity';
+import { WebhooksController } from './controllers/webhooks/webhooks.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Payment, PaymentMethod, Withdrawal, WithdrawalMethod]),
   ],
-  controllers: [PaymentsController, WithdrawalsController],
+  controllers: [PaymentsController, WithdrawalsController, WebhooksController],
   providers: [PaymentsService, WithdrawalsService, CryptoBotService]
 })
 export class PaymentsModule {}

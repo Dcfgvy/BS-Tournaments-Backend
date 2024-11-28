@@ -8,6 +8,7 @@ import { IPaymentService } from 'src/payments/interfaces/payment-service.interfa
 import { User } from 'src/database/entities/User.entity';
 import { WithdrawalStatus } from 'src/payments/enums/withdrawal-status.enum';
 import { validatePayload } from 'src/payments/utils/validate-withdrawal-payload.util';
+import { WithdrawalMethodCreateDto } from 'src/payments/dtos/WithdrawalMethodCreate.dto';
 
 @Injectable()
 export class WithdrawalsService {
@@ -84,5 +85,14 @@ export class WithdrawalsService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async createWithdrawalMethod(data: WithdrawalMethodCreateDto){
+    return this.withdrawalMethodRepository.save({
+      ...data,
+      names: JSON.stringify(data.names),
+      descriptions: JSON.stringify(data.descriptions),
+      comission: parseFloat(data.comission),
+    });
   }
 }
