@@ -87,7 +87,7 @@ export class WithdrawalsService {
     if(data.descriptions)
       payload.descriptions = JSON.stringify(data.descriptions);
     return this.withdrawalMethodRepository.save(payload);
-  }
+  } 
 
   deleteWithdrawalMethod(methodId: number) {
     return this.withdrawalMethodRepository.delete({ id: methodId });
