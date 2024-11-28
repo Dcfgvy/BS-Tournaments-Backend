@@ -3,12 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Withdrawal } from 'src/database/entities/payments/Withdrawal.entity';
 import { WithdrawalMethod } from 'src/database/entities/payments/WithdrawalMethod.entity';
 import { CryptoBotService } from '../crypto-bot/crypto-bot.service';
-import { Connection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { IPaymentService } from 'src/payments/interfaces/payment-service.interface';
 import { User } from 'src/database/entities/User.entity';
 import { WithdrawalStatus } from 'src/payments/enums/withdrawal-status.enum';
-import { validatePayload } from 'src/payments/utils/validate-withdrawal-payload.util';
-import { WithdrawalMethodCreateDto } from 'src/payments/dtos/WithdrawalMethodCreate.dto';
+import { validateWithdrawalPayload } from 'src/payments/utils/validate-payload.util';
+import { CreateWithdrawalMethodDto } from 'src/payments/dtos/CreateWithdrawalMethod.dto';
+import { UpdateWithdrawalMethodDto } from 'src/payments/dtos/UpdateWithdrawalMethod.dto';
 
 @Injectable()
 export class WithdrawalsService {
@@ -20,7 +21,6 @@ export class WithdrawalsService {
     private readonly withdrawalMethodRepository: Repository<WithdrawalMethod>,
     @InjectRepository(Withdrawal)
     private readonly withdrawalRepository: Repository<Withdrawal>,
-    private readonly dbConnection: Connection,
   ) {
     this.services.set('crypto-bot', this.cryptoBotService);
   }
@@ -39,7 +39,7 @@ export class WithdrawalsService {
     const method = await this.withdrawalMethodRepository.findOneBy({ methodName, isActive: true });
     if(!method) throw new HttpException('Withdrawal method not found', HttpStatus.NOT_FOUND);
 
-    await validatePayload(methodName, data);
+    await validateWithdrawalPayload(methodName, data);
 
     // Check the amount
     if(user.balance < data.amount) throw new HttpException('Insufficient funds', HttpStatus.BAD_REQUEST);
@@ -56,43 +56,40 @@ export class WithdrawalsService {
     });
     await this.withdrawalRepository.save(withdrawal);
 
-    const queryRunner = this.dbConnection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try{
-      const paymentService: IPaymentService = this.getPaymentService(methodName);
-      const result = await paymentService.withdraw(withdrawal, data);
-
-      const lockedUser = await queryRunner.manager.findOne(User, {
-        where: { id: user.id },
-        lock: { mode: 'pessimistic_write' },
-      });
-      if(!lockedUser) throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
-
-      lockedUser.balance -= withdrawal.amount;
-      withdrawal.status = WithdrawalStatus.SUCCESS;
-
-      await queryRunner.manager.save(lockedUser);
-      await queryRunner.manager.save(withdrawal);
-      await queryRunner.commitTransaction();
-
-      return result;
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-      await this.withdrawalRepository.save({ ...withdrawal, status: WithdrawalStatus.CANCELLED });
-      throw err;
-    } finally {
-      await queryRunner.release();
-    }
+    const paymentService: IPaymentService = this.getPaymentService(methodName);
+    return paymentService.withdraw(withdrawal, data);
   }
 
-  async createWithdrawalMethod(data: WithdrawalMethodCreateDto){
+  getAllWithdrawalMethods(){
+    return this.withdrawalMethodRepository.find();
+  }
+
+  getActiveWithdrawalMethods(){
+    return this.withdrawalMethodRepository.findBy({ isActive: true });
+  }
+
+  createWithdrawalMethod(data: CreateWithdrawalMethodDto){
     return this.withdrawalMethodRepository.save({
       ...data,
       names: JSON.stringify(data.names),
       descriptions: JSON.stringify(data.descriptions),
       comission: parseFloat(data.comission),
     });
+  }
+
+  updateWithdrawalMethod(methodId: number, data: UpdateWithdrawalMethodDto){
+    let payload: any = {
+      id: methodId,
+      ...data
+    };
+    if(data.names)
+      payload.names = JSON.stringify(data.names);
+    if(data.descriptions)
+      payload.descriptions = JSON.stringify(data.descriptions);
+    return this.withdrawalMethodRepository.save(payload);
+  }
+
+  deleteWithdrawalMethod(methodId: number) {
+    return this.withdrawalMethodRepository.delete({ id: methodId });
   }
 }

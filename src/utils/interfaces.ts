@@ -1,5 +1,4 @@
 export interface ISettings {
-  payoutCommission: number;
   organizerFee: number;
   // time is stored in milliseconds
   tourRecruitmentMaxTime: number;

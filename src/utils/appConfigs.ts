@@ -30,7 +30,6 @@ const envConfig = cleanEnv(process.env, {
   TOUR_FREEZE_TIME: num(),
   ORGANIZER_BAN_TIME: num(),
 
-  PAYOUT_COMMISSION: num(),
   ORGANIZER_FEE: num(),
   CRYPTO_BOT_TOKEN: str(),
   CRYPTO_ASSET: str(),

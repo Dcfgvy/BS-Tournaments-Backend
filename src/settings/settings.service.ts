@@ -24,7 +24,6 @@ export class SettingsService implements OnModuleInit {
     const settingsFromDB = await this.settingsRepository.find();
     const hour: number = 1000 * 60 * 60;
     let settings: ISettings = {
-      payoutCommission: appConfig.PAYOUT_COMMISSION,
       organizerFee: appConfig.ORGANIZER_FEE,
       tourRecruitmentMaxTime: hour * appConfig.TOUR_RECRUITMENT_MAX_TIME,
       tourStartAwaitingTime: hour * appConfig.TOUR_START_AWAITING_TIME,
