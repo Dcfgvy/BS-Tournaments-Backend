@@ -6,6 +6,7 @@ import { Event } from "./Event.entity";
 import { Brawler } from "./Brawler.entity";
 import { Win } from "./Win.entity";
 import { TourChatMessage } from "./TourChatMessage.entity";
+import { TournamentStatus } from "src/tournaments/enums/tournament-status.enum";
 
 @Entity({ name: 'tournaments' })
 export class Tournament extends BaseEntity {
@@ -22,10 +23,13 @@ export class Tournament extends BaseEntity {
   prizes: Array<number>;
 
   @Column()
-  status: number;
+  status: TournamentStatus;
 
   @Column({ nullable: true })
   inviteLink: string;
+
+  @Column()
+  feeToPay: number;
 
   @CreateDateColumn({ type: 'timestamptz' })
   lastStatusUpdate: Date;

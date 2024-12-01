@@ -14,6 +14,8 @@ import { Win } from '../../../database/entities/Win.entity';
 import { TourChatMessage } from '../../../database/entities/TourChatMessage.entity';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { formatDate } from '../../../utils/other';
+import { appConfig } from 'src/utils/appConfigs';
+import { SettingsService } from 'src/settings/settings.service';
 
 @Injectable()
 export class TournamentsService {
@@ -273,13 +275,13 @@ export class TournamentsService {
     prizes.sort((a, b) => b - a);
 
     // check if sum of all prized does not exceed
-    //       entryCost * (playersNumber - 1 (one player is the organizer, so he/she doesn't count))
+    //       entryCost * (playersNumber - 1 (one player is the organizer, so he/she doesn't count)) - fee
     if (
-      prizes.reduce((prev, curr) => prev + curr) >
+      (prizes.reduce((prev, curr) => prev + curr) + SettingsService.data.tourCreationFee) >
       entryCost * (playersNumber - 1)
     )
       throw new HttpException(
-        "Sum of all prizes cannot be more than all entries' costs",
+        "Sum of all prizes + tournament fee cannot be more than all entries' costs",
         HttpStatus.BAD_REQUEST,
       );
 
@@ -307,6 +309,7 @@ export class TournamentsService {
       playersNumber,
       prizes,
       status: TournamentStatus.RECRUITMENT,
+      feeToPay: SettingsService.data.tourCreationFee,
       organizer,
       event,
       eventMap,
@@ -548,7 +551,7 @@ export class TournamentsService {
         id,
         status: TournamentStatus.FROZEN,
       },
-      relations: ['wins'],
+      relations: ['wins', 'organizer'],
     });
     if (!tournament) {
       await queryRunner.release();
@@ -559,12 +562,17 @@ export class TournamentsService {
 
     try {
       tournament.status = TournamentStatus.ENDED;
+      let prizes_sum = 0;
       for (let i = 0; i < tournament.wins.length; i++) {
         const win = tournament.wins[i];
         const winner = tournament.wins[i].user;
-        winner.balance += tournament.prizes[win.place - 1] || 0;
+        const prize = tournament.prizes[win.place - 1] || 0;
+        winner.balance += prize;
+        prizes_sum += prize;
         await queryRunner.manager.save(winner);
       }
+      tournament.organizer.balance += tournament.entryCost * (tournament.playersNumber - 1) - prizes_sum - tournament.feeToPay;
+      await queryRunner.manager.save(tournament.organizer);
       await queryRunner.manager.save(tournament);
       await queryRunner.commitTransaction();
       return;

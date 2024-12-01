@@ -30,6 +30,7 @@ export class SettingsService implements OnModuleInit {
       tourPlayingMaxTime: hour * appConfig.TOUR_PLAYING_MAX_TIME,
       tourFreezeTime: hour * appConfig.TOUR_FREEZE_TIME,
       organizerBanTime:  hour * appConfig.ORGANIZER_BAN_TIME,
+      tourCreationFee: appConfig.TOUR_CREATION_FEE,
     };
     // replacing default values from env with data from DB
     for(let i = 0; i < settingsFromDB.length; i++){
