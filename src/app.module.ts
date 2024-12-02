@@ -24,12 +24,14 @@ import { EventsModule } from './events/events.module';
 import { BrawlersModule } from './brawlers/brawlers.module';
 import { EventMapsModule } from './maps/maps.module';
 import { SettingsModule } from './settings/settings.module';
+import { TelegramBotService } from './other/telegram-bot/telegram-bot.service';
+import { TelegramConnectionLink } from './database/entities/TelegramConnectionLink.entity';
 
 @Module({
   imports: [
     UsersModule, PaymentsModule, TournamentsModule, EventsModule, BrawlersModule, EventMapsModule, 
     TypeOrmModule.forRoot(dataSourceOptions),
-    TypeOrmModule.forFeature([User, Settings]),
+    TypeOrmModule.forFeature([User, Settings, TelegramConnectionLink]),
     ThrottlerModule.forRoot([{
       ttl: 60,
       limit: appConfig.NODE_ENV === NodeEnv.DEV ? undefined : 60,
@@ -56,7 +58,8 @@ import { SettingsModule } from './settings/settings.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    },
+    TelegramBotService
   ],
 })
 export class AppModule implements NestModule {

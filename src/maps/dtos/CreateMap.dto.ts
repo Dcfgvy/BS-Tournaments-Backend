@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, ValidateNested, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEventMapDto {

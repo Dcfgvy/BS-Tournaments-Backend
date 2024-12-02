@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 
 export class EventMapNoEventResponseDto {
   @ApiProperty({ example: 1 })

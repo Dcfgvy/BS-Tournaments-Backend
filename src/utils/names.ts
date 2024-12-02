@@ -9,3 +9,8 @@ export class NamesDto {
   @IsNotEmpty()
   ru: string;
 }
+
+export interface INames {
+  en: string;
+  ru: string;
+}

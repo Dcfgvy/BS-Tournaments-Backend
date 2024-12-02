@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 import { EventResponseDto } from '../../events/dtos/EventResponse.dto';
 
 export class EventMapResponseDto {

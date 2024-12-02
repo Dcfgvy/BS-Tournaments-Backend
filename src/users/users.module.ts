@@ -11,6 +11,8 @@ import { User } from '../database/entities/User.entity';
 import { UsersService } from './services/users/users.service';
 import { BgUnbanService } from './services/bg-unban/bg-unban.service';
 import { BullModule } from '@nestjs/bullmq';
+import { BgExpiredTgLinksDeletionService } from './services/bg-expired-tg-links-deletion/bg-expired-tg-links-deletion.service';
+import { TelegramConnectionLink } from 'src/database/entities/TelegramConnectionLink.entity';
 
 @Global()
 @Module({
@@ -23,11 +25,12 @@ import { BullModule } from '@nestjs/bullmq';
     },
     AdminCreationService,
     UsersService,
-    BgUnbanService
+    BgUnbanService,
+    BgExpiredTgLinksDeletionService
   ],
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, TelegramConnectionLink]),
     JwtModule.register({
       secret: appConfig.JWT_SECRET,
       signOptions: { expiresIn: '1h' }

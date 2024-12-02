@@ -94,7 +94,6 @@ export class AuthService {
     if(tgData && (validateTgUserPayload(tgData) === false))
       throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
 
-
     const user: User = await this.userRepository.findOneBy({ telegramId: tgData.user.id });
     if(user){
       return this.createTokens(user);
