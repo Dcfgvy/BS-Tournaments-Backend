@@ -4,6 +4,6 @@ import { IsNotEmpty, IsUrl } from "class-validator";
 export class StartTournamentDto {
   @IsNotEmpty()
   @IsUrl()
-  @ApiProperty({ example: 'https://brawlstars.com/invite' })
-  inviteLink: string;
+  @ApiProperty({ example: 'inviteCode' })
+  inviteCode: string;
 }

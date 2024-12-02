@@ -139,9 +139,9 @@ export class BrawlStarsApiService extends WorkerHost {
                 foundBotsTags.indexOf(teamPlayer.tag) === -1
               ){
                 foundBotsTags.push(teamPlayer.tag);
-                return true;
+                return true; // local return
               }
-              return false;
+              return false; // local return
             })
             if(!bot){
               // global return

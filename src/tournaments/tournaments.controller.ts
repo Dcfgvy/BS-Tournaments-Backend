@@ -139,7 +139,7 @@ export class TournamentsController {
   @ApiBearerAuth()
   @ApiNoContentResponse()
   updateTournamentLink(@GetUser() user: User, @Body() data: StartTournamentDto, @Param('id', ParseIntPipe) id: number){
-    return this.tournamentsService.updateTournamentLink(user.id, id, data.inviteLink);
+    return this.tournamentsService.updateTournamentLink(user.id, id, data.inviteCode);
   }
 
   @Post('/finish/:id')

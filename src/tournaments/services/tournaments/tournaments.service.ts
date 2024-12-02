@@ -386,7 +386,7 @@ export class TournamentsService {
   async updateTournamentLink(
     userId: number,
     tournamentId: number,
-    inviteLink: string,
+    inviteCode: string,
   ) {
     const tournament = await this.tournamentRepository.findOne({
       where: {
@@ -404,7 +404,7 @@ export class TournamentsService {
     if (!tournament)
       throw new HttpException('Tournament not found', HttpStatus.NOT_FOUND);
 
-    tournament.inviteLink = inviteLink;
+    tournament.inviteCode = inviteCode;
     if (tournament.status === TournamentStatus.WAITING_FOR_START)
       tournament.status = TournamentStatus.STARTED;
 

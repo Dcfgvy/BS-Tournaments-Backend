@@ -26,7 +26,7 @@ export class Tournament extends BaseEntity {
   status: TournamentStatus;
 
   @Column({ nullable: true })
-  inviteLink: string;
+  inviteCode: string;
 
   @Column()
   feeToPay: number;
