@@ -20,8 +20,8 @@ export class User extends BaseEntity {
   })
   password: string;
 
-  @Column({ nullable: true })
-  telegramId: string;
+  @Column({ type: 'bigint', unique: true, nullable: true })
+  telegramId: number;
 
   @Column({ default: 0.00 })
   balance: number;

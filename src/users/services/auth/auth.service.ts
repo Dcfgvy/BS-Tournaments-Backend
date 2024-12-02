@@ -11,6 +11,8 @@ import { comparePasswords, hashPassword } from '../../../utils/bcrypt';
 import { RefreshTokenDto } from '../../dtos/RefreshToken.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue, QueueEvents } from 'bullmq';
+import { validateTgUserPayload } from 'src/utils/other';
+import { TgLoginFormDto } from 'src/users/dtos/TgLoginForm.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +28,10 @@ export class AuthService {
       tag: userTag
     });
     if(!user){
+      const tgData = registerFormDto.telegramData;
+      if(tgData && (validateTgUserPayload(tgData) === false))
+        throw new HttpException('Invalid Telegram data', HttpStatus.BAD_REQUEST);
+
       const queueEvents = new QueueEvents('brawl-stars-api');
       const confirmationJob = await this.brawlStarsApiQueue.add('confirm-account-by-tag', {
         tag: userTag,
@@ -38,6 +44,7 @@ export class AuthService {
           tag: userTag,
           name: confirmedUserName,
           password: hashPassword(registerFormDto.password),
+          telegramId: tgData ? tgData.user.id : null,
           language: registerFormDto.language,
           ip: ip,
         });
@@ -80,6 +87,20 @@ export class AuthService {
   async login(loginFromDto: LoginFormDto){
     const user: User = await this.validateUser(loginFromDto.tag, loginFromDto.password);
     return this.createTokens(user);
+  }
+
+  async loginViaTelegram(loginFormDto: TgLoginFormDto){
+    const tgData = loginFormDto.telegramData;
+    if(tgData && (validateTgUserPayload(tgData) === false))
+      throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
+
+
+    const user: User = await this.userRepository.findOneBy({ telegramId: tgData.user.id });
+    if(user){
+      return this.createTokens(user);
+    } else {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
   }
 
   async updateToken(refreshTokenDto: RefreshTokenDto){

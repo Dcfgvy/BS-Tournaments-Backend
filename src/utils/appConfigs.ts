@@ -33,6 +33,7 @@ const envConfig = cleanEnv(process.env, {
 
   ORGANIZER_FEE: num(),
   CRYPTO_BOT_TOKEN: str(),
+  TELEGRAM_BOT_TOKEN: str(),
   CRYPTO_ASSET: str(),
   COINS_EXCHANGE_RATE: num(),
 });

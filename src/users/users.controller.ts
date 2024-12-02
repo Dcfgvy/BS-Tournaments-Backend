@@ -17,6 +17,7 @@ import { PaginationParams } from '../other/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { BanUserDto } from './dtos/BanUser.dto';
 import { TagUpperCasePipe } from './pipes/tag-uppercase.pipe';
+import { TgLoginFormDto } from './dtos/TgLoginForm.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -42,6 +43,13 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid credentials' })
   login(@Body() loginFormDto: LoginFormDto){
     return this.authService.login(loginFormDto);
+  }
+
+  @Post('/login/telegram')
+  @ApiResponse({ status: HttpStatus.CREATED, type: TokenResponseDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid credentials' })
+  loginViaTelegram(@Body() loginFormDto: TgLoginFormDto){
+    return this.authService.loginViaTelegram(loginFormDto);
   }
 
   @Post('/refresh')
