@@ -28,9 +28,12 @@ const texts: Texts = {
 };
 
 export function _(name: string, language: string, parameters?: Record<string, string>): string {
-  const template: string = texts[name][language] || texts[name]["en"];
-  if(parameters){
-    return template.replace(/{{(.*?)}}/g, (fullStr, key: string) => parameters[key.trim()] || '');
+  if(texts[name]){
+    const template: string = texts[name][language] || texts[name]["en"];
+    if(parameters){
+      return template.replace(/{{(.*?)}}/g, (fullStr, key: string) => parameters[key.trim()] || '');
+    }
+    return template;
   }
-  return template;
+  else return name;
 }
