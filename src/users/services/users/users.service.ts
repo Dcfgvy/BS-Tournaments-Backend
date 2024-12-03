@@ -11,7 +11,7 @@ import { SettingsService } from 'src/settings/settings.service';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
   ) {}
 
   fetchAllUsers(

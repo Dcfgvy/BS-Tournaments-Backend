@@ -17,6 +17,10 @@ const texts: Texts = {
     en: "The link is invalid or expired. Please try again",
     ru: "Ссылка недействительна. Пожалуйста, получите новую ссылку"
   },
+  "This Telegram account has been unlinked. You can now log in only using your tag and password.": {
+    en: "❗️ This Telegram account has been unlinked. You can now log in only using your tag and password.",
+    ru: "❗️ Этот Telegram аккаунт был отвязан от вашей учетной записи. Теперь вы можете войти только через тег и пароль."
+  },
 };
 
 export function _(name: string, language: string, parameters?: Record<string, string>): string {

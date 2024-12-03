@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Ip, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Ip, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { RegisterFormDto } from './dtos/RegisterForm.dto';
 import { AuthService } from './services/auth/auth.service';
 import { UserInterceptor } from './interceptors/user.interceptor';
@@ -18,6 +18,7 @@ import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { BanUserDto } from './dtos/BanUser.dto';
 import { TagUpperCasePipe } from './pipes/tag-uppercase.pipe';
 import { TgLoginFormDto } from './dtos/TgLoginForm.dto';
+import { TgConnectionLinkResponseDto } from './dtos/TgConnectionLinkResponse.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -67,6 +68,23 @@ export class UsersController {
   getUserInfo(@GetUser() user: User){
     if(!user) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     return user;
+  }
+
+  @Post('/telegram/connect')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.CREATED, type: TgConnectionLinkResponseDto })
+  async connectTelegramAccount(@GetUser() user: User){
+    const link = await this.authService.generateTelegramAccountConnectionLink(user);
+    return { link };
+  }
+
+  @Delete('/telegram/unlink')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  unlinkTelegramAccount(@GetUser() user: User){
+    return this.authService.unlinkTelegramAccount(user);
   }
 
   @Get('/all')

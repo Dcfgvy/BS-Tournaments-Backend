@@ -24,8 +24,8 @@ import { EventsModule } from './events/events.module';
 import { BrawlersModule } from './brawlers/brawlers.module';
 import { EventMapsModule } from './maps/maps.module';
 import { SettingsModule } from './settings/settings.module';
-import { TelegramBotService } from './other/telegram-bot/telegram-bot.service';
 import { TelegramConnectionLink } from './database/entities/TelegramConnectionLink.entity';
+import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
 
 @Module({
   imports: [
@@ -48,7 +48,8 @@ import { TelegramConnectionLink } from './database/entities/TelegramConnectionLi
       }
     }),
     ScheduleModule.forRoot(),
-    SettingsModule
+    SettingsModule,
+    TelegramBotModule
   ],
   controllers: [AppController],
   providers: [
@@ -59,7 +60,6 @@ import { TelegramConnectionLink } from './database/entities/TelegramConnectionLi
       provide: APP_GUARD,
       useClass: ThrottlerGuard
     },
-    TelegramBotService
   ],
 })
 export class AppModule implements NestModule {

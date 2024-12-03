@@ -13,6 +13,7 @@ import { BgUnbanService } from './services/bg-unban/bg-unban.service';
 import { BullModule } from '@nestjs/bullmq';
 import { BgExpiredTgLinksDeletionService } from './services/bg-expired-tg-links-deletion/bg-expired-tg-links-deletion.service';
 import { TelegramConnectionLink } from 'src/database/entities/TelegramConnectionLink.entity';
+import { TelegramBotModule } from 'src/telegram-bot/telegram-bot.module';
 
 @Global()
 @Module({
@@ -26,7 +27,7 @@ import { TelegramConnectionLink } from 'src/database/entities/TelegramConnection
     AdminCreationService,
     UsersService,
     BgUnbanService,
-    BgExpiredTgLinksDeletionService
+    BgExpiredTgLinksDeletionService,
   ],
   imports: [
     UsersModule,
@@ -37,7 +38,8 @@ import { TelegramConnectionLink } from 'src/database/entities/TelegramConnection
     }),
     BullModule.registerQueue({
       name: 'brawl-stars-api'
-    })
+    }),
+    TelegramBotModule,
   ],
   exports: [AuthService, UsersService]
 })
