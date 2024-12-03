@@ -6,7 +6,6 @@ import { User } from 'src/database/entities/User.entity';
 import { appConfig } from 'src/utils/appConfigs';
 import { Repository } from 'typeorm';
 import { _ } from 'src/utils/translator';
-import axios from 'axios';
 
 @Injectable()
 export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
@@ -37,6 +36,13 @@ export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
       if(!link){
         return ctx.reply(_(
           "The link is invalid or expired. Please try again",
+          ctx.from.language_code,
+        ));
+      }
+      const usersWithThisTgId = await this.userRepository.findBy({ telegramId: ctx.from.id });
+      if(usersWithThisTgId.length > 0){
+        return ctx.reply(_(
+          "This Telegram account is already in use by another account",
           ctx.from.language_code,
         ));
       }

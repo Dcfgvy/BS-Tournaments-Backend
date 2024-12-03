@@ -16,6 +16,7 @@ import { TgLoginFormDto } from 'src/users/dtos/TgLoginForm.dto';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { _ } from 'src/utils/translator';
 import { TelegramConnectionLink } from 'src/database/entities/TelegramConnectionLink.entity';
+import { ChangePasswordDto } from 'src/users/dtos/ChangePassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -118,6 +119,15 @@ export class AuthService {
 
     const user: User = await this.userRepository.findOneBy({ id: payload.id });
     return this.createTokens(user);
+  }
+
+  async changePassword(user: User, data: ChangePasswordDto): Promise<void> {
+    if(comparePasswords(data.oldPassword, user.password)){
+      user.password = hashPassword(data.newPassword);
+      await this.userRepository.save(user);
+    } else {
+      throw new HttpException('Invalid old password', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async processUserIpAddress(req: any, user: User): Promise<void> {

@@ -10,12 +10,16 @@ const texts: Texts = {
     ru: "✅ Ваш аккаунт Telegram был успешно привязан!"
   },
   "Hi, username, you didn't provide the verification data": {
-    en: "Hi, {{ username }}, you didn't provide the verification data",
-    ru: "Привет, {{ username }}, не было получено данных для привязки аккаунта"
+    en: "👋 Hi, {{ username }}, you didn't provide the verification data",
+    ru: "👋 Привет, {{ username }}, не было получено данных для привязки аккаунта"
   },
   "The link is invalid or expired. Please try again": {
-    en: "The link is invalid or expired. Please try again",
-    ru: "Ссылка недействительна. Пожалуйста, получите новую ссылку"
+    en: "❌ The link is invalid or expired. Please try again",
+    ru: "❌ Ссылка недействительна. Пожалуйста, получите новую ссылку"
+  },
+  "This Telegram account is already in use by another account": {
+    en: "❌ This Telegram account is already in use by another account",
+    ru: "❌ Этот аккаунт Telegram уже привязан к другому аккаунту"
   },
   "This Telegram account has been unlinked. You can now log in only using your tag and password.": {
     en: "❗️ This Telegram account has been unlinked. You can now log in only using your tag and password.",

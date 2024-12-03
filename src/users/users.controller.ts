@@ -19,6 +19,7 @@ import { BanUserDto } from './dtos/BanUser.dto';
 import { TagUpperCasePipe } from './pipes/tag-uppercase.pipe';
 import { TgLoginFormDto } from './dtos/TgLoginForm.dto';
 import { TgConnectionLinkResponseDto } from './dtos/TgConnectionLinkResponse.dto';
+import { ChangePasswordDto } from './dtos/ChangePassword.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -51,6 +52,15 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid credentials' })
   loginViaTelegram(@Body() loginFormDto: TgLoginFormDto){
     return this.authService.loginViaTelegram(loginFormDto);
+  }
+
+  @Put('/change-password')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST })
+  changePassword(@GetUser() user: User, @Body() changePasswordDto: ChangePasswordDto){
+    return this.authService.changePassword(user, changePasswordDto);
   }
 
   @Post('/refresh')
