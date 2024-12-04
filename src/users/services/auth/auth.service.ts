@@ -81,7 +81,7 @@ export class AuthService {
       const refreshPayload = { id: user.id, uuid: uuidv4() };
       return {
         tokenType: 'Bearer',
-        accessToken: this.jwtService.sign(accessPayload, { expiresIn: 3600 }),
+        accessToken: this.jwtService.sign(accessPayload, { expiresIn: '1h' }),
         expiresIn: 3600,
         refreshToken: this.jwtService.sign(refreshPayload, { expiresIn: '30d' }),
       };

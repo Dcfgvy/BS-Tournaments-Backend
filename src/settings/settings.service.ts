@@ -78,6 +78,10 @@ export class SettingsService implements OnModuleInit {
     await this.updateSettings();
   }
 
+  async getChannelsToPost(): Promise<ChannelToPost[]> {
+    return this.channelToPostRepository.find();
+  }
+
   async addChannelToPost(data: AddChannelToPostDto): Promise<void> {
     const channel = this.channelToPostRepository.create(data);
     await this.channelToPostRepository.save(channel);

@@ -25,9 +25,30 @@ const texts: Texts = {
     en: "❗️ This Telegram account has been unlinked. You can now log in only using your tag and password.",
     ru: "❗️ Этот Telegram аккаунт был отвязан от вашей учетной записи. Теперь вы можете войти только через тег и пароль."
   },
+  "Tournament post": {
+    en: `<b>🏆 Tournament - {{ eventName }} 🏆</b>
+
+🗺 Map - <b>{{ mapName }}</b> 🗺
+
+➕ ENTRY FEE: <b>{{entryCost}}💰</b>
+
+👥 PLAYERS: <b>{{ playersNumber }}</b>
+    
+💸 Prize fund: 💸`,
+    // start ru
+    ru: `<b>🏆 Турнир - {{ eventName }} 🏆</b>
+
+🗺 Карта - <b>{{ mapName }}</b> 🗺
+
+➕ ВХОД: <b>{{entryCost}}💰</b>
+
+👥 ИГРОКОВ: <b>{{ playersNumber }}</b>
+
+💸 Призовой фонд: 💸`,
+  },
 };
 
-export function _(name: string, language: string, parameters?: Record<string, string>): string {
+export function _(name: string, language: string, parameters?: Record<string, any>): string {
   if(texts[name]){
     const template: string = texts[name][language] || texts[name]["en"];
     if(parameters){
@@ -36,4 +57,38 @@ export function _(name: string, language: string, parameters?: Record<string, st
     return template;
   }
   else return name;
+}
+
+export function translatePlace(place: number, language: string, parameters?: Record<string, any>): string {
+  const places: Texts = {
+    "1": {
+      en: "🥇 PLACE: <b>{{prize}}</b>💰",
+      ru: "🥇 МЕСТО: <b>{{prize}}</b>💰"
+    },
+    "2": {
+      en: "🥈 PLACE: <b>{{prize}}</b>💰",
+      ru: "🥈 МЕСТО: <b>{{prize}}</b>💰"
+    },
+    "3": {
+      en: "🥉 PLACE: <b>{{prize}}</b>💰",
+      ru: "🥉 МЕСТО: <b>{{prize}}</b>💰"
+    },
+    "other": {
+      en: "  <b>{{ place }}-th</b> PLACE: <b>{{prize}}</b>💰",
+      ru: "  <b>{{ place }}-ое</b> МЕСТО: <b>{{prize}}</b>💰"
+    }
+  };
+
+  let template: string;
+  if(places[String(place)] && places[String(place)][language]){
+    template = places[String(place)][language];
+  }
+  else if(places["other"][language]){
+    template = places["other"][language];
+  }
+  else{
+    template = places["other"]["en"];
+  }
+  parameters["place"] = place;
+  return template.replace(/{{(.*?)}}/g, (fullStr, key: string) => parameters[key.trim()] || '');
 }

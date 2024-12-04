@@ -8,6 +8,7 @@ import { ChannelToPost } from 'src/database/entities/ChannelToPost.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Settings, ChannelToPost])],
   providers: [SettingsService],
-  controllers: [SettingsController]
+  controllers: [SettingsController],
+  exports: [SettingsService]
 })
 export class SettingsModule {}

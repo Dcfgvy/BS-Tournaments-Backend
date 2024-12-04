@@ -14,8 +14,9 @@ import { Win } from '../../../database/entities/Win.entity';
 import { TourChatMessage } from '../../../database/entities/TourChatMessage.entity';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { formatDate } from '../../../utils/other';
-import { appConfig } from 'src/utils/appConfigs';
 import { SettingsService } from 'src/settings/settings.service';
+import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { _, translatePlace } from 'src/utils/translator';
 
 @Injectable()
 export class TournamentsService {
@@ -33,6 +34,8 @@ export class TournamentsService {
     private readonly dbConnection: Connection,
     @InjectQueue('brawl-stars-api')
     private readonly brawlStarsApiQueue: Queue,
+    private readonly telegramBotService: TelegramBotService,
+    private readonly settingsService: SettingsService,
   ) {}
 
   async fetchActiveTournaments(
@@ -316,7 +319,24 @@ export class TournamentsService {
       bannedBrawlers,
       contestants: [organizer],
     });
-    return this.tournamentRepository.save(newTournament);
+    await this.tournamentRepository.save(newTournament);
+    await this.publishTournamentPost(newTournament);
+  }
+
+  async publishTournamentPost(tournament: Tournament): Promise<void> {
+    const channels = await this.settingsService.getChannelsToPost();
+    for (const channel of channels) {
+      const lang = channel.language;
+      let caption = _('Tournament post', lang, {
+        eventName: JSON.parse(tournament.event.names)[lang],
+        mapName: JSON.parse(tournament.eventMap.names)[lang],
+        entryCost: tournament.entryCost,
+        playersNumber: tournament.playersNumber,
+      });
+      const tab = '     ';
+      caption += `\n\n${tab}` + tournament.prizes.map((prize, index) => translatePlace(index + 1, lang, { prize })).join(`\n${tab}`);
+      await this.telegramBotService.sendMessage('@' + channel.username, caption);
+    }
   }
 
   async signUpForTournament(userId: number, tournamentId: number) {

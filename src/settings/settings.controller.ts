@@ -4,6 +4,7 @@ import { AdminGuard } from '../users/guards/admin.guard';
 import { ChangeAdminSettingDto } from './dtos/ChangeAdminSetting.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AddChannelToPostDto } from './dtos/AddChannel.dto';
+import { EditChannelToPostDto } from './dtos/EditChannel.dto';
 
 @Controller('settings')
 @ApiTags('Settings')
@@ -31,6 +32,13 @@ export class SettingsController {
     return this.settingsService.updateAdminSetting(data.key, data.value);
   }
 
+  @Get('/channels')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  getChannels() {
+    return this.settingsService.getChannelsToPost();
+  }
+
   @Post('/channels')
   @UseGuards(AdminGuard)
   @ApiBearerAuth()
@@ -41,7 +49,7 @@ export class SettingsController {
   @Put('/channels/:channelName')
   @UseGuards(AdminGuard)
   @ApiBearerAuth()
-  editChannelToPost(@Body() data: AddChannelToPostDto, @Param('channelName') channelName: string) {
+  editChannelToPost(@Body() data: EditChannelToPostDto, @Param('channelName') channelName: string) {
     return this.settingsService.editChannelToPost(channelName, data);
   }
 

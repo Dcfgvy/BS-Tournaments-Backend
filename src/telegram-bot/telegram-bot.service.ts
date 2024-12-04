@@ -82,7 +82,9 @@ export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  async sendMessage(chatId: number, message: string): Promise<void> {
-    await this.bot.telegram.sendMessage(chatId, message);
+  async sendMessage(chatId: number | string, message: string): Promise<void> {
+    await this.bot.telegram.sendMessage(chatId, message, {
+      parse_mode: 'HTML',
+    });
   }
 }
