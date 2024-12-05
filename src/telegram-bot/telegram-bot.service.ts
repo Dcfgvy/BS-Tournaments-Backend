@@ -1,11 +1,12 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Telegraf } from 'telegraf';
+import { Input, Telegraf } from 'telegraf';
 import { TelegramConnectionLink } from 'src/database/entities/TelegramConnectionLink.entity';
 import { User } from 'src/database/entities/User.entity';
 import { appConfig } from 'src/utils/appConfigs';
 import { Repository } from 'typeorm';
 import { _ } from 'src/utils/translator';
+import { InputFile } from 'telegraf/typings/core/types/typegram';
 
 @Injectable()
 export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
@@ -84,6 +85,19 @@ export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
 
   async sendMessage(chatId: number | string, message: string): Promise<void> {
     await this.bot.telegram.sendMessage(chatId, message, {
+      parse_mode: 'HTML',
+    });
+  }
+
+  async sendPhoto(chatId: number | string, photo: string | Buffer, message?: string): Promise<void> {
+    let finalPhoto: InputFile | string;
+    if(typeof photo === 'object'){
+      finalPhoto = Input.fromBuffer(photo as Buffer);
+    } else {
+      finalPhoto = photo;
+    }
+    await this.bot.telegram.sendPhoto(chatId, finalPhoto, {
+      caption: message || undefined,
       parse_mode: 'HTML',
     });
   }

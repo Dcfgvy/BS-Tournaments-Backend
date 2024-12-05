@@ -20,6 +20,11 @@ export class UpdateEventMapDto {
 
   @IsString()
   @IsOptional()
+  @ApiProperty({ example: '/uploads/images/post-image.png' })
+  postImgUrl?: string;
+
+  @IsString()
+  @IsOptional()
   @ApiProperty({ example: 'EveMapnt' })
   apiName?: string;
 

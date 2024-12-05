@@ -17,6 +17,8 @@ import { formatDate } from '../../../utils/other';
 import { SettingsService } from 'src/settings/settings.service';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { _, translatePlace } from 'src/utils/translator';
+import { appConfig } from 'src/utils/appConfigs';
+import axios from 'axios';
 
 @Injectable()
 export class TournamentsService {
@@ -335,7 +337,19 @@ export class TournamentsService {
       });
       const tab = '     ';
       caption += `\n\n${tab}` + tournament.prizes.map((prize, index) => translatePlace(index + 1, lang, { prize })).join(`\n${tab}`);
-      await this.telegramBotService.sendMessage('@' + channel.username, caption);
+      
+      if(tournament.eventMap.postImgUrl){
+        const imageUrl = tournament.eventMap.postImgUrl;
+        const fullImageUrl = imageUrl.startsWith('http') ? imageUrl
+          : `${appConfig.isDevelopment ? ('http://localhost:' + appConfig.PORT) : appConfig.APP_HOST_URL}/${imageUrl}`;
+        
+        // fetching the image by the URL
+        const response = await axios.get(fullImageUrl);
+        const buffer = Buffer.from(response.data, 'base64');
+        await this.telegramBotService.sendPhoto('@' + channel.username, buffer, caption);
+      } else {
+        await this.telegramBotService.sendMessage('@' + channel.username, caption);
+      }
     }
   }
 

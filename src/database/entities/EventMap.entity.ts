@@ -13,6 +13,9 @@ export class EventMap extends BaseEntity {
   @Column()
   imgUrl: string;
 
+  @Column({ nullable: true })
+  postImgUrl: string; // image that will be attached to a post in the Telegram channels when a tournament on this map is created
+
   @Column()
   apiName: string;
 

@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { NamesDto } from '../../utils/names';
-import { IsBoolean, IsNumber } from 'class-validator';
 
 export class EventResponseDto {
   @ApiProperty({ example: 1 })

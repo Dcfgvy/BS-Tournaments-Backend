@@ -7,6 +7,7 @@ dotenv.config();
 const envConfig = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'production', 'ci', 'test'], default: 'development' }),
   LOAD_TEST_DATA: bool({ choices: [true, false], default: false }),
+  APP_HOST_URL: url(),
   PORT: port(),
   BRAWL_STARS_API_KEY: str(),
   
