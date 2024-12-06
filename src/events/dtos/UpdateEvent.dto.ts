@@ -15,7 +15,7 @@ export class UpdateEventDto {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ example: '/uploads/images/event.png' })
+  @ApiProperty({ example: 'uploads/images/event.png' })
   imgUrl?: string;
 
   @IsString()

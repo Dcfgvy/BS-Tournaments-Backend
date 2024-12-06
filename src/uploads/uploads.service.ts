@@ -26,8 +26,11 @@ export class UploadsService {
       const fileContent = await fs.readFile(filePath);
       return fileContent.toString('base64');
     } catch (err) {
-      this.logger.error(`Error reading file: ${filename}`, err);
-      return null;
+      this.logger.warn(`Error reading file: ${filename}`, err);
+      // returning default no-image picture
+      const defaultImagePath = path.join(this.baseUploadDir, 'default-image.png');
+      const defaultImageContent = await fs.readFile(defaultImagePath);
+      return defaultImageContent.toString('base64');
     }
   }
 

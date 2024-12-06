@@ -11,7 +11,7 @@ export class BrawlerResponseDto {
   } })
   names: NamesDto;
 
-  @ApiProperty({ example: '/uploads/images/brawler.png' })
+  @ApiProperty({ example: 'uploads/images/brawler.png' })
   imgUrl: string;
 
   @ApiProperty({ example: 'Brawler' })

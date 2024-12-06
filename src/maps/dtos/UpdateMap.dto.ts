@@ -15,12 +15,12 @@ export class UpdateEventMapDto {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ example: '/uploads/images/map.png' })
+  @ApiProperty({ example: 'uploads/images/map.png' })
   imgUrl?: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ example: '/uploads/images/post-image.png' })
+  @ApiProperty({ example: 'uploads/images/post-image.png' })
   postImgUrl?: string;
 
   @IsString()

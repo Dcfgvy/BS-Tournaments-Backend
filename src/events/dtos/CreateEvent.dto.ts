@@ -14,7 +14,7 @@ export class CreateEventDto {
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '/uploads/images/event.png' })
+  @ApiProperty({ example: 'uploads/images/event.png' })
   imgUrl: string;
 
   @IsString()

@@ -11,10 +11,10 @@ export class EventMapNoEventResponseDto {
   } })
   names: NamesDto;
 
-  @ApiProperty({ example: '/uploads/images/map.png' })
+  @ApiProperty({ example: 'uploads/images/map.png' })
   imgUrl: string;
 
-  @ApiProperty({ example: '/uploads/images/post-image.png' })
+  @ApiProperty({ example: 'uploads/images/post-image.png' })
   postImgUrl: string;
 
   @ApiProperty({ example: 'Map' })
