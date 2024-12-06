@@ -37,13 +37,13 @@ export class Tournament extends BaseEntity {
   @OneToMany(() => TourChatMessage, tourChatMessage => tourChatMessage.tournament)
   chatMessages: TourChatMessage[];
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   organizer: User;
 
-  @ManyToOne(() => Event)
+  @ManyToOne(() => Event, { onDelete: 'SET NULL', nullable: true })
   event: Event;
 
-  @ManyToOne(() => EventMap)
+  @ManyToOne(() => EventMap, { onDelete: 'SET NULL', nullable: true })
   eventMap: EventMap;
 
   @ManyToMany(() => Brawler)

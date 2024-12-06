@@ -16,10 +16,10 @@ export class EventMap extends BaseEntity {
   @Column({ nullable: true })
   postImgUrl: string; // image that will be attached to a post in the Telegram channels when a tournament on this map is created
 
-  @Column()
+  @Column({ unique: true })
   apiName: string;
 
-  @ManyToOne(() => Event, event => event.eventMaps)
+  @ManyToOne(() => Event, event => event.eventMaps, { onDelete: 'CASCADE' })
   event: Event;
 
   @Column()

@@ -3,7 +3,7 @@
 /node_modules
 /build
 
-/uploads/images
+/uploaded/images
 
 # Logs
 logs

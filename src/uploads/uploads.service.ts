@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class UploadsService {
   private readonly logger: Logger = new Logger(UploadsService.name);
-  private readonly baseUploadDir = path.join(__dirname, '..', '..', 'uploads');
+  private readonly baseUploadDir = path.join(__dirname, '..', '..', 'uploaded');
 
   async uploadImage(file: Express.Multer.File): Promise<string> {
     const uploadsDir = path.join(this.baseUploadDir, 'images');
