@@ -57,7 +57,7 @@ export default class EventAndMapSeeder implements Seeder {
           ...map,
           names: JSON.stringify(map.names),
           imgUrl: 'uploads/images/' + map.apiName.toLowerCase().replace(' ', '_') + '.png',
-          postImgUrl: 'uploads/images/' + map.apiName.toLowerCase().replace(' ', '_') + '_post.png',
+          postImgUrl: null,
           event: event,
           eventId: event.id,
         });

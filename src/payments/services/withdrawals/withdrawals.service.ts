@@ -86,6 +86,8 @@ export class WithdrawalsService {
       payload.names = JSON.stringify(data.names);
     if(data.descriptions)
       payload.descriptions = JSON.stringify(data.descriptions);
+    if(data.comission)
+      payload.comission = parseFloat(data.comission);
     return this.withdrawalMethodRepository.save(payload);
   } 
 
