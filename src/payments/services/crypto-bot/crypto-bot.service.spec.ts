@@ -151,7 +151,6 @@ describe('CryptoBotService', () => {
       mockedAxios.post.mockRejectedValue(new Error('Transfer failed'));
     
       await expect(service.withdraw(withdrawal, payload)).rejects.toThrow('Transfer failed');
-      console.log('Save Calls:', mockQueryRunner.manager.save.mock.calls);
     
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
     
