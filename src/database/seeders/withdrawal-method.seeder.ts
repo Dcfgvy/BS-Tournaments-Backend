@@ -7,7 +7,7 @@ const items = [
     methodName: 'crypto-bot',
     names: { en: 'Crypto Bot (Telegram)', ru: 'Crypto Bot (Телеграм)' },
     descriptions: {
-      en: 'Instant crypto transfer to preferred Crypto Bot account in Telegram',
+      en: 'Instant transfer to your preferred Crypto Bot account in Telegram',
       ru: 'Моментальный перевод на предпочитаемый аккаунт Crypto Bot в Телеграм'
     },
     imgUrl: 'uploads/images/crypto-bot.jpg',
@@ -25,11 +25,11 @@ export default class WithdrawalMethodSeeder implements Seeder {
 
     console.log('Creating withdrawal methods...');
     for(const item of items){
-      await repository.insert({
+      await repository.upsert({
         ...item,
         names: JSON.stringify(item.names),
         descriptions: JSON.stringify(item.descriptions),
-      });
+      }, ['methodName']);
     }
   }
 }

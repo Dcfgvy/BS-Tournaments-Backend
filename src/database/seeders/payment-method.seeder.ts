@@ -25,11 +25,11 @@ export default class PaymentMethodSeeder implements Seeder {
 
     console.log('Creating payment methods...');
     for(const item of items){
-      await repository.insert({
+      await repository.upsert({
         ...item,
         names: JSON.stringify(item.names),
         descriptions: JSON.stringify(item.descriptions),
-      });
+      }, ['methodName']);
     }
   }
 }

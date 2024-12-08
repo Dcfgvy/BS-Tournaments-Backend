@@ -393,7 +393,7 @@ export default class EventAndMapSeeder implements Seeder {
         ...item,
         names: JSON.stringify(item.names),
       });
-      await eventRepository.save(event);
+      await eventRepository.upsert(event, ['apiName']);
       for(const map of item.maps){
         const mapEntity = mapRepository.create({
           ...map,
@@ -403,7 +403,7 @@ export default class EventAndMapSeeder implements Seeder {
           event: event,
           eventId: event.id,
         });
-        await mapRepository.save(mapEntity);
+        await mapRepository.upsert(mapEntity, ['apiName']);
       }
     }
   }
