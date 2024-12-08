@@ -5,7 +5,7 @@ import { UserInterceptor } from './interceptors/user.interceptor';
 import { LoginFormDto } from './dtos/LoginForm.dto';
 import { RefreshTokenDto } from './dtos/RefreshToken.dto';
 import { AuthGuard } from './guards/auth.guard';
-import { ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadGatewayResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { TokenResponseDto } from './dtos/TokenResponse.dto';
 import { GetUser } from './decorators/get-user.decorator';
@@ -20,6 +20,7 @@ import { TagUpperCasePipe } from './pipes/tag-uppercase.pipe';
 import { TgLoginFormDto } from './dtos/TgLoginForm.dto';
 import { TgConnectionLinkResponseDto } from './dtos/TgConnectionLinkResponse.dto';
 import { ChangePasswordDto } from './dtos/ChangePassword.dto';
+import { UpdateUserRolesDto } from './dtos/UpdateUserRoles.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -139,6 +140,20 @@ export class UsersController {
   ){
     return this.usersService.unbanUser(id);
   }
+
+  @Put('/user-roles/:id')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadGatewayResponse({ description: 'Invalid roles' })
+  updateUserRoles(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserRolesDto: UpdateUserRolesDto,
+  ){
+    return this.usersService.updateUserRoles(id, updateUserRolesDto.roles);
+  }
+
 
   @Post('/become-organizer')
   @UseGuards(AuthGuard)

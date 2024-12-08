@@ -1,7 +1,7 @@
 import { IsOptional, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class TournamentCreationDatesDto {
+export class CreationDatesDto {
   @IsOptional()
   @Type(() => Date)
   @IsDate()

@@ -281,12 +281,6 @@ const knockoutMaps = [
   },
 ];
 
-
-// {
-//   names: { en: 'NAME_EN', ru: 'NAME_RU' },
-//   apiName: 'API_NAME',
-// },
-
 const items = [
   {
     names: { en: 'Gem Grab', ru: 'Захват Кристаллов' },

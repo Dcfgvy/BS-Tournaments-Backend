@@ -15,9 +15,9 @@ import { UserInterceptor } from '../users/interceptors/user.interceptor';
 import { TournamentsResponseDto } from './dtos/TournamentResponse.dto';
 import { FinishTournamentDto } from './dtos/FinishTournament.dto';
 import { StartTournamentDto } from './dtos/StartTournament.dto';
-import { TournamentCreationDatesDto } from './dtos/TournamentCreationDates.dto';
 import { TournamentStatus } from './enums/tournament-status.enum';
 import { Response } from 'express';
+import { CreationDatesDto } from 'src/utils/dtos';
 
 @ApiTags('Tournaments')
 @UseInterceptors(UserInterceptor)
@@ -79,7 +79,7 @@ export class TournamentsController {
     @Query('playersNumberTo') playersNumberTo: number,
     @Query('eventId') eventId: number,
     @Query('bannedBrawlers', new DefaultValuePipe([]), new ParseArrayPipe({ items: Number, separator: ',' })) bannedBrawlers: number[],
-    @Query() creationDates: TournamentCreationDatesDto,
+    @Query() creationDates: CreationDatesDto,
     @Query('status') status: TournamentStatus,
     @Query('tournamentId') tournamentId: number,
     @Query('contestantTags', new DefaultValuePipe([]), new ParseArrayPipe({ items: String, separator: ',' })) contestantTags: string[],

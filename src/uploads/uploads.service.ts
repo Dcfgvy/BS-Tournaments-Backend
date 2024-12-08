@@ -35,7 +35,7 @@ export class UploadsService {
   }
 
   async deleteFile(filepath: string): Promise<boolean> {
-    const absolutePath = path.join(this.baseUploadDir, filepath);
+    const absolutePath = path.join(this.baseUploadDir, filepath.replace('uploads/', '').replace('../', ''));
     try {
       await fs.unlink(absolutePath);
       return true;

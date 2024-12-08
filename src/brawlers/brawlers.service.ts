@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brawler } from '../database/entities/Brawler.entity';
 import { Repository } from 'typeorm';
@@ -32,13 +32,15 @@ export class BrawlersService {
     return brawler;
   }
 
-  createBrawler(
+  async createBrawler(
     createBrawlerDto: CreateBrawlerDto
   ): Promise<any> {
+    const brawlerWithGivenApiName = await this.brawlerRepository.findOneBy({ apiName: createBrawlerDto.apiName });
+    if(brawlerWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
     return this.brawlerRepository.save({
       ...createBrawlerDto,
       names: JSON.stringify(createBrawlerDto.names)
-    })
+    });
   }
 
   async updateBrawler(
@@ -49,6 +51,10 @@ export class BrawlersService {
       id,
       ...updateBrawlerDto
     };
+    if(updateBrawlerDto.apiName){
+      const brawlerWithGivenApiName = await this.brawlerRepository.findOneBy({ apiName: updateBrawlerDto.apiName });
+      if(brawlerWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
+    }
     if(updateBrawlerDto.names)
       payload.names = JSON.stringify(updateBrawlerDto.names);
     return this.brawlerRepository.save(payload);
