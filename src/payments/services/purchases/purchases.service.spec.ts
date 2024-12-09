@@ -111,7 +111,6 @@ describe('PurchasesService', () => {
     });
 
     it('should order purchases by createdAt in descending order', async () => {
-
       await service.fetchAllPurchases({ page: 1, limit: 10 });
 
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith(
@@ -129,7 +128,6 @@ describe('PurchasesService', () => {
     });
 
     it('should handle multiple filters together', async () => {
-
       const createdFrom = new Date('2024-03-01T00:00:00.000Z');
       const createdTo = new Date('2024-04-01T00:00:00.000Z');
       const userId = 25;
