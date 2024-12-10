@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { cleanEnv, bool, port, url, str, num } from 'envalid';
+import { cleanEnv, bool, port, str, num } from 'envalid';
 import { NodeEnv } from './NodeEnv';
 
 dotenv.config();
@@ -7,7 +7,6 @@ dotenv.config();
 const envConfig = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'production', 'ci', 'test'], default: 'development' }),
   LOAD_TEST_DATA: bool({ choices: [true, false], default: false }),
-  APP_HOST_URL: url(),
   PORT: port(),
   BRAWL_STARS_API_KEY: str(),
   

@@ -12,7 +12,6 @@ on:
 env:
   NODE_ENV: ci
   LOAD_TEST_DATA: false
-  APP_HOST_URL: http://localhost:3000
   PORT: 3000
   BRAWL_STARS_API_KEY: ${{ secrets.BRAWL_STARS_API_KEY }}
   DB_HOST: localhost

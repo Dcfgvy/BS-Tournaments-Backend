@@ -17,6 +17,7 @@ import { appConfig } from '../utils/appConfigs';
 import { TourChatMessage } from '../database/entities/TourChatMessage.entity';
 import { SettingsModule } from 'src/settings/settings.module';
 import { TelegramBotModule } from 'src/telegram-bot/telegram-bot.module';
+import { UploadsModule } from 'src/uploads/uploads.module';
 
 @Module({
   providers: [
@@ -40,6 +41,7 @@ import { TelegramBotModule } from 'src/telegram-bot/telegram-bot.module';
     }),
     SettingsModule,
     TelegramBotModule,
+    UploadsModule
   ],
   exports: [TournamentChatGateway]
 })

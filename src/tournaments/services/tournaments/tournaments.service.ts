@@ -19,6 +19,8 @@ import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { _, translatePlace } from 'src/utils/translator';
 import { appConfig } from 'src/utils/appConfigs';
 import axios from 'axios';
+import { UploadsService } from 'src/uploads/uploads.service';
+import path from 'path';
 
 @Injectable()
 export class TournamentsService {
@@ -38,6 +40,7 @@ export class TournamentsService {
     private readonly brawlStarsApiQueue: Queue,
     private readonly telegramBotService: TelegramBotService,
     private readonly settingsService: SettingsService,
+    private readonly uploadsService: UploadsService
   ) {}
 
   async fetchActiveTournaments(
@@ -339,14 +342,17 @@ export class TournamentsService {
       caption += `\n\n${tab}` + tournament.prizes.map((prize, index) => translatePlace(index + 1, lang, { prize })).join(`\n${tab}`);
       
       if(tournament.eventMap.postImgUrl){
+        let imageBuffer: Buffer;
         const imageUrl = tournament.eventMap.postImgUrl;
-        const fullImageUrl = imageUrl.startsWith('http') ? imageUrl
-          : `${appConfig.isDevelopment ? ('http://localhost:' + appConfig.PORT) : appConfig.APP_HOST_URL}/${imageUrl}`;
+        if(imageUrl.startsWith('http://') || imageUrl.startsWith('https://')){
+          const response = await axios.get(imageUrl);
+          imageBuffer = Buffer.from(response.data);
+        } else {
+          const imgData = await this.uploadsService.fetchImage(path.parse(imageUrl).base);
+          imageBuffer = Buffer.from(imgData, 'base64');
+        }
         
-        // fetching the image by the URL
-        const response = await axios.get(fullImageUrl);
-        const buffer = Buffer.from(response.data, 'base64');
-        await this.telegramBotService.sendPhoto('@' + channel.username, buffer, caption);
+        await this.telegramBotService.sendPhoto('@' + channel.username, imageBuffer, caption);
       } else {
         await this.telegramBotService.sendMessage('@' + channel.username, caption);
       }
