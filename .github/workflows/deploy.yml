@@ -36,7 +36,7 @@ jobs:
         known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
 
     - name: Adding Known Hosts
-      run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      run: ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
             
     # Deploy to the server
     - name: Deploy to server
@@ -44,7 +44,7 @@ jobs:
         DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:${{ github.sha }}
         # SERVER_DEPLOY_PATH in format "/path-to-dir", e.g. "/usr/src/app"
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_HOST }} << EOF
+        ssh ${{ secrets.SERVER_HOST }} << EOF
         docker pull $DOCKER_IMAGE
         docker stop bs-tournaments-backend || true
         docker rm bs-tournaments-backend || true
