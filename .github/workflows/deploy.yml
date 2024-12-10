@@ -25,7 +25,8 @@ jobs:
     # Push the Docker image to the registry
     - name: Push Docker image
       run: |
-        docker tag bs-tournaments-backend:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:latest
+        docker tag bs-tournaments-backend:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:${{ github.sha }}
+        docker tag bs-tournaments-backend:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:latest
         docker push ${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:${{ github.sha }}
     
     # Deploy to the server
