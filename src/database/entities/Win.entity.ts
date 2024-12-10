@@ -12,9 +12,9 @@ export class Win extends BaseEntity {
   @Column()
   place: number;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne(() => Tournament, tournament => tournament.wins)
+  @ManyToOne(() => Tournament, tournament => tournament.wins, { onDelete: 'CASCADE' })
   tournament: Tournament;
 }

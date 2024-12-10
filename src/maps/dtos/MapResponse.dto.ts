@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 import { EventResponseDto } from '../../events/dtos/EventResponse.dto';
 
 export class EventMapResponseDto {
@@ -12,8 +12,11 @@ export class EventMapResponseDto {
   } })
   names: NamesDto;
 
-  @ApiProperty({ example: '/uploads/images/map.png' })
+  @ApiProperty({ example: 'uploads/images/map.png' })
   imgUrl: string;
+
+  @ApiProperty({ example: 'uploads/images/post-image.png' })
+  postImgUrl: string;
 
   @ApiProperty({ example: 'Map' })
   apiName: string;

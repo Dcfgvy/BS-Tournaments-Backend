@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 
 export class BrawlerResponseDto {
   @ApiProperty({ example: 1 })
@@ -11,7 +11,7 @@ export class BrawlerResponseDto {
   } })
   names: NamesDto;
 
-  @ApiProperty({ example: '/uploads/images/brawler.png' })
+  @ApiProperty({ example: 'uploads/images/brawler.png' })
   imgUrl: string;
 
   @ApiProperty({ example: 'Brawler' })

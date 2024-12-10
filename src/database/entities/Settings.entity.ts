@@ -8,7 +8,7 @@ export class Settings {
   @Column({ unique: true })
   key: string;
 
-  @Column()
+  @Column({ type: 'text' })
   value: string;
 
   @Column()

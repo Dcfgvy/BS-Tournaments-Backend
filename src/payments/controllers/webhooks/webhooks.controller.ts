@@ -1,4 +1,5 @@
 import { Body, Controller, HttpException, HttpStatus, Logger, Post } from '@nestjs/common';
+import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Payment } from 'src/database/entities/payments/Payment.entity';
 import { PaymentStatus } from 'src/payments/enums/payment-status.enum';
 import { appConfig } from 'src/utils/appConfigs';
@@ -17,8 +18,9 @@ export class WebhooksController {
   ) {}
 
   // Handle Crypto Bot invoice payments
+  @ApiExcludeEndpoint()
   @Post(`/${appConfig.CRYPTO_BOT_TOKEN}`)
-  async handleWebhookRequest(@Body() update: any){
+  async handleCryptoBotRequest(@Body() update: any){
     if(update.update_type === CryptoBotUpdateType.INVOICE_PAID){
       const paymentId: number = JSON.parse(update.payload.payload).paymentId;
 

@@ -14,6 +14,13 @@ import { Win } from '../../../database/entities/Win.entity';
 import { TourChatMessage } from '../../../database/entities/TourChatMessage.entity';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { formatDate } from '../../../utils/other';
+import { SettingsService } from 'src/settings/settings.service';
+import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { _, translatePlace } from 'src/utils/translator';
+import { appConfig } from 'src/utils/appConfigs';
+import axios from 'axios';
+import { UploadsService } from 'src/uploads/uploads.service';
+import path from 'path';
 
 @Injectable()
 export class TournamentsService {
@@ -31,6 +38,9 @@ export class TournamentsService {
     private readonly dbConnection: Connection,
     @InjectQueue('brawl-stars-api')
     private readonly brawlStarsApiQueue: Queue,
+    private readonly telegramBotService: TelegramBotService,
+    private readonly settingsService: SettingsService,
+    private readonly uploadsService: UploadsService
   ) {}
 
   async fetchActiveTournaments(
@@ -273,13 +283,13 @@ export class TournamentsService {
     prizes.sort((a, b) => b - a);
 
     // check if sum of all prized does not exceed
-    //       entryCost * (playersNumber - 1 (one player is the organizer, so he/she doesn't count))
+    //       entryCost * (playersNumber - 1 (one player is the organizer, so he/she doesn't count)) - fee
     if (
-      prizes.reduce((prev, curr) => prev + curr) >
+      (prizes.reduce((prev, curr) => prev + curr) + SettingsService.data.tourCreationFee) >
       entryCost * (playersNumber - 1)
     )
       throw new HttpException(
-        "Sum of all prizes cannot be more than all entries' costs",
+        "Sum of all prizes + tournament fee cannot be more than all entries' costs",
         HttpStatus.BAD_REQUEST,
       );
 
@@ -307,13 +317,46 @@ export class TournamentsService {
       playersNumber,
       prizes,
       status: TournamentStatus.RECRUITMENT,
+      feeToPay: SettingsService.data.tourCreationFee,
       organizer,
       event,
       eventMap,
       bannedBrawlers,
       contestants: [organizer],
     });
-    return this.tournamentRepository.save(newTournament);
+    await this.tournamentRepository.save(newTournament);
+    await this.publishTournamentPost(newTournament);
+  }
+
+  async publishTournamentPost(tournament: Tournament): Promise<void> {
+    const channels = await this.settingsService.getChannelsToPost();
+    for (const channel of channels) {
+      const lang = channel.language;
+      let caption = _('Tournament post', lang, {
+        eventName: JSON.parse(tournament.event.names)[lang],
+        mapName: JSON.parse(tournament.eventMap.names)[lang],
+        entryCost: tournament.entryCost,
+        playersNumber: tournament.playersNumber,
+      });
+      const tab = '     ';
+      caption += `\n\n${tab}` + tournament.prizes.map((prize, index) => translatePlace(index + 1, lang, { prize })).join(`\n${tab}`);
+      
+      if(tournament.eventMap.postImgUrl){
+        let imageBuffer: Buffer;
+        const imageUrl = tournament.eventMap.postImgUrl;
+        if(imageUrl.startsWith('http://') || imageUrl.startsWith('https://')){
+          const response = await axios.get(imageUrl);
+          imageBuffer = Buffer.from(response.data);
+        } else {
+          const imgData = await this.uploadsService.fetchImage(path.parse(imageUrl).base);
+          imageBuffer = Buffer.from(imgData, 'base64');
+        }
+        
+        await this.telegramBotService.sendPhoto('@' + channel.username, imageBuffer, caption);
+      } else {
+        await this.telegramBotService.sendMessage('@' + channel.username, caption);
+      }
+    }
   }
 
   async signUpForTournament(userId: number, tournamentId: number) {
@@ -383,7 +426,7 @@ export class TournamentsService {
   async updateTournamentLink(
     userId: number,
     tournamentId: number,
-    inviteLink: string,
+    inviteCode: string,
   ) {
     const tournament = await this.tournamentRepository.findOne({
       where: {
@@ -401,7 +444,7 @@ export class TournamentsService {
     if (!tournament)
       throw new HttpException('Tournament not found', HttpStatus.NOT_FOUND);
 
-    tournament.inviteLink = inviteLink;
+    tournament.inviteCode = inviteCode;
     if (tournament.status === TournamentStatus.WAITING_FOR_START)
       tournament.status = TournamentStatus.STARTED;
 
@@ -548,7 +591,7 @@ export class TournamentsService {
         id,
         status: TournamentStatus.FROZEN,
       },
-      relations: ['wins'],
+      relations: ['wins', 'organizer'],
     });
     if (!tournament) {
       await queryRunner.release();
@@ -559,12 +602,17 @@ export class TournamentsService {
 
     try {
       tournament.status = TournamentStatus.ENDED;
+      let prizes_sum = 0;
       for (let i = 0; i < tournament.wins.length; i++) {
         const win = tournament.wins[i];
         const winner = tournament.wins[i].user;
-        winner.balance += tournament.prizes[win.place - 1] || 0;
+        const prize = tournament.prizes[win.place - 1] || 0;
+        winner.balance += prize;
+        prizes_sum += prize;
         await queryRunner.manager.save(winner);
       }
+      tournament.organizer.balance += tournament.entryCost * (tournament.playersNumber - 1) - prizes_sum - tournament.feeToPay;
+      await queryRunner.manager.save(tournament.organizer);
       await queryRunner.manager.save(tournament);
       await queryRunner.commitTransaction();
       return;

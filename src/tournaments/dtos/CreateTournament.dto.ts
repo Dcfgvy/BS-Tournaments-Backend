@@ -29,6 +29,6 @@ export class CreateTournamentDto {
 
   @IsNotEmpty()
   @IsInt({ each: true })
-  @ApiProperty({ example: [40, 30, 15] })
+  @ApiProperty({ example: [25, 20, 15] })
   prizes: number[];
 }

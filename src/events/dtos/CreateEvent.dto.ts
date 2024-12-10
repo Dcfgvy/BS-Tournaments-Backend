@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, ValidateNested, IsNumber, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEventDto {
@@ -14,7 +14,7 @@ export class CreateEventDto {
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '/uploads/images/event.png' })
+  @ApiProperty({ example: 'uploads/images/event.png' })
   imgUrl: string;
 
   @IsString()

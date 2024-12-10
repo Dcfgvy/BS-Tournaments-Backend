@@ -6,7 +6,7 @@ export class PaymentMethod extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column() // name for internal processes, for example "crypto-bot", or "paypal"
+  @Column({ unique: true }) // name for internal processes, for example "crypto-bot", or "paypal"
   methodName: string;
 
   @Column() // names in different languages, shown to users, e.g. {"en": "Crypto Bot", "ru": "Крипто-бот"}

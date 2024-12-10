@@ -10,10 +10,18 @@ import { Brawler } from "../database/entities/Brawler.entity";
 import { TournamentsService } from "../tournaments/services/tournaments/tournaments.service";
 import { TourChatMessage } from "../database/entities/TourChatMessage.entity";
 import { Connection } from "typeorm";
+import { Withdrawal } from "src/database/entities/payments/Withdrawal.entity";
+import { CryptoBotService } from "src/payments/services/crypto-bot/crypto-bot.service";
 
 export const authProviders = [
-  AuthService,
-  JwtService,
+  {
+    provide: AuthService,
+    useValue: {},
+  },
+  {
+    provide: JwtService,
+    useValue: {}
+  },
   {
     provide: getRepositoryToken(User),
     useValue: {},
@@ -74,5 +82,21 @@ export const tournamentsServiceProviders = [
     provide: getQueueToken('brawl-stars-api'),
     useValue: {
     }
+  }
+];
+
+export const cryptoBotServiceProviders = [
+  CryptoBotService,
+  {
+    provide: Connection,
+    useValue: {
+      ...mockDbConnection
+    }
+  },
+  {
+    provide: getRepositoryToken(Withdrawal),
+    useValue: {
+      save: jest.fn(),
+    },
   }
 ];

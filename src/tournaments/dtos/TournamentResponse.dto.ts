@@ -23,8 +23,8 @@ export class TournamentsResponseDto {
   @ApiProperty({ example: 0 })
   status: TournamentStatus;
 
-  @ApiProperty({ example: 'https://brawlstars.com/invite-3467387fh2' })
-  inviteLink: string;
+  @ApiProperty({ example: 'CODE123' })
+  inviteCode: string;
 
   @ApiProperty({ type: EventResponseDto })
   event: EventResponseDto;

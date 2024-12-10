@@ -31,13 +31,14 @@ export class BrawlStarsApiService extends WorkerHost {
 
   async makeRequest(tag: string, battlelog: boolean = true){
     try {
-      const response = await axios({
-        method: 'get',
-        url: `https://api.brawlstars.com/v1/players/${encodeURIComponent(tag)}/${battlelog ? 'battlelog': ''}`,
-        headers: {
-          'Authorization': `Bearer ${appConfig.BRAWL_STARS_API_KEY}`
+      const response = await axios.get(
+        `https://api.brawlstars.com/v1/players/${encodeURIComponent(tag)}/${battlelog ? 'battlelog': ''}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${appConfig.BRAWL_STARS_API_KEY}`
+          }
         }
-      });
+      );
       return response.data;
     } catch (err) {
       throw new HttpException('Intenal server error', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -139,9 +140,9 @@ export class BrawlStarsApiService extends WorkerHost {
                 foundBotsTags.indexOf(teamPlayer.tag) === -1
               ){
                 foundBotsTags.push(teamPlayer.tag);
-                return true;
+                return true; // local return
               }
-              return false;
+              return false; // local return
             })
             if(!bot){
               // global return

@@ -15,9 +15,9 @@ export class Payment extends BaseEntity {
   @Column()
   status: PaymentStatus;
 
-  @ManyToOne(() => PaymentMethod)
+  @ManyToOne(() => PaymentMethod, { onDelete: 'SET NULL', nullable: true })
   method: PaymentMethod;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 }

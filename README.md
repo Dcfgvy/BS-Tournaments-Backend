@@ -55,6 +55,16 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+## Seeding the database
+
+```bash
+# execute all seeders
+$ yarn seed
+
+# execute seeders for specified tables
+$ yarn seed -- users brawlers
+```
+
 ## Migrations
 
 ```bash

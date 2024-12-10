@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Event } from '../database/entities/Event.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,16 +29,18 @@ export class EventsService {
     return this.eventRepository.find();
   }
 
-  createEvent(
+  async createEvent(
     createEventDto: CreateEventDto
   ): Promise<any> {
+    const eventWithGivenApiName = await this.eventRepository.findOneBy({ apiName: createEventDto.apiName });
+    if(eventWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
     return this.eventRepository.save({
       ...createEventDto,
       names: JSON.stringify(createEventDto.names)
     })
   }
 
-  updateEvent(
+  async updateEvent(
     id: number,
     updateEventDto: UpdateEventDto
   ): Promise<any> {
@@ -46,6 +48,10 @@ export class EventsService {
       id,
       ...updateEventDto
     };
+    if(updateEventDto.apiName){
+      const eventWithGivenApiName = await this.eventRepository.findOneBy({ apiName: updateEventDto.apiName });
+      if(eventWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
+    }
     if(updateEventDto.names)
       payload.names = JSON.stringify(updateEventDto.names);
     return this.eventRepository.save(payload);

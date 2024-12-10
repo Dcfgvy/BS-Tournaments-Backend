@@ -11,7 +11,7 @@ import {
   Min,
   ValidateNested 
 } from 'class-validator';
-import { NamesDto } from 'src/utils/dtos';
+import { NamesDto } from 'src/utils/names';
 
 export class CreateWithdrawalMethodDto {
   @ApiProperty({ example: 'crypto-bot', description: 'Name of the withdrawal method for internal processes.' })

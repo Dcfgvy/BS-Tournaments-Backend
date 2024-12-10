@@ -1,6 +1,6 @@
 import { IsString, ValidateNested, IsOptional, IsBoolean, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateEventDto {
@@ -15,7 +15,7 @@ export class UpdateEventDto {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ example: '/uploads/images/event.png' })
+  @ApiProperty({ example: 'uploads/images/event.png' })
   imgUrl?: string;
 
   @IsString()

@@ -1,5 +1,7 @@
 export interface ISettings {
+  globalMessage: string;
   organizerFee: number;
+  tourCreationFee: number;
   // time is stored in milliseconds
   tourRecruitmentMaxTime: number;
   tourStartAwaitingTime: number;

@@ -14,10 +14,10 @@ export class UploadsController {
   ){}
 
   @Post('images')
-  @UseGuards(AdminGuard)
-  @UseInterceptors(FileInterceptor('file'))
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor('file'))
   @ApiBody({
     schema: {
       type: 'object',

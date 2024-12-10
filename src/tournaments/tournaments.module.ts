@@ -15,6 +15,9 @@ import { WsAuthGuard } from '../users/guards/ws-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { appConfig } from '../utils/appConfigs';
 import { TourChatMessage } from '../database/entities/TourChatMessage.entity';
+import { SettingsModule } from 'src/settings/settings.module';
+import { TelegramBotModule } from 'src/telegram-bot/telegram-bot.module';
+import { UploadsModule } from 'src/uploads/uploads.module';
 
 @Module({
   providers: [
@@ -36,6 +39,9 @@ import { TourChatMessage } from '../database/entities/TourChatMessage.entity';
     JwtModule.register({
       secret: appConfig.JWT_SECRET,
     }),
+    SettingsModule,
+    TelegramBotModule,
+    UploadsModule
   ],
   exports: [TournamentChatGateway]
 })

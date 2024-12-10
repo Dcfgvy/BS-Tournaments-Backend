@@ -1,6 +1,6 @@
 import { IsString, ValidateNested, IsOptional, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
-import { NamesDto } from '../../utils/dtos';
+import { NamesDto } from '../../utils/names';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateBrawlerDto {
@@ -15,7 +15,7 @@ export class UpdateBrawlerDto {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ example: '/uploads/images/brawler.png' })
+  @ApiProperty({ example: 'uploads/images/brawler.png' })
   imgUrl?: string;
 
   @IsString()

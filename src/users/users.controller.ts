@@ -1,11 +1,11 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Ip, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Ip, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { RegisterFormDto } from './dtos/RegisterForm.dto';
 import { AuthService } from './services/auth/auth.service';
 import { UserInterceptor } from './interceptors/user.interceptor';
 import { LoginFormDto } from './dtos/LoginForm.dto';
 import { RefreshTokenDto } from './dtos/RefreshToken.dto';
 import { AuthGuard } from './guards/auth.guard';
-import { ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadGatewayResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiPaymentRequiredResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { TokenResponseDto } from './dtos/TokenResponse.dto';
 import { GetUser } from './decorators/get-user.decorator';
@@ -17,6 +17,10 @@ import { PaginationParams } from '../other/pagination/pagination.decorator';
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { BanUserDto } from './dtos/BanUser.dto';
 import { TagUpperCasePipe } from './pipes/tag-uppercase.pipe';
+import { TgLoginFormDto } from './dtos/TgLoginForm.dto';
+import { TgConnectionLinkResponseDto } from './dtos/TgConnectionLinkResponse.dto';
+import { ChangePasswordDto } from './dtos/ChangePassword.dto';
+import { UpdateUserRolesDto } from './dtos/UpdateUserRoles.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -44,6 +48,22 @@ export class UsersController {
     return this.authService.login(loginFormDto);
   }
 
+  @Post('/login/telegram')
+  @ApiResponse({ status: HttpStatus.CREATED, type: TokenResponseDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid credentials' })
+  loginViaTelegram(@Body() loginFormDto: TgLoginFormDto){
+    return this.authService.loginViaTelegram(loginFormDto);
+  }
+
+  @Put('/change-password')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST })
+  changePassword(@GetUser() user: User, @Body() changePasswordDto: ChangePasswordDto){
+    return this.authService.changePassword(user, changePasswordDto);
+  }
+
   @Post('/refresh')
   @ApiResponse({ status: HttpStatus.CREATED, type: TokenResponseDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid refresh token' })
@@ -59,6 +79,23 @@ export class UsersController {
   getUserInfo(@GetUser() user: User){
     if(!user) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     return user;
+  }
+
+  @Post('/telegram/connect')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.CREATED, type: TgConnectionLinkResponseDto })
+  async connectTelegramAccount(@GetUser() user: User){
+    const link = await this.authService.generateTelegramAccountConnectionLink(user);
+    return { link };
+  }
+
+  @Delete('/telegram/unlink')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  unlinkTelegramAccount(@GetUser() user: User){
+    return this.authService.unlinkTelegramAccount(user);
   }
 
   @Get('/all')
@@ -103,6 +140,20 @@ export class UsersController {
   ){
     return this.usersService.unbanUser(id);
   }
+
+  @Put('/user-roles/:id')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadGatewayResponse({ description: 'Invalid roles' })
+  updateUserRoles(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserRolesDto: UpdateUserRolesDto,
+  ){
+    return this.usersService.updateUserRoles(id, updateUserRolesDto.roles);
+  }
+
 
   @Post('/become-organizer')
   @UseGuards(AuthGuard)

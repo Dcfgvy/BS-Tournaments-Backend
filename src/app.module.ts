@@ -24,12 +24,14 @@ import { EventsModule } from './events/events.module';
 import { BrawlersModule } from './brawlers/brawlers.module';
 import { EventMapsModule } from './maps/maps.module';
 import { SettingsModule } from './settings/settings.module';
+import { TelegramConnectionLink } from './database/entities/TelegramConnectionLink.entity';
+import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
 
 @Module({
   imports: [
     UsersModule, PaymentsModule, TournamentsModule, EventsModule, BrawlersModule, EventMapsModule, 
     TypeOrmModule.forRoot(dataSourceOptions),
-    TypeOrmModule.forFeature([User, Settings]),
+    TypeOrmModule.forFeature([User, Settings, TelegramConnectionLink]),
     ThrottlerModule.forRoot([{
       ttl: 60,
       limit: appConfig.NODE_ENV === NodeEnv.DEV ? undefined : 60,
@@ -46,7 +48,8 @@ import { SettingsModule } from './settings/settings.module';
       }
     }),
     ScheduleModule.forRoot(),
-    SettingsModule
+    SettingsModule,
+    TelegramBotModule
   ],
   controllers: [AppController],
   providers: [
@@ -56,7 +59,7 @@ import { SettingsModule } from './settings/settings.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    },
   ],
 })
 export class AppModule implements NestModule {
@@ -64,7 +67,7 @@ export class AppModule implements NestModule {
     consumer
      .apply(AuthMiddleware)
      .exclude(
-      { path: 'uploads/(.*)', method: RequestMethod.ALL }
+      { path: 'uploads/(.*)', method: RequestMethod.GET }
      )
      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }

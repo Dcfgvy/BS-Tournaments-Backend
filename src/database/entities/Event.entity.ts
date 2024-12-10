@@ -13,7 +13,7 @@ export class Event extends BaseEntity {
   @Column()
   imgUrl: string;
 
-  @Column()
+  @Column({ unique: true })
   apiName: string;
   
   @Column({ default: false })

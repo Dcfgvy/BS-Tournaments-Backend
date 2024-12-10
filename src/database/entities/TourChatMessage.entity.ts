@@ -14,6 +14,6 @@ export class TourChatMessage extends BaseEntity {
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Tournament, tournament => tournament.chatMessages)
+  @ManyToOne(() => Tournament, tournament => tournament.chatMessages, { onDelete: 'CASCADE' })
   tournament: Tournament;
 }

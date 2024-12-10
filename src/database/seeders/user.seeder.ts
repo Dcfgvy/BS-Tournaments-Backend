@@ -13,7 +13,7 @@ export default class UserSeeder implements Seeder {
     const repository = dataSource.getRepository(User);
 
     console.log('Creating organizer...')
-    await repository.insert({
+    await repository.upsert({
       tag: appConfig.DB_SEED_ORGANIZER_TAG,
       name: 'Organizer',
       password: hashPassword(appConfig.DB_SEED_ORGANIZER_PASSWORD),
@@ -21,7 +21,7 @@ export default class UserSeeder implements Seeder {
       language: 'en',
       ip: 'localhost',
       roles: [UserRole.USER, UserRole.ORGANIZER],
-    });
+    }, ['tag']);
 
     console.log('Creating users...')
     const userFactory = factoryManager.get(User);

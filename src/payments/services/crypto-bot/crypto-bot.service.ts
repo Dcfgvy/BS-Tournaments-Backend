@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
@@ -24,7 +24,7 @@ type ExchangeRate = {
 }
 
 @Injectable()
-export class CryptoBotService implements IPaymentService {
+export class CryptoBotService implements IPaymentService, OnModuleInit {
   // Crypto Bot has a limit around 1-25000 USD for transfers in any crypto currency
   public minCryptoWithdrawalAmount: number = 0;
   public maxCryptoWithdrawalAmount: number = Infinity;
@@ -35,9 +35,11 @@ export class CryptoBotService implements IPaymentService {
     private readonly dbConnection: Connection,
     @InjectRepository(Withdrawal)
     private readonly withdrawalRepository: Repository<Withdrawal>
-  ){
+  ) {}
+
+  async onModuleInit(): Promise<void> {
     try{
-      this.getCryptoBotExchangeRates();
+      await this.getCryptoBotExchangeRates();
     } catch(e) {
       this.logger.error('Error fetching Crypto Bot exchange rates', e);
     }
@@ -45,13 +47,9 @@ export class CryptoBotService implements IPaymentService {
 
   async deposit(payment: Payment): Promise<UrlRedirect> {
     const { id, amount, method } = payment;
-    const response = await axios({
-      method: 'POST',
-      url: `${this.cryptoBotUrl}/api/createInvoice`,
-      headers: {
-        'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
-      },
-      data: {
+    const response = await axios.post(
+      `${this.cryptoBotUrl}/api/createInvoice`,
+      {
         currency_type: "crypto",
         asset: appConfig.CRYPTO_ASSET,
         amount: String(depositCryptoAmount(amount, method.comission)),
@@ -61,10 +59,14 @@ export class CryptoBotService implements IPaymentService {
         allow_comments: false,
         allow_anonymous: false,
         expires_in: 60 * 60 * 24, // 24 hours
+      }, {
+        headers: {
+          'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
+        }
       }
-    });
+    );
 
-    if(response.data?.ok){
+    if(response?.data?.ok){
       return { url: response.data.result.bot_invoice_url };
     }
     throw new HttpException('Error creating invoice', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -97,20 +99,21 @@ export class CryptoBotService implements IPaymentService {
       }
 
       const spendId = `${user.id}-${new Date().getTime()}-${uuid()}`;
-      const response = await axios({
-        method: 'POST',
-        url: `${this.cryptoBotUrl}/api/transfer`,
-        headers: {
-          'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
-        },
-        data: {
+      const response = await axios.post(
+        `${this.cryptoBotUrl}/api/transfer`,
+        {
           user_id: payload.telegramUserId,
           asset: appConfig.CRYPTO_ASSET,
           amount: amountAfterComission,
           spend_id: spendId,
+        },
+        {
+          headers: {
+            'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
+          }
         }
-      });
-      if(!response.data?.ok) throw new HttpException('Error making transfer', HttpStatus.INTERNAL_SERVER_ERROR);
+      );
+      if(!response?.data?.ok) throw new HttpException('Error making transfer', HttpStatus.INTERNAL_SERVER_ERROR);
 
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -124,15 +127,13 @@ export class CryptoBotService implements IPaymentService {
 
   @Cron(CronExpression.EVERY_MINUTE, { name: 'crypto_bot_exchange_rates_fetching'})
   async getCryptoBotExchangeRates(): Promise<ExchangeRate[]> {
-    const response = await axios({
-      method: 'GET',
-      url: `${this.cryptoBotUrl}/api/getExchangeRates`,
+    const response = await axios.get(`${this.cryptoBotUrl}/api/getExchangeRates`, {
       headers: {
         'Crypto-Pay-API-Token': appConfig.CRYPTO_BOT_TOKEN,
       },
     });
 
-    if(response.data?.ok){
+    if(response?.data?.ok){
       const rates = response.data.result as Array<ExchangeRate>;
       for(const rate of rates){
         if(

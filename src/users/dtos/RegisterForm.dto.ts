@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, Length, Matches, IsNumber } from "class-validator";
+import { IsNotEmpty, IsString, Length, Matches, IsOptional, IsInt } from "class-validator";
 
 export class RegisterFormDto {
   @IsNotEmpty()
@@ -16,9 +16,22 @@ export class RegisterFormDto {
   @Length(8, 32)
   @ApiProperty()
   password: string;
+
+  // used to link the telegram account automatically (when registering from the tg mini app)
+  @IsOptional()
+  @ApiProperty({ example: { hash: 'some_hash', user: { id: 12345 } } })
+  telegramData?: any;
+  /*
+    {
+      "hash": string,
+      "user": {
+        "id": integer
+      }
+    }
+  */
   
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   @ApiProperty({ example: 4 })
   trophyChange: number;
 

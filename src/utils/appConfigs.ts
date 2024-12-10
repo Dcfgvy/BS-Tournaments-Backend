@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { cleanEnv, bool, port, url, str, num } from 'envalid';
+import { cleanEnv, bool, port, str, num } from 'envalid';
 import { NodeEnv } from './NodeEnv';
 
 dotenv.config();
@@ -29,9 +29,11 @@ const envConfig = cleanEnv(process.env, {
   TOUR_PLAYING_MAX_TIME: num(),
   TOUR_FREEZE_TIME: num(),
   ORGANIZER_BAN_TIME: num(),
+  TOUR_CREATION_FEE: num(),
 
   ORGANIZER_FEE: num(),
   CRYPTO_BOT_TOKEN: str(),
+  TELEGRAM_BOT_TOKEN: str(),
   CRYPTO_ASSET: str(),
   COINS_EXCHANGE_RATE: num(),
 });
@@ -49,8 +51,9 @@ const defaultConfig = {
   TOUR_RECRUITMENT_MAX_TIME: 4,
   TOUR_START_AWAITING_TIME: 0.25,
   TOUR_PLAYING_MAX_TIME: 0.5,
-  TOUR_FREEZE_TIME: 72,
-  ORGANIZER_BAN_TIME: 48,
+  TOUR_FREEZE_TIME: 1,
+  ORGANIZER_BAN_TIME: 24,
+  TOUR_CREATION_FEE: 20,
   COINS_EXCHANGE_RATE: 100,
 };
 

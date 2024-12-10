@@ -1,11 +1,14 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsOptional, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class NamesDto {
-  @IsString()
-  @IsNotEmpty()
-  en: string;
+export class CreationDatesDto {
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  createdFrom?: Date;
 
-  @IsString()
-  @IsNotEmpty()
-  ru: string;
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  createdTo?: Date;
 }

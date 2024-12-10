@@ -15,9 +15,9 @@ export class Withdrawal extends BaseEntity {
   @Column()
   status: WithdrawalStatus;
 
-  @ManyToOne(() => WithdrawalMethod)
+  @ManyToOne(() => WithdrawalMethod, { onDelete: 'SET NULL', nullable: true })
   method: WithdrawalMethod;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 }

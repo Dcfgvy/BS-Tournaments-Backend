@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { NamesDto } from '../../utils/dtos';
-import { IsBoolean, IsNumber } from 'class-validator';
+import { NamesDto } from '../../utils/names';
 
 export class EventResponseDto {
   @ApiProperty({ example: 1 })
@@ -12,7 +11,7 @@ export class EventResponseDto {
   } })
   names: NamesDto;
 
-  @ApiProperty({ example: '/uploads/images/event.png' })
+  @ApiProperty({ example: 'uploads/images/event.png' })
   imgUrl: string;
 
   @ApiProperty({ example: 'Event' })

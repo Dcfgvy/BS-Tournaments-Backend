@@ -5,12 +5,17 @@ import { Repository } from 'typeorm';
 import { ISettings } from '../utils/interfaces';
 import { appConfig } from '../utils/appConfigs';
 import { convertValue } from '../utils/other';
+import { AddChannelToPostDto } from './dtos/AddChannel.dto';
+import { ChannelToPost } from 'src/database/entities/ChannelToPost.entity';
+import { EditChannelToPostDto } from './dtos/EditChannel.dto';
 
 @Injectable()
 export class SettingsService implements OnModuleInit {
   constructor(
     @InjectRepository(Settings)
-    private settingsRepository: Repository<Settings>
+    private settingsRepository: Repository<Settings>,
+    @InjectRepository(ChannelToPost)
+    private channelToPostRepository: Repository<ChannelToPost>,
   ) {}
 
   public static data: ISettings = null;
@@ -30,6 +35,8 @@ export class SettingsService implements OnModuleInit {
       tourPlayingMaxTime: hour * appConfig.TOUR_PLAYING_MAX_TIME,
       tourFreezeTime: hour * appConfig.TOUR_FREEZE_TIME,
       organizerBanTime:  hour * appConfig.ORGANIZER_BAN_TIME,
+      tourCreationFee: appConfig.TOUR_CREATION_FEE,
+      globalMessage: "",
     };
     // replacing default values from env with data from DB
     for(let i = 0; i < settingsFromDB.length; i++){
@@ -69,5 +76,31 @@ export class SettingsService implements OnModuleInit {
     setting.value = String(value);
     await this.settingsRepository.save(setting);
     await this.updateSettings();
+  }
+
+  async getChannelsToPost(): Promise<ChannelToPost[]> {
+    return this.channelToPostRepository.find();
+  }
+
+  async addChannelToPost(data: AddChannelToPostDto): Promise<void> {
+    const channel = this.channelToPostRepository.create(data);
+    await this.channelToPostRepository.save(channel);
+    return;
+  }
+
+  async editChannelToPost(channel: string, data: EditChannelToPostDto): Promise<void> {
+    await this.channelToPostRepository.update({
+      username: channel,
+    }, {
+      language: data.language,
+    });
+    return;
+  }
+
+  async deleteChannelToPost(channel: string): Promise<void> {
+    await this.channelToPostRepository.delete({
+      username: channel,
+    });
+    return;
   }
 }
