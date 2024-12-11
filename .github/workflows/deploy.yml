@@ -51,7 +51,6 @@ jobs:
           DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:${{ github.sha }}
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
-          set -e
           cd ${{ secrets.SERVER_WORK_DIR }}
           mkdir -p ./uploaded/images
           docker compose pull
