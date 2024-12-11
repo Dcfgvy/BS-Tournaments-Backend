@@ -44,15 +44,8 @@ jobs:
         # SERVER_WORK_DIR in format "/path-to-dir", e.g. "/usr/src/app"
       run: |
         ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
-        docker pull $DOCKER_IMAGE
-        docker stop bs-tournaments-backend || true
-        docker rm bs-tournaments-backend || true
-        # Create the directory on the server if it doesn't exist
-        mkdir -p ${{ secrets.SERVER_WORK_DIR }}/uploaded/images
-        # Run the container with a bind mount for the images directory
-        docker run -d --name bs-tournaments-backend \
-          --env-file ${{ secrets.SERVER_WORK_DIR }}/.env \
-          -p 3001:3001 \
-          -v ${{ secrets.SERVER_WORK_DIR }}/uploaded/images:/usr/src/app/uploaded/images \
-          $DOCKER_IMAGE
+        cd ${{ secrets.SERVER_WORK_DIR }}
+        mkdir -p ./uploaded/images
+        docker-compose pull
+        TAG=${{ github.sha }} docker-compose -f docker-compose.yml up -d
         EOF
