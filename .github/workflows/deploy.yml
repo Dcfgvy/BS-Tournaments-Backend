@@ -46,6 +46,6 @@ jobs:
         ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
         cd ${{ secrets.SERVER_WORK_DIR }}
         mkdir -p ./uploaded/images
-        docker-compose pull
-        TAG=${{ github.sha }} docker-compose -f docker-compose.yml up -d
+        docker compose pull
+        TAG=${{ github.sha }} docker compose -f docker-compose.yml up -d
         EOF
