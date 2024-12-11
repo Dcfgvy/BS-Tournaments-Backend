@@ -43,11 +43,7 @@ import { Redis } from 'ioredis';
       secret: appConfig.JWT_SECRET,
     }),
     BullModule.forRoot({
-      connection: new Redis({
-        host: appConfig.REDIS_HOST,
-        port: appConfig.REDIS_PORT,
-        maxRetriesPerRequest: null,
-      })
+      connection: new Redis(appConfig.REDIS_URL, { maxRetriesPerRequest: null })
     }),
     ScheduleModule.forRoot(),
     SettingsModule,
