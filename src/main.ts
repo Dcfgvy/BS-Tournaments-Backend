@@ -6,9 +6,11 @@ import { setupSwagger } from './utils/swagger';
 import { NodeEnv } from './utils/NodeEnv';
 
 async function bootstrap() {
-  console.log(appConfig.REDIS_HOST);
-  console.log(appConfig.REDIS_PORT);
-  
+  setInterval(() => {
+    console.log(appConfig.REDIS_HOST);
+    console.log(appConfig.REDIS_PORT);
+  }, 2000);
+
   const app = await NestFactory.create(AppModule, {
     logger: (appConfig.NODE_ENV === NodeEnv.DEV) ? undefined : false,
   });
