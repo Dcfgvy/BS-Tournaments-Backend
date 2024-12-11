@@ -17,6 +17,7 @@ import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { _ } from 'src/utils/translator';
 import { TelegramConnectionLink } from 'src/database/entities/TelegramConnectionLink.entity';
 import { ChangePasswordDto } from 'src/users/dtos/ChangePassword.dto';
+import { bullConfig } from 'src/utils/bullConfig';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,7 @@ export class AuthService {
       if(tgData && (validateTgUserPayload(tgData) === false))
         throw new HttpException('Invalid Telegram data', HttpStatus.BAD_REQUEST);
 
-      const queueEvents = new QueueEvents('brawl-stars-api');
+      const queueEvents = new QueueEvents('brawl-stars-api', bullConfig);
       const confirmationJob = await this.brawlStarsApiQueue.add('confirm-account-by-tag', {
         tag: userTag,
         trophyChange: registerFormDto.trophyChange

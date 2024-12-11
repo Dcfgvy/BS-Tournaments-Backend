@@ -26,7 +26,7 @@ import { EventMapsModule } from './maps/maps.module';
 import { SettingsModule } from './settings/settings.module';
 import { TelegramConnectionLink } from './database/entities/TelegramConnectionLink.entity';
 import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
-import { Redis } from 'ioredis';
+import { bullConfig } from './utils/bullConfig';
 
 @Module({
   imports: [
@@ -42,9 +42,7 @@ import { Redis } from 'ioredis';
     JwtModule.register({
       secret: appConfig.JWT_SECRET,
     }),
-    BullModule.forRoot({
-      connection: new Redis(appConfig.REDIS_URL, { maxRetriesPerRequest: null })
-    }),
+    BullModule.forRoot(bullConfig),
     ScheduleModule.forRoot(),
     SettingsModule,
     TelegramBotModule
