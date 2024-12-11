@@ -10,6 +10,10 @@ import { Job } from 'bullmq';
   limiter: {
     max: 5,
     duration: 5 * 1000
+  },
+  connection: {
+    host: appConfig.REDIS_HOST,
+    port: appConfig.REDIS_PORT,
   }
 })
 export class BrawlStarsApiService extends WorkerHost {
