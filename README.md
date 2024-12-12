@@ -62,10 +62,12 @@ $ yarn run test:cov
 $ yarn seed
 
 # execute seeders for specified tables
-$ yarn seed -- users brawlers
+$ yarn seed users brawlers
 
-# change default source (useful for remote test and production seeding)
-$ yarn seed -- events brawlers --db-url=postgresql://postgres:password@localhost:5432/brawl_tournaments
+# seed production or test database (on server)
+$ docker exec -it { backend_container_name } sh
+$ node /usr/src/app/dist/database/seed.js events brawlers payment_methods withdrawal_methods
+$ exit
 ```
 
 ## Migrations

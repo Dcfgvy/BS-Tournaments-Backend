@@ -10,39 +10,30 @@ import EventAndMapSeeder from "./seeders/event-and-map.seeder";
 
 // Map of database tables names to seeder classes
 const allSeeders = {
-  users: UserSeeder,
-  brawlers: BrawlerSeeder,
-  payment_methods: PaymentMethodSeeder,
-  withdrawal_methods: WithdrawalMethodSeeder,
-  events: EventAndMapSeeder,
+  'users': UserSeeder,
+  'brawlers': BrawlerSeeder,
+  'payment_methods': PaymentMethodSeeder,
+  'withdrawal_methods': WithdrawalMethodSeeder,
+  'events': EventAndMapSeeder,
 };
 
-// Extract command-line arguments
-const args = process.argv.slice(2);
-const dbUrlArg = args.find(arg => arg.startsWith("--db-url="));
-const specifiedSeeders = args.filter(arg => !arg.startsWith("--db-url="));
+// Extract command-line arguments to specify seeders
+const specifiedSeeders = process.argv.slice(2); // Arguments after the script name
 
-let databaseUrl: string | undefined;
-if(dbUrlArg){
-  databaseUrl = dbUrlArg.split("=")[1];
-}
-
-// Check for invalid seeders
-const invalidSeeders = specifiedSeeders.filter(name => !allSeeders[name]);
-if(invalidSeeders.length > 0){
+// Check for errors
+const invalidSeeders = specifiedSeeders.filter((name) => !allSeeders[name]);
+if (invalidSeeders.length > 0) {
   console.error(`Invalid seeders specified: ${invalidSeeders.join(", ")}`);
   process.exit(1);
 }
 
 // Filter seeders based on user input
 const seedsToRun = specifiedSeeders.length
-  ? specifiedSeeders.map(name => allSeeders[name]).filter(Boolean)
-  : Object.values(allSeeders);
+  ? specifiedSeeders.map((name) => allSeeders[name]).filter(Boolean)
+  : Object.values(allSeeders); // Default to all seeders if none specified
 
 const seedSourceOptions: DataSourceOptions & SeederOptions = {
-  ...(databaseUrl
-    ? { type: "postgres", url: databaseUrl }
-    : dataSourceOptions),
+  ...dataSourceOptions,
   factories: [UserFactory],
   seeds: seedsToRun,
 };
