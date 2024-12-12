@@ -57,5 +57,5 @@ jobs:
           TAG=${{ github.sha }} docker compose -f docker-compose.yml up -d
 
           # Remove old unused backend images
-          docker images --filter "reference=${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:*" --format "{{.Repository}}:{{.Tag}}" | grep -v "${{ github.sha }}" | xargs -r docker rmi
+          docker images --filter "reference=${{ secrets.DOCKER_USERNAME }}/bs-tournaments-backend:*" --format "{{.Repository}}:{{.Tag}}" | grep -v "${{ github.sha }}" | xargs -r docker rmi || true
           EOF

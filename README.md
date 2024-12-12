@@ -63,6 +63,9 @@ $ yarn seed
 
 # execute seeders for specified tables
 $ yarn seed -- users brawlers
+
+# change default source (useful for remote test and production seeding)
+$ yarn seed -- events brawlers --db-url=postgresql://postgres:password@localhost:5432/brawl_tournaments
 ```
 
 ## Migrations

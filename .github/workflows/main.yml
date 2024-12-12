@@ -11,14 +11,9 @@ on:
 
 env:
   NODE_ENV: ci
-  LOAD_TEST_DATA: false
   PORT: 3000
   BRAWL_STARS_API_KEY: ${{ secrets.BRAWL_STARS_API_KEY }}
-  DB_HOST: localhost
-  DB_PORT: 5432
-  DB_USER: ${{ secrets.DB_USER }}
-  DB_PASS: ${{ secrets.DB_PASS }}
-  DB_NAME: ${{ secrets.DB_NAME }}
+  DATABASE_URL: postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASS }}@localhost:5432/${{ secrets.DB_NAME }}
   REDIS_URL: "redis://localhost:6379"
   DB_SEED_USER_PASSWORD: ${{ secrets.DB_SEED_USER_PASSWORD }}
   DB_SEED_ORGANIZER_TAG: "#88V88VUP"
