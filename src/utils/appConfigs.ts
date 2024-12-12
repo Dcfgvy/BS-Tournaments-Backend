@@ -6,19 +6,15 @@ dotenv.config();
 
 const envConfig = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'production', 'ci', 'test'], default: 'development' }),
-  LOAD_TEST_DATA: bool({ choices: [true, false], default: false }),
   PORT: port(),
   BRAWL_STARS_API_KEY: str(),
   
-  DB_HOST: str(),
-  DB_PORT: port(),
-  DB_USER: str(),
-  DB_PASS: str(),
-  DB_NAME: str(),
-  REDIS_URL: str(),
+  DATABASE_URL: str(),
   DB_SEED_USER_PASSWORD: str(),
   DB_SEED_ORGANIZER_TAG: str(),
   DB_SEED_ORGANIZER_PASSWORD: str(),
+
+  REDIS_URL: str(),
   JWT_SECRET: str(),
   ADMIN_TAGNAME: str(),
   ADMIN_PASSWORD: str(),
@@ -40,10 +36,7 @@ const envConfig = cleanEnv(process.env, {
 // In next config objects put variables after default config if you want to overwrite default values
 // for corresponding application mode
 const defaultConfig = {
-  LOAD_TEST_DATA: false,
   PORT: 3000,
-  DB_HOST: 'localhost',
-  DB_PORT: 5432,
   REDIS_URL: 'redis://localhost:6379',
   ADMIN_TAGNAME: '#ADMIN',
   TOUR_RECRUITMENT_MAX_TIME: 4,

@@ -62,7 +62,12 @@ $ yarn run test:cov
 $ yarn seed
 
 # execute seeders for specified tables
-$ yarn seed -- users brawlers
+$ yarn seed users brawlers
+
+# seed production or test database (on server)
+$ docker exec -it { backend_container_name } sh
+$ node /usr/src/app/dist/database/seed.js events brawlers payment_methods withdrawal_methods
+$ exit
 ```
 
 ## Migrations
