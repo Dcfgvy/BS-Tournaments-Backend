@@ -36,7 +36,7 @@ env:
 jobs:
   install-deps:
     name: Install dependencies
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
 
     strategy:
@@ -55,7 +55,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: install-deps
     timeout-minutes: 10
 
@@ -78,7 +78,7 @@ jobs:
 
   unit-test:
     name: Unit test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: install-deps
     timeout-minutes: 30
 
