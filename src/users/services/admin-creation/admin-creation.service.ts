@@ -22,7 +22,7 @@ export class AdminCreationService implements OnApplicationBootstrap {
       const adminUser = this.userRepository.create({
         tag: appConfig.ADMIN_TAGNAME,
         password: hashedPassword,
-        balance: 10000,
+        balance: 0,
         name: 'Admin',
         language: 'en',
         ip: 'localhost',
