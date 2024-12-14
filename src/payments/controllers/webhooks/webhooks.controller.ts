@@ -42,6 +42,7 @@ export class WebhooksController {
 
         await queryRunner.manager.save(payment);
         await queryRunner.manager.save(user);
+        await queryRunner.commitTransaction();
       } catch (err) {
         await queryRunner.rollbackTransaction();
         this.logger.error(err);
@@ -49,7 +50,8 @@ export class WebhooksController {
       } finally {
         await queryRunner.release();
       }
-    } else {
+    }
+    else {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
   }
