@@ -19,7 +19,7 @@ export class WebhooksController {
 
   // Handle Crypto Bot invoice payments
   @ApiExcludeEndpoint()
-  @Post(`/${encodeURIComponent(appConfig.CRYPTO_BOT_TOKEN)}`)
+  @Post(`/${appConfig.CRYPTO_BOT_TOKEN.replace(':', '_')}`)
   async handleCryptoBotRequest(@Body() update: any){
     if(update.update_type === CryptoBotUpdateType.INVOICE_PAID){
       const paymentId: number = JSON.parse(update.payload.payload).paymentId;
