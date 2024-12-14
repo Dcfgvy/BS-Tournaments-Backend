@@ -7,7 +7,7 @@ import { NodeEnv } from './utils/NodeEnv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: (appConfig.NODE_ENV === NodeEnv.DEV) ? undefined : false,
+    logger: (appConfig.NODE_ENV === NodeEnv.DEV || appConfig.NODE_ENV === NodeEnv.TEST) ? undefined : false,
   });
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));

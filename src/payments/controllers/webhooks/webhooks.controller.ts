@@ -21,8 +21,9 @@ export class WebhooksController {
   @ApiExcludeEndpoint()
   @Post(`/${appConfig.CRYPTO_BOT_TOKEN.replace(':', '_')}`)
   async handleCryptoBotRequest(@Body() update: any){
+    this.logger.log('Received Crypto Bot invoice payment update:', update);
     if(update.update_type === CryptoBotUpdateType.INVOICE_PAID){
-      const paymentId: number = JSON.parse(update.payload.payload).paymentId;
+      const paymentId: number = JSON.parse(decodeURIComponent(update.payload.payload)).paymentId;
 
       const queryRunner = this.dbConnection.createQueryRunner();
       await queryRunner.connect();
