@@ -11,6 +11,7 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.setGlobalPrefix('api');
   setupSwagger(app);
 
   const PORT = appConfig.PORT;

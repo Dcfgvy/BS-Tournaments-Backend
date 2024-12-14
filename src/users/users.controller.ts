@@ -71,7 +71,7 @@ export class UsersController {
     return this.authService.updateToken(refreshTokenDto);
   }
 
-  @Get('/info')
+  @Get('/me')
   // not using @UseGuards(AuthGuard) because a banned user won't be able to get information about their ban
   @UseInterceptors(UserInterceptor)
   @ApiBearerAuth()
