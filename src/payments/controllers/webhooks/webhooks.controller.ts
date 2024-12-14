@@ -1,6 +1,7 @@
 import { Body, Controller, HttpException, HttpStatus, Logger, Post } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Payment } from 'src/database/entities/payments/Payment.entity';
+import { User } from 'src/database/entities/User.entity';
 import { PaymentStatus } from 'src/payments/enums/payment-status.enum';
 import { appConfig } from 'src/utils/appConfigs';
 import { Connection } from 'typeorm';
@@ -30,12 +31,18 @@ export class WebhooksController {
       await queryRunner.startTransaction();
       
       try{
-        const payment = await queryRunner.manager.findOne(Payment, {
-          where: { id: paymentId, status: PaymentStatus.PENDING },
-          relations: ['user']
-        });
-        if(!payment) throw new Error('Payment not found');
+        const payment = await queryRunner.manager
+          .createQueryBuilder(Payment, 'payment')
+          .leftJoinAndSelect('payment.user', 'user')
+          .setLock('pessimistic_write')
+          .where('payment.id = :paymentId', { paymentId })
+          .andWhere('payment.status = :status', { status: PaymentStatus.PENDING })
+          .getOne();
+        
+        if(!payment) throw new Error('Payment not found or not in PENDING status');
+        
         const user = payment.user;
+        if(!user) throw new Error('User not found for the payment');
 
         payment.status = PaymentStatus.SUCCESS;
         user.balance += payment.amount;
