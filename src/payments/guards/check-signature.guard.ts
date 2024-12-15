@@ -17,12 +17,10 @@ export class CheckSignatureGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest() as Request;
-    console.log(request.headers);
-    console.log(request.body);
     const signatureHeader = request.headers[this.signatureHeaderName];
     const body = request.body;
 
-    const secretKey = createHash('sha256').update(appConfig.CRYPTO_BOT_TOKEN).digest('hex');
+    const secretKey = createHash('sha256').update(appConfig.CRYPTO_BOT_TOKEN).digest();
     const hmac = createHmac('sha256', secretKey);
     hmac.update(JSON.stringify(body));
     const calculatedSignature = hmac.digest('hex');
