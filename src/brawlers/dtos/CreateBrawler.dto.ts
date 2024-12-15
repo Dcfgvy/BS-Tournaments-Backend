@@ -14,7 +14,7 @@ export class CreateBrawlerDto {
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: 'uploads/images/brawler.png' })
+  @ApiProperty({ example: 'api/uploads/images/brawler.png' })
   imgUrl: string;
 
   @IsString()

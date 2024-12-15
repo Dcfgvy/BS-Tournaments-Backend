@@ -368,7 +368,7 @@ export default class BrawlerSeeder implements Seeder {
       await repository.upsert({
         ...brawler,
         names: JSON.stringify(brawler.names),
-        imgUrl: 'uploads/images/' + brawler.apiName.toLowerCase().replace(' ', '_') + '.png',
+        imgUrl: 'api/uploads/images/' + brawler.apiName.toLowerCase().replace(' ', '_') + '.png',
       }, ['apiName']);
     }
   }

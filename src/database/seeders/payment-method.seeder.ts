@@ -10,7 +10,7 @@ const items = [
       en: 'Instant balance top-up. Just pay the Crypto Bot check',
       ru: 'Моментальное пополнение баланса. Просто оплатите чек Crypto Bot'
     },
-    imgUrl: 'uploads/images/crypto-bot.jpg',
+    imgUrl: 'api/uploads/images/crypto-bot.jpg',
     minAmount: 10,
     maxAmount: 100000,
     comission: 0

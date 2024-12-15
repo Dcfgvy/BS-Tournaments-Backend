@@ -135,7 +135,7 @@ describe('PaymentsService', () => {
         names: { en: 'Method', ru: 'Метод' },
         descriptions: { en: 'Description', ru: 'Описание' },
         comission: '0.05',
-        imgUrl: 'uploads/images/no-image',
+        imgUrl: 'api/uploads/images/no-image',
         methodName: 'method',
         minAmount: 50,
         maxAmount: 1000

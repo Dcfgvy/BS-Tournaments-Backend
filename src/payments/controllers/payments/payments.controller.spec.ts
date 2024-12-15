@@ -65,7 +65,7 @@ describe('PaymentsController', () => {
       const createDto: CreatePaymentMethodDto = {
         names: { en: 'Jiji', ru: 'Jiji' },
         descriptions: { en: 'Credit Card', ru: 'Кредитная карта' },
-        imgUrl: 'uploads/images/credit-card.png',
+        imgUrl: 'api/uploads/images/credit-card.png',
         minAmount: 10,
         maxAmount: 1000,
         comission: '0.10',
@@ -83,7 +83,7 @@ describe('PaymentsController', () => {
     it('should update a payment method', async () => {
       const updateDto: UpdatePaymentMethodDto = {
         comission: '0.30',
-        imgUrl: 'uploads/images/hello.png',
+        imgUrl: 'api/images/hello.png',
       };
       const methodId = 1;
       const result = { id: methodId, ...updateDto };

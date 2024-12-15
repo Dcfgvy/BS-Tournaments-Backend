@@ -17,7 +17,6 @@ import { formatDate } from '../../../utils/other';
 import { SettingsService } from 'src/settings/settings.service';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { _, translatePlace } from 'src/utils/translator';
-import { appConfig } from 'src/utils/appConfigs';
 import axios from 'axios';
 import { UploadsService } from 'src/uploads/uploads.service';
 import path from 'path';
