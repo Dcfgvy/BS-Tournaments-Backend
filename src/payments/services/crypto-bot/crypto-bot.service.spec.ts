@@ -175,7 +175,7 @@ describe('CryptoBotService', () => {
               is_valid: true,
               is_crypto: true,
               is_fiat: false,
-              source: appConfig.CRYPTO_ASSET,
+              source: appConfig.CRYPTO_BOT_ASSET,
               target: 'USD',
               rate: '50000',
             },
