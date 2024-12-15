@@ -10,7 +10,7 @@ const texts: Texts = {
     ru: "✅ Ваш аккаунт Telegram был успешно привязан!"
   },
   "Hi, username, you didn't provide the verification data": {
-    en: "👋 Hi, {{ username }}, you didn't provide the verification data",
+    en: "👋 Hi, {{ username }}, you didn't provide the account verification data",
     ru: "👋 Привет, {{ username }}, не было получено данных для привязки аккаунта"
   },
   "The link is invalid or expired. Please try again": {

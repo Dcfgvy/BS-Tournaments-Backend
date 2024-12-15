@@ -16,7 +16,7 @@ export class UploadsService {
     const filePath = path.join(uploadsDir, uniqueFilename);
     await fs.writeFile(filePath, file.buffer);
 
-    return `uploads/images/${uniqueFilename}`;
+    return `api/uploads/images/${uniqueFilename}`;
   }
 
   async fetchImage(filename: string): Promise<string> {
@@ -35,7 +35,7 @@ export class UploadsService {
   }
 
   async deleteFile(filepath: string): Promise<boolean> {
-    const absolutePath = path.join(this.baseUploadDir, filepath.replace('uploads/', '').replace('../', ''));
+    const absolutePath = path.join(this.baseUploadDir, filepath.replace('api/uploads/', '').replace('../', ''));
     try {
       await fs.unlink(absolutePath);
       return true;

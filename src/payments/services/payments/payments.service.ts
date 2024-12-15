@@ -10,6 +10,7 @@ import { Payment } from 'src/database/entities/payments/Payment.entity';
 import { validatePaymentPayload } from 'src/payments/utils/validate-payload.util';
 import { CreatePaymentMethodDto } from 'src/payments/dtos/CreatePaymentMethod.dto';
 import { UpdatePaymentMethodDto } from 'src/payments/dtos/UpdatePaymentMethod.dto';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class PaymentsService {
@@ -57,6 +58,30 @@ export class PaymentsService {
 
     const paymentService: IPaymentService = this.getPaymentService(methodName);
     return paymentService.deposit(payment, data);
+  }
+
+  async fetchPayments(
+    paginationOptions: IPaginationOptions,
+    userId?: number,
+    methodName?: string,
+    createdFrom?: Date,
+    createdTo?: Date,
+  ): Promise<Pagination<Payment>> {
+    let query = this.paymentRepository
+      .createQueryBuilder('payments')
+      .leftJoinAndSelect('payments.user', 'user')
+      .leftJoinAndSelect('payments.method', 'method');
+  
+    if(methodName) query = query.andWhere('method.methodName = :methodName', { methodName });
+    if(userId) query = query.andWhere('user.id = :userId', { userId });
+  
+    // Filter by creation date range
+    if(createdFrom) query = query.andWhere('payments.createdAt >= :createdFrom', { createdFrom });
+    if(createdTo) query = query.andWhere('payments.createdAt <= :createdTo', { createdTo });
+  
+    query = query.orderBy('payments.createdAt', 'DESC');
+  
+    return paginate<Payment>(query, paginationOptions);
   }
 
   getAllPaymentMethods(){

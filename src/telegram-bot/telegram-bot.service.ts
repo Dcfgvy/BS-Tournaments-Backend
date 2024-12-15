@@ -11,7 +11,7 @@ import { InputFile } from 'telegraf/typings/core/types/typegram';
 @Injectable()
 export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
   private bot: Telegraf;
-  public botUsername: string;
+  private _botUsername: string;
   private readonly logger: Logger = new Logger(TelegramBotService.name);
 
   constructor(
@@ -21,6 +21,10 @@ export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
     private readonly telegramConnectionLinkRepository: Repository<TelegramConnectionLink>,
   ) {
     this.bot = new Telegraf(appConfig.TELEGRAM_BOT_TOKEN);
+  }
+
+  public get botUsername(): string {
+    return this._botUsername;
   }
 
   async onModuleInit() {
@@ -77,7 +81,7 @@ export class TelegramBotService implements OnModuleInit, OnModuleDestroy {
   private getName(){
     this.bot.telegram.getMe()
     .then((botInfo) => {
-      this.botUsername = botInfo.username;
+      this._botUsername = botInfo.username;
     }).catch((error) => {
       setTimeout(() => this.getName(), 500);
     });

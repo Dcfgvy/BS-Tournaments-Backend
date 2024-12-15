@@ -284,7 +284,7 @@ const knockoutMaps = [
 const items = [
   {
     names: { en: 'Gem Grab', ru: 'Захват Кристаллов' },
-    imgUrl: 'uploads/images/gem-grab.png',
+    imgUrl: 'api/uploads/images/gem-grab.png',
     apiName: 'gemGrab',
     isSolo: false,
     teamSize: 3,
@@ -293,7 +293,7 @@ const items = [
   },
   {
     names: { en: 'Solo Showdown', ru: 'Одиночное Столкновение' },
-    imgUrl: 'uploads/images/showdown.png',
+    imgUrl: 'api/uploads/images/showdown.png',
     apiName: 'soloShowdown',
     isSolo: true,
     teamSize: null,
@@ -302,7 +302,7 @@ const items = [
   },
   {
     names: { en: 'Duo Showdown', ru: 'Парное Столкновение' },
-    imgUrl: 'uploads/images/showdown.png',
+    imgUrl: 'api/uploads/images/showdown.png',
     apiName: 'duoShowdown',
     isSolo: false,
     teamSize: 2,
@@ -311,7 +311,7 @@ const items = [
   },
   {
     names: { en: 'Heist', ru: 'Ограбление' },
-    imgUrl: 'uploads/images/heist.png',
+    imgUrl: 'api/uploads/images/heist.png',
     apiName: 'heist',
     isSolo: false,
     teamSize: 3,
@@ -320,7 +320,7 @@ const items = [
   },
   {
     names: { en: 'Bounty', ru: 'Награда за Поимку' },
-    imgUrl: 'uploads/images/bounty.png',
+    imgUrl: 'api/uploads/images/bounty.png',
     apiName: 'bounty',
     isSolo: false,
     teamSize: 3,
@@ -329,7 +329,7 @@ const items = [
   },
   {
     names: { en: 'Brawl Ball', ru: 'Броулбол' },
-    imgUrl: 'uploads/images/brawl-ball.png',
+    imgUrl: 'api/uploads/images/brawl-ball.png',
     apiName: 'brawlBall',
     isSolo: false,
     teamSize: 3,
@@ -338,7 +338,7 @@ const items = [
   },
   {
     names: { en: 'Hot Zone', ru: 'Горячая Зона' },
-    imgUrl: 'uploads/images/hot-zone.png',
+    imgUrl: 'api/uploads/images/hot-zone.png',
     apiName: 'hotZone',
     isSolo: false,
     teamSize: 3,
@@ -347,7 +347,7 @@ const items = [
   },
   {
     names: { en: 'Knockout', ru: 'Нокаут' },
-    imgUrl: 'uploads/images/knockout.png',
+    imgUrl: 'api/uploads/images/knockout.png',
     apiName: 'knockout',
     isSolo: false,
     teamSize: 3,
@@ -392,7 +392,7 @@ export default class EventAndMapSeeder implements Seeder {
         const mapEntity = mapRepository.create({
           ...map,
           names: JSON.stringify(map.names),
-          imgUrl: 'uploads/images/' + map.apiName.toLowerCase().replace(' ', '_') + '.png',
+          imgUrl: 'api/uploads/images/' + map.apiName.toLowerCase().replace(' ', '_') + '.png',
           postImgUrl: null,
           event: event,
           eventId: event.id,

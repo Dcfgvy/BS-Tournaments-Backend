@@ -11,7 +11,7 @@ export class EventResponseDto {
   } })
   names: NamesDto;
 
-  @ApiProperty({ example: 'uploads/images/event.png' })
+  @ApiProperty({ example: 'api/uploads/images/event.png' })
   imgUrl: string;
 
   @ApiProperty({ example: 'Event' })

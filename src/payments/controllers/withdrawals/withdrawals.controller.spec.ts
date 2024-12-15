@@ -63,7 +63,7 @@ describe('WithdrawalsController', () => {
       const createDto: CreateWithdrawalMethodDto = {
         names: { en: 'Bank Transfer', ru: 'Банковский перевод' },
         descriptions: { en: 'Direct bank transfer', ru: 'Прямой банковский перевод' },
-        imgUrl: 'uploads/images/bank-transfer.png',
+        imgUrl: 'api/uploads/images/bank-transfer.png',
         minAmount: 50,
         maxAmount: 5000,
         comission: '0.05',
@@ -81,7 +81,7 @@ describe('WithdrawalsController', () => {
     it('should update a withdrawal method', async () => {
       const updateDto: UpdateWithdrawalMethodDto = {
         comission: '0.10',
-        imgUrl: 'uploads/images/updated.png',
+        imgUrl: 'api/uploads/images/updated.png',
       };
       const methodId = 1;
       const result = { id: methodId, ...updateDto };

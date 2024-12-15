@@ -10,7 +10,7 @@ const items = [
       en: 'Instant transfer to your preferred Crypto Bot account in Telegram',
       ru: 'Моментальный перевод на предпочитаемый аккаунт Crypto Bot в Телеграм'
     },
-    imgUrl: 'uploads/images/crypto-bot.jpg',
+    imgUrl: 'api/uploads/images/crypto-bot.jpg',
     minAmount: 100,
     maxAmount: 100000,
     comission: 0.05
