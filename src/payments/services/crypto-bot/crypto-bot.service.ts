@@ -95,7 +95,7 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
       // the withdrawal process
       const amountAfterComission = withdrawalCryptoAmount(withdrawal.amount, withdrawal.method.comission);
       if(amountAfterComission < this.minCryptoWithdrawalAmount || amountAfterComission > this.maxCryptoWithdrawalAmount){
-        throw new HttpException('Invalid withdrawal amount', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Invalid withdrawal amount (min 1 USD)', HttpStatus.BAD_REQUEST);
       }
 
       const spendId = `${user.id}-${new Date().getTime()}-${uuid()}`;
