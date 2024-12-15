@@ -26,8 +26,8 @@ type ExchangeRate = {
 @Injectable()
 export class CryptoBotService implements IPaymentService, OnModuleInit {
   // Crypto Bot has a limit around 1-25000 USD for transfers in any crypto currency
-  public minCryptoWithdrawalAmount: number = 0;
-  public maxCryptoWithdrawalAmount: number = Infinity;
+  private _minCryptoWithdrawalAmount: number = 0;
+  private _maxCryptoWithdrawalAmount: number = Infinity;
   private readonly logger = new Logger(CryptoBotService.name);
   public readonly cryptoBotUrl: string = appConfig.isProduction ? 'https://pay.crypt.bot' : 'https://testnet-pay.crypt.bot'
   
@@ -36,6 +36,13 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
     @InjectRepository(Withdrawal)
     private readonly withdrawalRepository: Repository<Withdrawal>
   ) {}
+
+  public get minCryptoWithdrawalAmount(): number {
+    return this._minCryptoWithdrawalAmount;
+  }
+  public get maxCryptoWithdrawalAmount(): number {
+    return this._maxCryptoWithdrawalAmount;
+  }
 
   async onModuleInit(): Promise<void> {
     try{
@@ -94,7 +101,7 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
 
       // the withdrawal process
       const amountAfterComission = withdrawalCryptoAmount(withdrawal.amount, withdrawal.method.comission);
-      if(amountAfterComission < this.minCryptoWithdrawalAmount || amountAfterComission > this.maxCryptoWithdrawalAmount){
+      if(amountAfterComission < this._minCryptoWithdrawalAmount || amountAfterComission > this._maxCryptoWithdrawalAmount){
         throw new HttpException('Invalid withdrawal amount (min 1 USD)', HttpStatus.BAD_REQUEST);
       }
 
@@ -142,8 +149,8 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
           && rate.source === appConfig.CRYPTO_ASSET
           && rate.target === "USD"
         ){
-          this.minCryptoWithdrawalAmount = 1 / Number(rate.rate);
-          this.maxCryptoWithdrawalAmount = 1 / Number(rate.rate) * 25000;
+          this._minCryptoWithdrawalAmount = 1 / Number(rate.rate);
+          this._maxCryptoWithdrawalAmount = 1 / Number(rate.rate) * 25000;
           break;
         }
       }
