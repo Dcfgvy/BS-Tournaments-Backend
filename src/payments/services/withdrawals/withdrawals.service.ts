@@ -10,6 +10,7 @@ import { WithdrawalStatus } from 'src/payments/enums/withdrawal-status.enum';
 import { validateWithdrawalPayload } from 'src/payments/utils/validate-payload.util';
 import { CreateWithdrawalMethodDto } from 'src/payments/dtos/CreateWithdrawalMethod.dto';
 import { UpdateWithdrawalMethodDto } from 'src/payments/dtos/UpdateWithdrawalMethod.dto';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class WithdrawalsService {
@@ -58,6 +59,30 @@ export class WithdrawalsService {
 
     const paymentService: IPaymentService = this.getPaymentService(methodName);
     return paymentService.withdraw(withdrawal, data);
+  }
+
+  async fetchWithdrawals(
+    paginationOptions: IPaginationOptions,
+    userId?: number,
+    methodName?: string,
+    createdFrom?: Date,
+    createdTo?: Date,
+  ): Promise<Pagination<Withdrawal>> {
+    let query = this.withdrawalRepository
+      .createQueryBuilder('withdrawals')
+      .leftJoinAndSelect('withdrawals.user', 'user')
+      .leftJoinAndSelect('withdrawals.method', 'method');
+  
+    if(methodName) query = query.andWhere('method.methodName = :methodName', { methodName });
+    if(userId) query = query.andWhere('user.id = :userId', { userId });
+  
+    // Filter by creation date range
+    if(createdFrom) query = query.andWhere('withdrawals.createdAt >= :createdFrom', { createdFrom });
+    if(createdTo) query = query.andWhere('withdrawals.createdAt <= :createdTo', { createdTo });
+  
+    query = query.orderBy('withdrawals.createdAt', 'DESC');
+  
+    return paginate<Withdrawal>(query, paginationOptions);
   }
 
   getAllWithdrawalMethods(){
