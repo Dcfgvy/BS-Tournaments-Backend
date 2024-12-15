@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/database/entities/User.entity';
 import { PaymentBaseDto } from 'src/payments/dtos/PaymentBase.dto';
 import { CreateWithdrawalMethodDto } from 'src/payments/dtos/CreateWithdrawalMethod.dto';
@@ -8,6 +8,13 @@ import { GetUser } from 'src/users/decorators/get-user.decorator';
 import { AdminGuard } from 'src/users/guards/admin.guard';
 import { AuthGuard } from 'src/users/guards/auth.guard';
 import { UpdateWithdrawalMethodDto } from 'src/payments/dtos/UpdateWithdrawalMethod.dto';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { ApiPagination } from 'src/other/pagination/api-pagination.decorator';
+import { PaginationParams } from 'src/other/pagination/pagination.decorator';
+import { PaginationParamsDto } from 'src/other/pagination/pagination.dto';
+import { WithdrawalResponseDto } from 'src/payments/dtos/WithdrawalResponse.dto';
+import { UserInterceptor } from 'src/users/interceptors/user.interceptor';
+import { CreationDatesDto } from 'src/utils/dtos';
 
 @Controller('withdrawals')
 @ApiTags('Withdrawals')
@@ -16,6 +23,57 @@ export class WithdrawalsController {
   constructor(
     private readonly withdrawalsService: WithdrawalsService,
   ) {}
+
+  @Get()
+  @UseGuards(AdminGuard)
+  @UseInterceptors(UserInterceptor)
+  @ApiQuery({ name: 'userId', required: false, type: Number, example: 25 })
+  @ApiQuery({ name: 'method', required: false, type: String, example: 'crypto-bot' })
+  @ApiQuery({ name: 'createdFrom', required: false, type: String, example: '2024-03-04T00:00:00.000Z' })
+  @ApiQuery({ name: 'createdTo', required: false, type: String, example: '2024-04-05T00:00:00.000Z' })
+  @ApiPagination()
+  @ApiOkResponse({ type: Pagination<WithdrawalResponseDto> })
+  async getAllWithdrawals(
+    @Query() creationDates: CreationDatesDto,
+    @Query('userId') userId: number,
+    @Query('method') methodName: string,
+    @PaginationParams() paginationParams: PaginationParamsDto,
+  ): Promise<Pagination<WithdrawalResponseDto>> {
+    const { createdFrom, createdTo } = creationDates;
+    const withdrawals = await this.withdrawalsService.fetchWithdrawals(
+      paginationParams,
+      userId,
+      methodName,
+      createdFrom,
+      createdTo,
+    );
+    return withdrawals;
+  }
+
+  @Get('/my')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(UserInterceptor)
+  @ApiQuery({ name: 'method', required: false, type: String, example: 'crypto-bot' })
+  @ApiQuery({ name: 'createdFrom', required: false, type: String, example: '2024-03-04T00:00:00.000Z' })
+  @ApiQuery({ name: 'createdTo', required: false, type: String, example: '2024-04-05T00:00:00.000Z' })
+  @ApiPagination()
+  @ApiOkResponse({ type: Pagination<WithdrawalResponseDto> })
+  async getUserPayments(
+    @Query() creationDates: CreationDatesDto,
+    @Query('method') methodName: string,
+    @PaginationParams() paginationParams: PaginationParamsDto,
+    @GetUser() user: User,
+  ): Promise<Pagination<WithdrawalResponseDto>> {
+    const { createdFrom, createdTo } = creationDates;
+    const withdrawals = await this.withdrawalsService.fetchWithdrawals(
+      paginationParams,
+      user.id,
+      methodName,
+      createdFrom,
+      createdTo,
+    );
+    return withdrawals;
+  }
 
   @Get('/methods')
   @UseGuards(AdminGuard)

@@ -164,7 +164,6 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
           this.cryptoToFiatToRate = Number(rate.rate);
         }
       }
-
       return rates;
     }
   }
