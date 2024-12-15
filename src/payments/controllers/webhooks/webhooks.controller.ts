@@ -1,9 +1,8 @@
-import { Body, Controller, HttpException, HttpStatus, Logger, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Logger, Post, UseGuards } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Payment } from 'src/database/entities/payments/Payment.entity';
-import { User } from 'src/database/entities/User.entity';
 import { PaymentStatus } from 'src/payments/enums/payment-status.enum';
-import { appConfig } from 'src/utils/appConfigs';
+import { CheckSignatureGuard } from 'src/payments/guards/check-signature.guard';
 import { Connection } from 'typeorm';
 
 enum CryptoBotUpdateType {
@@ -19,10 +18,10 @@ export class WebhooksController {
   ) {}
 
   // Handle Crypto Bot invoice payments
+  @Post(`/crypto-bot-update`)
   @ApiExcludeEndpoint()
-  @Post(`/${appConfig.CRYPTO_BOT_TOKEN.replace(':', '_')}`)
+  @UseGuards(new CheckSignatureGuard('crypto-pay-api-signature'))
   async handleCryptoBotRequest(@Body() update: any){
-    this.logger.log('Received Crypto Bot invoice payment update:', update);
     if(update.update_type === CryptoBotUpdateType.INVOICE_PAID){
       const paymentId: number = JSON.parse(decodeURIComponent(update.payload.payload)).paymentId;
 
@@ -40,7 +39,7 @@ export class WebhooksController {
           .getOne();
         
         if(!payment) throw new Error('Payment not found or not in PENDING status');
-        
+
         const user = payment.user;
         if(!user) throw new Error('User not found for the payment');
 
