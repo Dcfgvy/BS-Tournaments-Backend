@@ -32,7 +32,7 @@ export class WebhooksController {
       try{
         const payment = await queryRunner.manager
           .createQueryBuilder(Payment, 'payment')
-          .leftJoinAndSelect('payment.user', 'user')
+          .innerJoinAndSelect('payment.user', 'user')
           .setLock('pessimistic_write')
           .where('payment.id = :paymentId', { paymentId })
           .andWhere('payment.status = :status', { status: PaymentStatus.PENDING })
