@@ -6,7 +6,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class CheckSignatureGuard implements CanActivate {
-  signatureHeaderName: string;
+  private signatureHeaderName: string;
 
   constructor(signatureHeaderName: string){
     if(!signatureHeaderName) throw new Error('Missing signature header');

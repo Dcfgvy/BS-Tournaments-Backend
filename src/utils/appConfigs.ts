@@ -26,11 +26,13 @@ const envConfig = cleanEnv(process.env, {
   ORGANIZER_BAN_TIME: num(),
   TOUR_CREATION_FEE: num(),
 
-  ORGANIZER_FEE: num(),
   CRYPTO_BOT_TOKEN: str(),
-  TELEGRAM_BOT_TOKEN: str(),
-  CRYPTO_ASSET: str(),
+  CRYPTO_BOT_ASSET: str(),
+  FIAT_CURRENCY: str(),
   COINS_EXCHANGE_RATE: num(),
+
+  ORGANIZER_FEE: num(),
+  TELEGRAM_BOT_TOKEN: str(),
 });
 
 // In next config objects put variables after default config if you want to overwrite default values
@@ -45,7 +47,6 @@ const defaultConfig = {
   TOUR_FREEZE_TIME: 1,
   ORGANIZER_BAN_TIME: 24,
   TOUR_CREATION_FEE: 20,
-  COINS_EXCHANGE_RATE: 100,
 };
 
 const devConfig = {
