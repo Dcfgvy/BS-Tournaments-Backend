@@ -13,7 +13,8 @@ const items = [
     imgUrl: 'api/uploads/images/crypto-bot.jpg',
     minAmount: 100,
     maxAmount: 100000,
-    comission: 0.05
+    comission: 0.05,
+    serviceComission: 0,
   },
 ]
 
