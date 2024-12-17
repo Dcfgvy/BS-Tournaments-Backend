@@ -68,6 +68,7 @@ describe('PaymentsController', () => {
         imgUrl: 'api/uploads/images/credit-card.png',
         minAmount: 10,
         maxAmount: 1000,
+        serviceComission: '0.05',
         comission: '0.10',
         methodName: 'credit-card',
       };
