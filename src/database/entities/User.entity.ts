@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "./BaseEntity";
 import { Exclude } from "class-transformer";
 import { UserRole } from "../../users/enums/role.enum";
