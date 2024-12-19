@@ -40,6 +40,12 @@ export class PaymentMethodResponseDto {
     description: 'Commission percentage (e.g., 0.15 = 15%)',
   })
   comission: number;
+  
+  @ApiProperty({
+    example: '0.15',
+    description: 'Service commission percentage (e.g., 0.15 = 15%)',
+  })
+  serviceComission: string;
 
   @ApiProperty({ example: true, description: 'Indicates if the method is active' })
   isActive: boolean;

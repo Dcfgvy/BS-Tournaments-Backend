@@ -134,6 +134,7 @@ describe('PaymentsService', () => {
       const dto: CreatePaymentMethodDto = {
         names: { en: 'Method', ru: 'Метод' },
         descriptions: { en: 'Description', ru: 'Описание' },
+        serviceComission: '0.05',
         comission: '0.05',
         imgUrl: 'api/uploads/images/no-image',
         methodName: 'method',

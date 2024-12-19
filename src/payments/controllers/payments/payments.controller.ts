@@ -40,14 +40,14 @@ export class PaymentsController {
     @PaginationParams() paginationParams: PaginationParamsDto,
   ): Promise<Pagination<PaymentResponseDto>> {
     const { createdFrom, createdTo } = creationDates;
-    const payments = await this.paymentsService.fetchPayments(
+    const payments: unknown = await this.paymentsService.fetchPayments(
       paginationParams,
       userId,
       methodName,
       createdFrom,
       createdTo,
     );
-    return payments;
+    return payments as Pagination<PaymentResponseDto>;
   }
 
   @Get('/my')
@@ -65,14 +65,14 @@ export class PaymentsController {
     @GetUser() user: User,
   ): Promise<Pagination<PaymentResponseDto>> {
     const { createdFrom, createdTo } = creationDates;
-    const payments = await this.paymentsService.fetchPayments(
+    const payments: unknown = await this.paymentsService.fetchPayments(
       paginationParams,
       user.id,
       methodName,
       createdFrom,
       createdTo,
     );
-    return payments;
+    return payments as Pagination<PaymentResponseDto>;
   }
 
   @Get('/methods')
