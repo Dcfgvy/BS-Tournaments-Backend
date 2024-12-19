@@ -68,6 +68,13 @@ export class CreatePaymentMethodDto {
   comission: string;
 
   @ApiProperty({
+    example: '0.15',
+    description: 'Service commission rate for payments, represented as a decimal (e.g., 0.15 for 15%).',
+  })
+  @IsDecimal({ decimal_digits: '1,2' }, { message: 'Service commission must have up to 2 decimal places' })
+  serviceComission: string;
+
+  @ApiProperty({
     example: true,
     description: 'Indicates whether the method is active.',
     required: false,

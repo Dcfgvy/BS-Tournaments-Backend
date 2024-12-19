@@ -28,7 +28,7 @@ export class Tournament extends BaseEntity {
   @Column({ nullable: true })
   inviteCode: string;
 
-  @Column()
+  @Column() // fee paid by organizer when tournament is ended (we need to store it in case it will get changed during the tournament)
   feeToPay: number;
 
   @CreateDateColumn({ type: 'timestamptz' })
