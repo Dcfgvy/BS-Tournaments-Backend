@@ -28,7 +28,7 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
   // Crypto Bot has a limit around 1-25000 USD for transfers in any crypto currency
   private _minCryptoWithdrawalAmount: number = 0;
   private _maxCryptoWithdrawalAmount: number = Infinity;
-  private cryptoToFiatToRate: number = Infinity;
+  private _cryptoToFiatToRate: number = Infinity;
 
   private readonly logger = new Logger(CryptoBotService.name);
   public readonly cryptoBotUrl: string = appConfig.isProduction ? 'https://pay.crypt.bot' : 'https://testnet-pay.crypt.bot'
@@ -44,6 +44,9 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
   }
   public get maxCryptoWithdrawalAmount(): number {
     return this._maxCryptoWithdrawalAmount;
+  }
+  public get cryptoToFiatToRate(): number {
+    return this._cryptoToFiatToRate;
   }
 
   async onModuleInit(): Promise<void> {
@@ -61,7 +64,7 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
       {
         currency_type: "crypto",
         asset: appConfig.CRYPTO_BOT_ASSET,
-        amount: String(depositFiatAmount(amount, method.comission) / this.cryptoToFiatToRate),
+        amount: String(depositFiatAmount(amount, method.comission) / this._cryptoToFiatToRate),
         payload: JSON.stringify({ paymentId: id }),
         paid_btn_name: "callback",
         paid_btn_url: "https://google.com",
@@ -102,7 +105,7 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
       await queryRunner.manager.save(withdrawal);
 
       // the withdrawal process
-      const amountAfterComission = withdrawalFiatAmount(withdrawal.amount, withdrawal.method.comission) / this.cryptoToFiatToRate;
+      const amountAfterComission = withdrawalFiatAmount(withdrawal.amount, withdrawal.method.comission) / this._cryptoToFiatToRate;
       if(amountAfterComission < this._minCryptoWithdrawalAmount || amountAfterComission > this._maxCryptoWithdrawalAmount){
         throw new HttpException('Invalid withdrawal amount (min 1 USD)', HttpStatus.BAD_REQUEST);
       }
@@ -161,7 +164,7 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
           && rate.source === appConfig.CRYPTO_BOT_ASSET
           && rate.target === appConfig.FIAT_CURRENCY
         ){
-          this.cryptoToFiatToRate = Number(rate.rate);
+          this._cryptoToFiatToRate = Number(rate.rate);
         }
       }
       return rates;

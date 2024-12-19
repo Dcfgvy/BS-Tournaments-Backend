@@ -99,6 +99,7 @@ export class WithdrawalsService {
       names: JSON.stringify(data.names),
       descriptions: JSON.stringify(data.descriptions),
       comission: parseFloat(data.comission),
+      serviceComission: parseFloat(data.serviceComission),
     });
   }
 
@@ -113,6 +114,8 @@ export class WithdrawalsService {
       payload.descriptions = JSON.stringify(data.descriptions);
     if(data.comission)
       payload.comission = parseFloat(data.comission);
+    if(data.serviceComission)
+      payload.serviceComission = parseFloat(data.serviceComission);
     return this.withdrawalMethodRepository.save(payload);
   } 
 

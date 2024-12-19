@@ -40,14 +40,14 @@ export class WithdrawalsController {
     @PaginationParams() paginationParams: PaginationParamsDto,
   ): Promise<Pagination<WithdrawalResponseDto>> {
     const { createdFrom, createdTo } = creationDates;
-    const withdrawals = await this.withdrawalsService.fetchWithdrawals(
+    const withdrawals: unknown = await this.withdrawalsService.fetchWithdrawals(
       paginationParams,
       userId,
       methodName,
       createdFrom,
       createdTo,
     );
-    return withdrawals;
+    return withdrawals as Pagination<WithdrawalResponseDto>;
   }
 
   @Get('/my')
@@ -65,14 +65,14 @@ export class WithdrawalsController {
     @GetUser() user: User,
   ): Promise<Pagination<WithdrawalResponseDto>> {
     const { createdFrom, createdTo } = creationDates;
-    const withdrawals = await this.withdrawalsService.fetchWithdrawals(
+    const withdrawals: unknown = await this.withdrawalsService.fetchWithdrawals(
       paginationParams,
       user.id,
       methodName,
       createdFrom,
       createdTo,
     );
-    return withdrawals;
+    return withdrawals as Pagination<WithdrawalResponseDto>;
   }
 
   @Get('/methods')

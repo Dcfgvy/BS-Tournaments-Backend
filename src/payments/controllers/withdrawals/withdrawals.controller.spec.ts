@@ -66,6 +66,7 @@ describe('WithdrawalsController', () => {
         imgUrl: 'api/uploads/images/bank-transfer.png',
         minAmount: 50,
         maxAmount: 5000,
+        serviceComission: '0.05',
         comission: '0.05',
         methodName: 'bank-transfer',
       };

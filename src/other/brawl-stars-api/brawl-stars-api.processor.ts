@@ -56,16 +56,19 @@ export class BrawlStarsApiService extends WorkerHost {
       let allPlayers: any[] = [];
       if(lastBattle.players?.length > 0){
         allPlayers = lastBattle.players;
-      } else if(lastBattle.teams?.length > 0){
+      }
+      else if(lastBattle.teams?.length > 0){
         lastBattle.teams.forEach(team => {
           team.forEach(player => {
             allPlayers.push(player);
           })
         });
-      } else{
+      }
+      else{
         throw new HttpException('No battlelog found', HttpStatus.NOT_FOUND);
       }
-      return allPlayers.find((player) => player.tag == tag)?.name || null;
+
+      return allPlayers.find((player) => player.tag === tag)?.name || null;
     }
     return null;
   }
@@ -82,7 +85,7 @@ export class BrawlStarsApiService extends WorkerHost {
     eventMap: string,
     bannedBrawlers: string[],
     winners: string[],
-  );
+  ): Promise<boolean>;
   confirmWinners(
     organizerTag: string,
     event: string,
@@ -90,7 +93,7 @@ export class BrawlStarsApiService extends WorkerHost {
     bannedBrawlers: string[],
     winners: string[],
     teamSize: number,
-  );
+  ): Promise<boolean>;
   async confirmWinners(
     organizerTag: string,
     event: string,
@@ -104,7 +107,7 @@ export class BrawlStarsApiService extends WorkerHost {
 
     const lastBattleData = battlelog.items[0];
     if(battlelog.items[0].event.mode !== event || battlelog.items[0].event.map !== eventMap)
-      throw new Error('Last battle was held on the wrong map or event');
+      throw new Error('Last battle was played on the wrong map or event');
 
     const lastBattle = lastBattleData.battle;
     if(lastBattle.players?.length > 0){
