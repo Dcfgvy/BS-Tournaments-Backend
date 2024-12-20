@@ -11,6 +11,8 @@ import { validateWithdrawalPayload } from 'src/payments/utils/validate-payload.u
 import { CreateWithdrawalMethodDto } from 'src/payments/dtos/CreateWithdrawalMethod.dto';
 import { UpdateWithdrawalMethodDto } from 'src/payments/dtos/UpdateWithdrawalMethod.dto';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Tournament } from 'src/database/entities/Tournament.entity';
+import { TournamentStatus } from 'src/tournaments/enums/tournament-status.enum';
 
 @Injectable()
 export class WithdrawalsService {
@@ -22,6 +24,10 @@ export class WithdrawalsService {
     private readonly withdrawalMethodRepository: Repository<WithdrawalMethod>,
     @InjectRepository(Withdrawal)
     private readonly withdrawalRepository: Repository<Withdrawal>,
+    @InjectRepository(Tournament)
+    private readonly tournamentRepository: Repository<Tournament>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {
     this.services.set('crypto-bot', this.cryptoBotService);
   }
@@ -121,5 +127,49 @@ export class WithdrawalsService {
 
   deleteWithdrawalMethod(methodId: number) {
     return this.withdrawalMethodRepository.delete({ id: methodId });
+  }
+
+  async calculateTotalBalanceAndFrozenMoney(): Promise<number> {
+    // 1. Calculate the sum of all non-banned users' balances
+    const nonBannedUsersBalanceResult = await this.userRepository
+      .createQueryBuilder('user')
+      .select('SUM(user.balance)', 'sum')
+      .where('user.isBanned = :isBanned', { isBanned: false })
+      .getRawOne();
+    const nonBannedUsersBalance = parseFloat(nonBannedUsersBalanceResult.sum || 0);
+
+    const frozenMoneyResult = await this.tournamentRepository
+      .createQueryBuilder('tournament')
+      .leftJoin('tournament.contestants', 'contestant')
+      .select('tournament.id', 'tournamentId')
+      .addSelect('tournament.entryCost', 'entryCost')
+      .addSelect('COUNT(contestant.id)', 'contestantCount')
+      .where('tournament.status IN (:...statuses)', {
+        statuses: [
+          TournamentStatus.RECRUITMENT,
+          TournamentStatus.WAITING_FOR_START,
+          TournamentStatus.STARTED,
+          TournamentStatus.FROZEN,
+        ],
+      })
+      .groupBy('tournament.id')
+      .addGroupBy('tournament.entryCost')
+      .getRawMany();
+    
+    // Calculate frozen money
+    const frozenMoney = frozenMoneyResult.reduce((total, row) => {
+      const contestantCount = parseFloat(row.contestantCount || '0') - 1; // Subtract 1 from the contestant count
+      const entryCost = parseFloat(row.entryCost || '0');
+      return total + entryCost * contestantCount;
+    }, 0);
+
+    return nonBannedUsersBalance + frozenMoney;
+  }
+
+  async getMinimalBalanceForWithdrawalMethod(methodId: number): Promise<number> {
+    const allMonetToPayOut = await this.calculateTotalBalanceAndFrozenMoney();
+    const method = await this.withdrawalMethodRepository.findOneBy({ id: methodId });
+    const minBalance = allMonetToPayOut * (1 - method.comission) / (1 - method.serviceComission);
+    return minBalance;
   }
 }

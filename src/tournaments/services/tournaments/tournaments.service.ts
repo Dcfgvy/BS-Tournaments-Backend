@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, In, Repository } from 'typeorm';
 import { Tournament } from '../../../database/entities/Tournament.entity';
@@ -20,9 +20,12 @@ import { _, translatePlace } from 'src/utils/translator';
 import axios from 'axios';
 import { UploadsService } from 'src/uploads/uploads.service';
 import path from 'path';
+import { Language } from 'src/utils/names';
 
 @Injectable()
 export class TournamentsService {
+  private readonly logger: Logger = new Logger(TournamentsService.name);
+
   constructor(
     @InjectRepository(Tournament)
     private readonly tournamentRepository: Repository<Tournament>,
@@ -298,7 +301,7 @@ export class TournamentsService {
         throw new HttpException('Prizes must be equal for every team member', HttpStatus.BAD_REQUEST);
 
       for (let i = 0; i < prizes.length; i++) {
-        if (prizes[i] !== prizes[ event.teamSize * (Math.floor(i % event.teamSize)) ])
+        if (prizes[i] !== prizes[ event.teamSize * (Math.floor(i / event.teamSize)) ])
           throw new HttpException('Prizes must be equal for every team member', HttpStatus.BAD_REQUEST);
       }
     }
@@ -324,7 +327,12 @@ export class TournamentsService {
       contestants: [organizer],
     });
     await this.tournamentRepository.save(newTournament);
-    await this.publishTournamentPost(newTournament);
+
+    try{
+      this.publishTournamentPost(newTournament);
+    } catch {
+      this.logger.error('Failed to publish a post about a new tournament');
+    }
   }
 
   async publishTournamentPost(tournament: Tournament): Promise<void> {
@@ -337,8 +345,17 @@ export class TournamentsService {
         entryCost: tournament.entryCost,
         playersNumber: tournament.playersNumber,
       });
+      if(!tournament.event.isSolo){
+        caption += ` ${_('(to each team member)', lang)}`;
+      }
       const tab = '     ';
-      caption += `\n\n${tab}` + tournament.prizes.map((prize, index) => translatePlace(index + 1, lang, { prize })).join(`\n${tab}`);
+      caption += `\n`;
+
+      const step: number = (tournament.event.isSolo ? 1 : tournament.event.teamSize);
+      for(let i = 0; i < tournament.prizes.length; i += step){
+        caption += `\n${tab}`;
+        caption += translatePlace(i + 1, lang, { prize: tournament.prizes[i] });
+      }
       
       if(tournament.eventMap.postImgUrl){
         let imageBuffer: Buffer;

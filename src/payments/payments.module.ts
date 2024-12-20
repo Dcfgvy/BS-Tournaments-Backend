@@ -13,10 +13,12 @@ import { WebhooksController } from './controllers/webhooks/webhooks.controller';
 import { PurchasesController } from './controllers/purchases/purchases.controller';
 import { PurchasesService } from './services/purchases/purchases.service';
 import { Purchase } from 'src/database/entities/payments/Purchase.entity';
+import { User } from 'src/database/entities/User.entity';
+import { Tournament } from 'src/database/entities/Tournament.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Payment, PaymentMethod, Withdrawal, WithdrawalMethod, Purchase]),
+    TypeOrmModule.forFeature([Payment, PaymentMethod, Withdrawal, WithdrawalMethod, Purchase, User, Tournament]),
   ],
   controllers: [PaymentsController, WithdrawalsController, WebhooksController, PurchasesController],
   providers: [PaymentsService, WithdrawalsService, CryptoBotService, PurchasesService]
