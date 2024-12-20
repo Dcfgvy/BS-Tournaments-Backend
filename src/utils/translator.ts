@@ -46,6 +46,10 @@ const texts: Texts = {
 
 💸 Призовой фонд: 💸`,
   },
+  "(to each team member)": {
+    en: "<i>(to each team member)</i>",
+    ru: "<i>(каждому члену команды)</i>"
+  }
 };
 
 export function _(name: string, language: string, parameters?: Record<string, any>): string {

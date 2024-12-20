@@ -81,6 +81,15 @@ export class WithdrawalsController {
     return this.withdrawalsService.getAllWithdrawalMethods();
   }
 
+  // get minimal balance that should be on a specific withdrawal method
+  @Get('/methods/min-balance/:id')
+  @UseGuards(AdminGuard)
+  getMinimalBalanceForWithdrawalMethod(
+    @Param('id', ParseIntPipe) methodId: number,
+  ){
+    return this.withdrawalsService.getMinimalBalanceForWithdrawalMethod(methodId);
+  }
+
   @Get('/methods/active')
   getActiveWithdrawalMethods(){
     return this.withdrawalsService.getActiveWithdrawalMethods();

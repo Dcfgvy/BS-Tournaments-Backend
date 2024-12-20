@@ -1,5 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
+export type Language = "en" | "ru";
+
 export class NamesDto {
   @IsString()
   @IsNotEmpty()
