@@ -13,7 +13,7 @@ export class RegisterFormDto {
 
   @IsNotEmpty()
   @IsString()
-  @Length(8, 32)
+  @Length(6, 32)
   @ApiProperty()
   password: string;
 
