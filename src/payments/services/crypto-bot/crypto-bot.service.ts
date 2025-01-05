@@ -10,6 +10,7 @@ import { WithdrawalStatus } from 'src/payments/enums/withdrawal-status.enum';
 import { depositFiatAmount, withdrawalFiatAmount } from 'src/payments/functions';
 import { IPaymentService } from 'src/payments/interfaces/payment-service.interface';
 import { appConfig } from 'src/utils/appConfigs';
+import { NodeEnv } from 'src/utils/NodeEnv';
 import { UrlRedirect } from 'src/utils/other';
 import { Connection, Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -31,7 +32,7 @@ export class CryptoBotService implements IPaymentService, OnModuleInit {
   private _cryptoToFiatToRate: number = Infinity;
 
   private readonly logger = new Logger(CryptoBotService.name);
-  public readonly cryptoBotUrl: string = appConfig.isProduction ? 'https://pay.crypt.bot' : 'https://testnet-pay.crypt.bot'
+  public readonly cryptoBotUrl: string = appConfig.NODE_ENV === NodeEnv.PROD ? 'https://pay.crypt.bot' : 'https://testnet-pay.crypt.bot'
   
   constructor(
     private readonly dbConnection: Connection,
