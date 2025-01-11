@@ -5,17 +5,22 @@ import { ChangeAdminSettingDto } from './dtos/ChangeAdminSetting.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AddChannelToPostDto } from './dtos/AddChannel.dto';
 import { EditChannelToPostDto } from './dtos/EditChannel.dto';
+import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 
 @Controller('settings')
 @ApiTags('Settings')
 export class SettingsController {
   constructor(
-    private readonly settingsService: SettingsService
+    private readonly settingsService: SettingsService,
+    private readonly tgBotService: TelegramBotService,
   ) {}
 
   @Get('/public')
   getPublicSettings() {
-    return SettingsService.data;
+    return {
+      ...SettingsService.data,
+      botUsername: this.tgBotService.botUsername
+    };
   }
 
   @Get()

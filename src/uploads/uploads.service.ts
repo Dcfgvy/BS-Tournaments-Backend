@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Response } from 'express';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,18 +20,46 @@ export class UploadsService {
     return `api/uploads/images/${uniqueFilename}`;
   }
 
-  async fetchImage(filename: string): Promise<string> {
+  async fetchImage(filename: string, res?: Response): Promise<string> {
     const uploadsDir = path.join(this.baseUploadDir, 'images');
     const filePath = path.join(uploadsDir, filename);
     try {
       const fileContent = await fs.readFile(filePath);
-      return fileContent.toString('base64');
+      const mimeType = this.getMimeType(filename);
+
+      if(res){
+        // Set appropriate headers
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Cache-Control', 'public, max-age=31536000');
+        res.status(HttpStatus.OK).send(fileContent);
+      }
+
+      return `data:${mimeType};base64,${fileContent.toString('base64')}`;
     } catch (err) {
       this.logger.warn(`Error reading file: ${filename}`, err);
       // returning default no-image picture
       const defaultImagePath = path.join(this.baseUploadDir, 'default-image.png');
       const defaultImageContent = await fs.readFile(defaultImagePath);
-      return defaultImageContent.toString('base64');
+      
+      if(res){
+        // Set appropriate headers
+        res.setHeader('Content-Type', 'image/png');
+        res.setHeader('Cache-Control', 'public, max-age=31536000');
+        res.status(HttpStatus.OK).send(defaultImageContent);
+      }
+
+      return `data:image/png;base64,${defaultImageContent.toString('base64')}`;
+    }
+  }
+
+  private getMimeType(filename: string): string {
+    const ext = path.extname(filename).toLowerCase();
+    switch (ext) {
+      case '.png': return 'image/png';
+      case '.jpg':
+      case '.jpeg': return 'image/jpeg';
+      case '.gif': return 'image/gif';
+      default: return 'application/octet-stream'; // Fallback for unknown file types
     }
   }
 

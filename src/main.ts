@@ -12,8 +12,10 @@ async function bootstrap() {
     logger: (appConfig.NODE_ENV === NodeEnv.DEV || appConfig.NODE_ENV === NodeEnv.TEST) ? undefined : false,
   });
 
-  app.use(helmet());
   if(appConfig.NODE_ENV === NodeEnv.DEV){
+    app.use(helmet({
+      crossOriginResourcePolicy: false
+    }));
     app.enableCors({
       origin: 'http://localhost:4200', // Allow frontend
       methods: 'GET,POST,PUT,DELETE,OPTIONS',
@@ -21,12 +23,15 @@ async function bootstrap() {
       credentials: true, // Allow cookies
     });
   }
+  else{
+    app.use(helmet());
+  }
 
   // Middleware for allowing all origins on `/api/webhooks/*`
   app.use('/api/webhooks', (req: Request, res: Response, next: NextFunction) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', '*');
     next();
   });
 

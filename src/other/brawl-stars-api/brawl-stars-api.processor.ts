@@ -41,12 +41,20 @@ export class BrawlStarsApiService extends WorkerHost {
       );
       return response.data;
     } catch (err) {
+      if(err.response?.status === HttpStatus.NOT_FOUND) throw err;
       throw new HttpException('Intenal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
+  
   async confirmAccountByTag(tag: string, lastTrophyChange: number): Promise<string> {
-    const battlelog = await this.makeRequest(tag);
+    let battlelog: any;
+    try{
+      battlelog = await this.makeRequest(tag);
+    } catch(err) {
+      if(err.response?.status === HttpStatus.NOT_FOUND) return null;
+      throw err;
+    }
     if(battlelog.items.length === 0) throw new HttpException('No battlelog found', HttpStatus.NOT_FOUND);
 
     const lastBattle = battlelog.items[0].battle;
