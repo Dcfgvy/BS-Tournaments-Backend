@@ -293,7 +293,7 @@ const items = [
   },
   {
     names: { en: 'Solo Showdown', ru: 'Одиночное Столкновение' },
-    imgUrl: 'api/uploads/images/showdown.png',
+    imgUrl: 'api/uploads/images/solo-showdown.png',
     apiName: 'soloShowdown',
     isSolo: true,
     teamSize: null,
@@ -302,7 +302,7 @@ const items = [
   },
   {
     names: { en: 'Duo Showdown', ru: 'Парное Столкновение' },
-    imgUrl: 'api/uploads/images/showdown.png',
+    imgUrl: 'api/uploads/images/duo-showdown.png',
     apiName: 'duoShowdown',
     isSolo: false,
     teamSize: 2,
