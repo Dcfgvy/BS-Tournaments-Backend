@@ -28,8 +28,8 @@ export default class PaymentMethodSeeder implements Seeder {
     for(const item of items){
       await repository.upsert({
         ...item,
-        names: JSON.stringify(item.names),
-        descriptions: JSON.stringify(item.descriptions),
+        names: item.names,
+        descriptions: item.descriptions,
       }, ['methodName']);
     }
   }

@@ -9,11 +9,11 @@ export class PaymentMethod extends BaseEntity {
   @Column({ unique: true }) // name for internal processes, for example "crypto-bot", or "paypal"
   methodName: string;
 
-  @Column() // names in different languages, shown to users, e.g. {"en": "Crypto Bot", "ru": "Крипто-бот"}
-  names: string;
+  @Column({ type: 'jsonb' }) // names in different languages, shown to users, e.g. {"en": "Crypto Bot", "ru": "Крипто-бот"}
+  names: object;
 
-  @Column({ type: 'text' })
-  descriptions: string;
+  @Column({ type: 'jsonb' })
+  descriptions: object;
 
   @Column({ nullable: true })
   imgUrl: string;

@@ -39,7 +39,7 @@ export class BrawlersService {
     if(brawlerWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
     return this.brawlerRepository.save({
       ...createBrawlerDto,
-      names: JSON.stringify(createBrawlerDto.names)
+      names: createBrawlerDto.names
     });
   }
 
@@ -55,8 +55,6 @@ export class BrawlersService {
       const brawlerWithGivenApiName = await this.brawlerRepository.findOneBy({ apiName: updateBrawlerDto.apiName });
       if(brawlerWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
     }
-    if(updateBrawlerDto.names)
-      payload.names = JSON.stringify(updateBrawlerDto.names);
     return this.brawlerRepository.save(payload);
   }
 

@@ -34,10 +34,7 @@ export class EventsService {
   ): Promise<any> {
     const eventWithGivenApiName = await this.eventRepository.findOneBy({ apiName: createEventDto.apiName });
     if(eventWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
-    return this.eventRepository.save({
-      ...createEventDto,
-      names: JSON.stringify(createEventDto.names)
-    })
+    return this.eventRepository.save(createEventDto)
   }
 
   async updateEvent(
@@ -52,8 +49,6 @@ export class EventsService {
       const eventWithGivenApiName = await this.eventRepository.findOneBy({ apiName: updateEventDto.apiName });
       if(eventWithGivenApiName) throw new HttpException('Api Name is already taken', HttpStatus.CONFLICT);
     }
-    if(updateEventDto.names)
-      payload.names = JSON.stringify(updateEventDto.names);
     return this.eventRepository.save(payload);
   }
 

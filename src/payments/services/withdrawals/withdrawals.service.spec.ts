@@ -164,8 +164,8 @@ describe('WithdrawalsService', () => {
 
       expect(mockWithdrawalMethodRepository.save).toHaveBeenCalledWith({
         ...dto,
-        names: JSON.stringify(dto.names),
-        descriptions: JSON.stringify(dto.descriptions),
+        names: dto.names,
+        descriptions: dto.descriptions,
         comission: parseFloat(dto.comission),
       });
       expect(result).toBe(savedMethod);
@@ -189,8 +189,8 @@ describe('WithdrawalsService', () => {
 
       expect(mockWithdrawalMethodRepository.save).toHaveBeenCalledWith({
         ...savedMethod,
-        names: JSON.stringify(data.names),
-        descriptions: JSON.stringify(data.descriptions),
+        names: data.names,
+        descriptions: data.descriptions,
         comission: parseFloat(data.comission),
       });
       expect(result).toBe(savedMethod);

@@ -385,13 +385,13 @@ export default class EventAndMapSeeder implements Seeder {
     for(const item of items){
       const event = eventRepository.create({
         ...item,
-        names: JSON.stringify(item.names),
+        names: item.names,
       });
       await eventRepository.upsert(event, ['apiName']);
       for(const map of item.maps){
         const mapEntity = mapRepository.create({
           ...map,
-          names: JSON.stringify(map.names),
+          names: map.names,
           imgUrl: 'api/uploads/images/' + map.apiName.toLowerCase().replace(' ', '_') + '.png',
           postImgUrl: null,
           event: event,

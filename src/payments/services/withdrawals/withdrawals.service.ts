@@ -102,8 +102,6 @@ export class WithdrawalsService {
   createWithdrawalMethod(data: CreateWithdrawalMethodDto){
     return this.withdrawalMethodRepository.save({
       ...data,
-      names: JSON.stringify(data.names),
-      descriptions: JSON.stringify(data.descriptions),
       comission: parseFloat(data.comission),
       serviceComission: parseFloat(data.serviceComission),
     });
@@ -114,10 +112,6 @@ export class WithdrawalsService {
       id: methodId,
       ...data
     };
-    if(data.names)
-      payload.names = JSON.stringify(data.names);
-    if(data.descriptions)
-      payload.descriptions = JSON.stringify(data.descriptions);
     if(data.comission)
       payload.comission = parseFloat(data.comission);
     if(data.serviceComission)

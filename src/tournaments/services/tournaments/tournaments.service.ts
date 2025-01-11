@@ -340,8 +340,8 @@ export class TournamentsService {
     for (const channel of channels) {
       const lang = channel.language;
       let caption = _('Tournament post', lang, {
-        eventName: JSON.parse(tournament.event.names)[lang],
-        mapName: JSON.parse(tournament.eventMap.names)[lang],
+        eventName: tournament.event.names[lang],
+        mapName: tournament.eventMap.names[lang],
         entryCost: tournament.entryCost,
         playersNumber: tournament.playersNumber,
       });

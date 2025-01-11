@@ -7,8 +7,8 @@ export class EventMap extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  names: string;
+  @Column({ type: 'jsonb' })
+  names: object;
 
   @Column()
   imgUrl: string;

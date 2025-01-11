@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { NamesDto } from 'src/utils/names';
 
 export class PaymentMethodResponseDto {
   @ApiProperty({ example: 1, description: 'Payment method ID' })
@@ -11,16 +12,22 @@ export class PaymentMethodResponseDto {
   methodName: string;
 
   @ApiProperty({
-    example: '{"en": "Crypto Bot", "ru": "Крипто-бот"}',
+    example: {
+      en: 'Crypto Bot',
+      ru: 'Крипто-бот',
+    },
     description: 'Localized names of the payment method',
   })
-  names: string;
+  names: NamesDto;
 
   @ApiProperty({
-    example: 'Secure crypto payments',
+    example: {
+      en: 'Secure crypto payments',
+      ru: 'Безопасные крипто-платежи',
+    },
     description: 'Payment method descriptions',
   })
-  descriptions: string;
+  descriptions: NamesDto;
 
   @ApiProperty({
     example: 'https://example.com/image.png',
